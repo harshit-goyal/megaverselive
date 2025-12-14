@@ -1,15 +1,15 @@
 
 
+
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Megaverse Live — 1:1 Coaching for Study Abroad & Tech Interviews</title>
-
     <meta
       name="description"
-      content="Founder-led 1:1 coaching for IELTS, General English, and Backend Interview Preparation. Live sessions, real feedback, and practical improvement plans."
+      content="Megaverse Live offers founder-led 1:1 coaching for IELTS/General English and Backend Interview Preparation. Live sessions, real feedback, and clear improvement plans."
     />
 
     <!-- Tailwind CDN -->
@@ -26,12 +26,12 @@
   </head>
 
   <body class="bg-white text-slate-900">
-    <!-- HEADER -->
+    <!-- Header -->
     <header class="sticky top-0 z-50 border-b border-slate-200 bg-white/80 backdrop-blur">
       <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
         <div class="flex items-center gap-2">
-          <div class="grid h-9 w-9 place-items-center rounded-xl border border-slate-200 font-semibold">
-            M
+          <div class="grid h-9 w-9 place-items-center rounded-xl border border-slate-200 shadow-sm">
+            <span class="font-semibold">M</span>
           </div>
           <div class="leading-tight">
             <div class="font-semibold">Megaverse Live</div>
@@ -46,73 +46,169 @@
           <a href="#faq" class="hover:text-slate-900">FAQ</a>
         </nav>
 
-        <a
-          href="https://docs.google.com/forms/d/e/1FAIpQLSf4cKQdyLn3sxW8s1zXn6sbUGaVxx6rW76-0VNg3aqTMloe9w/viewform"
-          class="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800"
-        >
-          Book a trial
-        </a>
+        <div class="flex items-center gap-2">
+          <a
+            href="https://docs.google.com/forms/d/e/1FAIpQLSf4cKQdyLn3sxW8s1zXn6sbUGaVxx6rW76-0VNg3aqTMloe9w/viewform"
+            class="hidden rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium hover:bg-slate-50 md:inline-flex"
+          >
+            Book a trial
+          </a>
+          <a
+            href="https://docs.google.com/forms/d/e/1FAIpQLSf4cKQdyLn3sxW8s1zXn6sbUGaVxx6rW76-0VNg3aqTMloe9w/viewform"
+            class="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800"
+          >
+            Book now
+          </a>
+        </div>
       </div>
     </header>
 
-    <!-- HERO -->
-    <section class="mx-auto max-w-6xl px-4 py-16">
+    <!-- Hero -->
+    <section class="mx-auto max-w-6xl px-4 py-14 md:py-20">
       <div class="grid items-center gap-10 md:grid-cols-2">
         <div>
           <p class="inline-flex items-center gap-2 rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-600">
-            Founder-led • Live 1:1 • Real feedback
+            <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+            Live 1:1 • Founder-led • Real feedback
           </p>
 
-          <h1 class="mt-5 text-4xl font-extrabold md:text-5xl">
-            Prepare for global opportunities with
-            <span class="underline decoration-slate-300">1:1 coaching</span>
+          <h1 class="mt-5 text-4xl font-extrabold tracking-tight md:text-5xl">
+            Build global confidence — <span class="underline decoration-slate-300">English + Interviews</span>.
           </h1>
 
           <p class="mt-4 text-lg text-slate-600">
-            English for study abroad and backend interview preparation — delivered through focused,
-            founder-led live sessions.
+            Megaverse Live offers founder-led 1:1 coaching for
+            <span class="font-semibold">IELTS / General English</span>
+            and <span class="font-semibold">Backend Interview Preparation</span>.
+            Practical sessions, honest feedback, and a clear improvement plan.
           </p>
 
-          <a
-            href="https://docs.google.com/forms/d/e/1FAIpQLSf4cKQdyLn3sxW8s1zXn6sbUGaVxx6rW76-0VNg3aqTMloe9w/viewform"
-            class="mt-6 inline-block rounded-2xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-soft hover:bg-slate-800"
-          >
-            Book a trial session
-          </a>
+          <div class="mt-6 flex flex-col gap-3 sm:flex-row">
+            <a
+              id="book"
+              href="https://docs.google.com/forms/d/e/1FAIpQLSf4cKQdyLn3sxW8s1zXn6sbUGaVxx6rW76-0VNg3aqTMloe9w/viewform"
+              class="inline-flex items-center justify-center rounded-2xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-soft hover:bg-slate-800"
+            >
+              Book a trial session
+            </a>
+            <a
+              href="#how"
+              class="inline-flex items-center justify-center rounded-2xl border border-slate-200 px-6 py-3 text-sm font-semibold hover:bg-slate-50"
+            >
+              See how it works
+            </a>
+          </div>
 
           <p class="mt-3 text-xs text-slate-500">
             After booking, you’ll receive a secure payment link to confirm your session.
           </p>
+
+          <div class="mt-8 grid grid-cols-3 gap-4">
+            <div class="rounded-2xl border border-slate-200 p-4">
+              <div class="text-2xl font-bold">1:1</div>
+              <div class="mt-1 text-xs text-slate-500">Live coaching</div>
+            </div>
+            <div class="rounded-2xl border border-slate-200 p-4">
+              <div class="text-2xl font-bold">IELTS</div>
+              <div class="mt-1 text-xs text-slate-500">Speak + Write</div>
+            </div>
+            <div class="rounded-2xl border border-slate-200 p-4">
+              <div class="text-2xl font-bold">SD</div>
+              <div class="mt-1 text-xs text-slate-500">System design</div>
+            </div>
+          </div>
         </div>
 
+        <!-- Right card -->
         <div class="rounded-3xl border border-slate-200 p-6 shadow-soft">
-          <h2 class="text-lg font-semibold">What Megaverse Live helps with</h2>
-          <ul class="mt-4 space-y-2 text-sm text-slate-600">
-            <li>• IELTS & General English (speaking, writing)</li>
-            <li>• Backend & system design interviews</li>
-            <li>• Clear thinking, structured answers</li>
-            <li>• Honest feedback and improvement plans</li>
-          </ul>
+          <h2 class="text-lg font-semibold">What you’ll improve</h2>
+          <p class="mt-2 text-sm text-slate-600">
+            Pick one goal. We’ll improve through live practice, feedback, and a simple plan.
+          </p>
+
+          <div class="mt-5 grid gap-3">
+            <div class="rounded-2xl border border-slate-200 p-4">
+              <div class="font-semibold">English (IELTS + General)</div>
+              <div class="mt-1 text-sm text-slate-600">
+                Speaking confidence, writing clarity, grammar, structure, and band strategy.
+              </div>
+            </div>
+
+            <div class="rounded-2xl border border-slate-200 p-4">
+              <div class="font-semibold">Backend Interviews</div>
+              <div class="mt-1 text-sm text-slate-600">
+                System design (HLD/LLD), backend fundamentals, and mock interviews.
+              </div>
+            </div>
+
+            <div class="rounded-2xl border border-slate-200 p-4">
+              <div class="font-semibold">Communication</div>
+              <div class="mt-1 text-sm text-slate-600">
+                Structured answers, clear trade-offs, and confidence under pressure.
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-6 rounded-2xl bg-slate-50 p-4">
+            <div class="text-sm font-semibold">AI support (coming later)</div>
+            <p class="mt-1 text-sm text-slate-600">
+              Notes, practice prompts, and session summaries powered by AI — guided by your feedback.
+            </p>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- ENGLISH COACHING -->
+    <!-- How it works -->
+    <section id="how" class="border-t border-slate-200 bg-slate-50">
+      <div class="mx-auto max-w-6xl px-4 py-14">
+        <h2 class="text-2xl font-bold">How it works</h2>
+        <p class="mt-2 text-slate-600">Simple flow. Real coaching. Clear next steps.</p>
+
+        <div class="mt-8 grid gap-6 md:grid-cols-3">
+          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
+            <div class="text-sm font-semibold text-slate-500">Step 1</div>
+            <div class="mt-2 text-lg font-semibold">Book a trial</div>
+            <div class="mt-2 text-sm text-slate-600">
+              Fill the form with your goal (English or Backend) and availability.
+            </div>
+          </div>
+
+          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
+            <div class="text-sm font-semibold text-slate-500">Step 2</div>
+            <div class="mt-2 text-lg font-semibold">Confirm your slot</div>
+            <div class="mt-2 text-sm text-slate-600">
+              You’ll receive a secure payment link to confirm your session.
+            </div>
+          </div>
+
+          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
+            <div class="text-sm font-semibold text-slate-500">Step 3</div>
+            <div class="mt-2 text-lg font-semibold">Practice live + improve</div>
+            <div class="mt-2 text-sm text-slate-600">
+              Live coaching + feedback + a practical improvement plan you can follow.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- English Coaches -->
     <section id="english" class="mx-auto max-w-6xl px-4 py-14">
-      <h2 class="text-2xl font-bold">English Coaching (Study Abroad)</h2>
+      <h2 class="text-2xl font-bold">English Coaching</h2>
       <p class="mt-2 text-slate-600">
-        IELTS and General English coaching focused on speaking confidence and writing clarity.
+        IELTS and General English (speaking & writing). Founder-led sessions right now.
       </p>
 
       <div class="mt-8 grid gap-6 md:grid-cols-3">
-        <!-- Harshit -->
+        <!-- Card 1: Active (Harshit) -->
         <div class="rounded-3xl border border-slate-200 p-6 shadow-soft">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-3">
               <div class="grid h-12 w-12 place-items-center rounded-2xl bg-slate-100 font-bold">HG</div>
               <div>
                 <div class="font-semibold">Harshit Goyal</div>
-                <div class="text-sm text-slate-500">IELTS • General English</div>
+                <div class="text-sm text-slate-500">IELTS • General English • Founder</div>
               </div>
             </div>
             <span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
@@ -121,54 +217,108 @@
           </div>
 
           <p class="mt-4 text-sm text-slate-600">
-            Founder-led English coaching with clear feedback, band strategy, and practical improvement plans.
+            Speaking confidence, writing clarity, grammar fixes, and band-oriented feedback.
+            You’ll leave with a simple plan to improve quickly.
           </p>
 
-          <div class="mt-4 flex justify-between">
+          <div class="mt-4 flex items-center justify-between">
             <span class="text-sm font-semibold">Live 1:1</span>
             <a
               href="https://docs.google.com/forms/d/e/1FAIpQLSf4cKQdyLn3sxW8s1zXn6sbUGaVxx6rW76-0VNg3aqTMloe9w/viewform"
-              class="text-sm font-semibold underline decoration-slate-300"
+              class="text-sm font-semibold underline decoration-slate-300 hover:decoration-slate-600"
             >
               Book trial
             </a>
           </div>
         </div>
 
-        <!-- Dummy -->
-        <div class="rounded-3xl border border-slate-200 p-6 shadow-soft opacity-80">
-          <div class="font-semibold">Aisha Malik</div>
-          <div class="text-sm text-slate-500">IELTS • Writing</div>
-          <p class="mt-4 text-sm text-slate-600">Currently not accepting new students.</p>
-          <div class="mt-4 text-xs text-slate-400">Slots full</div>
+        <!-- Card 2: Dummy (Slots full) -->
+        <div class="rounded-3xl border border-slate-200 p-6 shadow-soft">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="grid h-12 w-12 place-items-center rounded-2xl bg-slate-100 font-bold">AM</div>
+              <div>
+                <div class="font-semibold">Aisha Malik</div>
+                <div class="text-sm text-slate-500">IELTS • Speaking & Writing</div>
+              </div>
+            </div>
+            <span class="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600">
+              Slots full
+            </span>
+          </div>
+
+          <p class="mt-4 text-sm text-slate-600">
+            IELTS coaching with structured mock practice and band-oriented feedback.
+            Currently not accepting new students.
+          </p>
+
+          <div class="mt-4 flex items-center justify-between">
+            <span class="text-sm font-semibold text-slate-500">Not available</span>
+            <span class="text-sm font-semibold text-slate-400">Closed</span>
+          </div>
         </div>
 
-        <div class="rounded-3xl border border-slate-200 p-6 shadow-soft opacity-80">
-          <div class="font-semibold">Jason Reed</div>
-          <div class="text-sm text-slate-500">General English • Speaking</div>
-          <p class="mt-4 text-sm text-slate-600">Onboarding soon.</p>
-          <div class="mt-4 text-xs text-slate-400">Coming soon</div>
+        <!-- Card 3: Dummy (Onboarding soon) -->
+        <div class="rounded-3xl border border-slate-200 p-6 shadow-soft">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="grid h-12 w-12 place-items-center rounded-2xl bg-slate-100 font-bold">JR</div>
+              <div>
+                <div class="font-semibold">Jason Reed</div>
+                <div class="text-sm text-slate-500">General English • Fluency & Confidence</div>
+              </div>
+            </div>
+            <span class="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600">
+              Onboarding soon
+            </span>
+          </div>
+
+          <p class="mt-4 text-sm text-slate-600">
+            General English coaching for speaking confidence, clarity, and natural conversation practice.
+            Opening slots soon.
+          </p>
+
+          <div class="mt-4 flex items-center justify-between">
+            <span class="text-sm font-semibold text-slate-500">Not available</span>
+            <span class="text-sm font-semibold text-slate-400">Soon</span>
+          </div>
         </div>
       </div>
+
+      <p class="mt-4 text-xs text-slate-500">
+        Only the “Book trial” button is active right now. The other coaches will open slots later.
+      </p>
     </section>
 
-    <!-- BACKEND INTERVIEW PREP -->
-    <section id="backend" class="border-t border-slate-200 bg-slate-50">
+    <!-- Backend Interview Preparation -->
+    <section id="backend" class="border-t border-slate-200 bg-white">
       <div class="mx-auto max-w-6xl px-4 py-14">
-        <h2 class="text-2xl font-bold">Backend Interview Preparation</h2>
-        <p class="mt-2 text-slate-600">
-          Founder-led 1:1 coaching for backend and system design interviews.
-        </p>
+        <div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+          <div>
+            <h2 class="text-2xl font-bold">Backend Interview Preparation</h2>
+            <p class="mt-2 text-slate-600">
+              Founder-led 1:1 coaching for <span class="font-semibold">System Design</span> and <span class="font-semibold">Backend Interviews</span>.
+              Real mock interviews, structured thinking, and actionable feedback.
+            </p>
+          </div>
+
+          <a
+            href="https://docs.google.com/forms/d/e/1FAIpQLSf4cKQdyLn3sxW8s1zXn6sbUGaVxx6rW76-0VNg3aqTMloe9w/viewform"
+            class="inline-flex items-center justify-center rounded-2xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-soft hover:bg-slate-800"
+          >
+            Book a backend prep session
+          </a>
+        </div>
 
         <div class="mt-8 grid gap-6 md:grid-cols-3">
-          <!-- Harshit -->
-          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
+          <!-- Card 1: Active (Harshit) -->
+          <div class="rounded-3xl border border-slate-200 p-6 shadow-soft">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-3">
                 <div class="grid h-12 w-12 place-items-center rounded-2xl bg-slate-100 font-bold">HG</div>
                 <div>
                   <div class="font-semibold">Harshit Goyal</div>
-                  <div class="text-sm text-slate-500">System Design • Backend</div>
+                  <div class="text-sm text-slate-500">System Design • Backend • Mock Interviews</div>
                 </div>
               </div>
               <span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
@@ -177,81 +327,155 @@
             </div>
 
             <p class="mt-4 text-sm text-slate-600">
-              Focused preparation for product-company interviews: system design, backend fundamentals,
-              and realistic mock interviews.
+              Focused prep for product-company backend interviews:
+              HLD/LLD structure, APIs & data modeling, scaling patterns, and interview communication.
             </p>
 
-            <div class="mt-4 flex justify-between">
+            <div class="mt-4 flex items-center justify-between">
               <span class="text-sm font-semibold">Live 1:1</span>
               <a
                 href="https://docs.google.com/forms/d/e/1FAIpQLSf4cKQdyLn3sxW8s1zXn6sbUGaVxx6rW76-0VNg3aqTMloe9w/viewform"
-                class="text-sm font-semibold underline decoration-slate-300"
+                class="text-sm font-semibold underline decoration-slate-300 hover:decoration-slate-600"
               >
                 Book trial
               </a>
             </div>
           </div>
 
-          <!-- Dummy -->
-          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft opacity-80">
-            <div class="font-semibold">Arjun Khanna</div>
-            <div class="text-sm text-slate-500">Backend • Databases</div>
-            <p class="mt-4 text-sm text-slate-600">Slots currently full.</p>
-            <div class="mt-4 text-xs text-slate-400">Slots full</div>
+          <!-- Card 2: Dummy (Slots full) -->
+          <div class="rounded-3xl border border-slate-200 p-6 shadow-soft">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="grid h-12 w-12 place-items-center rounded-2xl bg-slate-100 font-bold">AK</div>
+                <div>
+                  <div class="font-semibold">Arjun Khanna</div>
+                  <div class="text-sm text-slate-500">Backend • Databases • Concurrency</div>
+                </div>
+              </div>
+              <span class="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600">
+                Slots full
+              </span>
+            </div>
+
+            <p class="mt-4 text-sm text-slate-600">
+              Backend fundamentals + debugging-style interview prep. Currently not accepting new students.
+            </p>
+
+            <div class="mt-4 flex items-center justify-between">
+              <span class="text-sm font-semibold text-slate-500">Not available</span>
+              <span class="text-sm font-semibold text-slate-400">Closed</span>
+            </div>
           </div>
 
-          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft opacity-80">
-            <div class="font-semibold">Sofia Rivera</div>
-            <div class="text-sm text-slate-500">System Design • HLD/LLD</div>
-            <p class="mt-4 text-sm text-slate-600">Onboarding soon.</p>
-            <div class="mt-4 text-xs text-slate-400">Coming soon</div>
+          <!-- Card 3: Dummy (Onboarding soon) -->
+          <div class="rounded-3xl border border-slate-200 p-6 shadow-soft">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="grid h-12 w-12 place-items-center rounded-2xl bg-slate-100 font-bold">SR</div>
+                <div>
+                  <div class="font-semibold">Sofia Rivera</div>
+                  <div class="text-sm text-slate-500">System Design • HLD/LLD</div>
+                </div>
+              </div>
+              <span class="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600">
+                Onboarding soon
+              </span>
+            </div>
+
+            <p class="mt-4 text-sm text-slate-600">
+              Structured system design coaching with trade-off thinking and interview communication. Opening slots soon.
+            </p>
+
+            <div class="mt-4 flex items-center justify-between">
+              <span class="text-sm font-semibold text-slate-500">Not available</span>
+              <span class="text-sm font-semibold text-slate-400">Soon</span>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
 
-    <!-- HOW IT WORKS -->
-    <section id="how" class="border-t border-slate-200">
-      <div class="mx-auto max-w-6xl px-4 py-14">
-        <h2 class="text-2xl font-bold">How it works</h2>
-        <div class="mt-8 grid gap-6 md:grid-cols-3">
-          <div class="rounded-2xl border p-6">
-            <h3 class="font-semibold">1. Book a trial</h3>
-            <p class="mt-2 text-sm text-slate-600">Share your goal and availability.</p>
+        <div class="mt-6 rounded-2xl bg-slate-50 p-5">
+          <div class="text-sm font-semibold">What you’ll cover</div>
+          <div class="mt-3 grid gap-3 md:grid-cols-2">
+            <div class="rounded-2xl border border-slate-200 bg-white p-4">
+              <div class="font-semibold">System Design (HLD + LLD)</div>
+              <div class="mt-1 text-sm text-slate-600">
+                Requirements → APIs → data model → scaling → caching → reliability → trade-offs.
+              </div>
+            </div>
+            <div class="rounded-2xl border border-slate-200 bg-white p-4">
+              <div class="font-semibold">Backend Fundamentals</div>
+              <div class="mt-1 text-sm text-slate-600">
+                Databases, concurrency, performance, and real engineering judgement.
+              </div>
+            </div>
+            <div class="rounded-2xl border border-slate-200 bg-white p-4">
+              <div class="font-semibold">Mock Interviews</div>
+              <div class="mt-1 text-sm text-slate-600">
+                Real interview simulations + honest feedback + gap-based plan.
+              </div>
+            </div>
+            <div class="rounded-2xl border border-slate-200 bg-white p-4">
+              <div class="font-semibold">Interview Communication</div>
+              <div class="mt-1 text-sm text-slate-600">
+                How to structure answers, handle follow-ups, and stay calm under pressure.
+              </div>
+            </div>
           </div>
-          <div class="rounded-2xl border p-6">
-            <h3 class="font-semibold">2. Confirm payment</h3>
-            <p class="mt-2 text-sm text-slate-600">Receive a secure payment link.</p>
-          </div>
-          <div class="rounded-2xl border p-6">
-            <h3 class="font-semibold">3. Start improving</h3>
-            <p class="mt-2 text-sm text-slate-600">Live session + feedback.</p>
-          </div>
+
+          <p class="mt-4 text-xs text-slate-500">
+            Founder-led right now. The other coach cards are placeholders and will open slots later.
+          </p>
         </div>
       </div>
     </section>
 
     <!-- FAQ -->
-    <section id="faq" class="border-t border-slate-200">
+    <section id="faq" class="border-t border-slate-200 bg-white">
       <div class="mx-auto max-w-6xl px-4 py-14">
         <h2 class="text-2xl font-bold">FAQ</h2>
+
         <div class="mt-8 grid gap-6 md:grid-cols-2">
-          <div>
-            <h3 class="font-semibold">Are sessions live?</h3>
-            <p class="mt-2 text-sm text-slate-600">Yes, all sessions are live and 1:1.</p>
+          <div class="rounded-3xl border border-slate-200 p-6">
+            <div class="font-semibold">Are sessions live?</div>
+            <p class="mt-2 text-sm text-slate-600">
+              Yes. All sessions are live and 1:1 (not recorded courses).
+            </p>
           </div>
-          <div>
-            <h3 class="font-semibold">Who conducts the sessions?</h3>
-            <p class="mt-2 text-sm text-slate-600">Early sessions are founder-led.</p>
+
+          <div class="rounded-3xl border border-slate-200 p-6">
+            <div class="font-semibold">Do you cover only IELTS?</div>
+            <p class="mt-2 text-sm text-slate-600">
+              English coaching includes IELTS and General English (speaking & writing).
+            </p>
+          </div>
+
+          <div class="rounded-3xl border border-slate-200 p-6">
+            <div class="font-semibold">What’s included in backend prep?</div>
+            <p class="mt-2 text-sm text-slate-600">
+              System design (HLD/LLD), backend fundamentals, mock interviews, and communication feedback.
+            </p>
+          </div>
+
+          <div class="rounded-3xl border border-slate-200 p-6">
+            <div class="font-semibold">How do I confirm my session?</div>
+            <p class="mt-2 text-sm text-slate-600">
+              After you submit the booking form, you’ll receive a secure payment link to confirm your slot.
+            </p>
           </div>
         </div>
+
+        <footer
+          class="mt-12 flex flex-col gap-2 border-t border-slate-200 pt-6 text-sm text-slate-500 md:flex-row md:items-center md:justify-between"
+        >
+          <div>© <span id="year"></span> Megaverse Live. All rights reserved.</div>
+          <div class="flex gap-4">
+            <a class="hover:text-slate-900" href="mailto:hello@megaverselive.com">hello@megaverselive.com</a>
+            <a class="hover:text-slate-900" href="#">Privacy</a>
+            <a class="hover:text-slate-900" href="#">Terms</a>
+          </div>
+        </footer>
       </div>
     </section>
-
-    <!-- FOOTER -->
-    <footer class="border-t border-slate-200 py-8 text-center text-sm text-slate-500">
-      © <span id="year"></span> Megaverse Live. All rights reserved.
-    </footer>
 
     <script>
       document.getElementById("year").textContent = new Date().getFullYear();
