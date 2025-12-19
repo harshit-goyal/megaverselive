@@ -25,14 +25,10 @@
   <body class="bg-white text-slate-900">
     <!-- LINKS (single source of truth) -->
     <!-- Student Booking Form -->
-    <!-- Replace only if you change form later -->
-    <!-- Student: -->
     <!-- https://docs.google.com/forms/d/e/1FAIpQLSfupDFGHrHKaVFtBk3r9nUqjozr-VqU_BKXER7Zl_1NZmvqlg/viewform?usp=publish-editor -->
 
-    <!-- Mentor Application Form -->
-    <!-- Replace with your mentor form once created -->
-    <!-- Mentor: -->
-    <!-- https://docs.google.com/forms/d/e/REPLACE_WITH_MENTOR_FORM_ID/viewform -->
+    <!-- Mentor Application Form (FINAL) -->
+    <!-- https://docs.google.com/forms/d/e/1FAIpQLSdblRvBiftISdkO1kZUgTeocVvTsALBKlmIx9SGFhtb0NEMkQ/viewform?usp=publish-editor -->
 
     <!-- Header -->
     <header class="sticky top-0 z-50 border-b border-slate-200 bg-white/80 backdrop-blur">
@@ -55,18 +51,13 @@
           <a href="#faq" class="hover:text-slate-900">FAQ</a>
         </nav>
 
+        <!-- Only ONE button on top as requested -->
         <div class="flex items-center gap-2">
-          <a
-            href="https://docs.google.com/forms/d/e/1FAIpQLSfupDFGHrHKaVFtBk3r9nUqjozr-VqU_BKXER7Zl_1NZmvqlg/viewform?usp=publish-editor"
-            class="hidden rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium hover:bg-slate-50 md:inline-flex"
-          >
-            Book a session
-          </a>
           <a
             href="https://docs.google.com/forms/d/e/1FAIpQLSfupDFGHrHKaVFtBk3r9nUqjozr-VqU_BKXER7Zl_1NZmvqlg/viewform?usp=publish-editor"
             class="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800"
           >
-            Book now
+            Book a 1:1 session
           </a>
         </div>
       </div>
@@ -195,10 +186,22 @@
 
     <!-- English Coaches -->
     <section id="english" class="mx-auto max-w-6xl px-4 py-14">
-      <h2 class="text-2xl font-bold">English Coaching</h2>
-      <p class="mt-2 text-slate-600">
-        IELTS and General English (speaking & writing). Founder-led sessions right now.
-      </p>
+      <div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+        <div>
+          <h2 class="text-2xl font-bold">English Coaching</h2>
+          <p class="mt-2 text-slate-600">
+            IELTS and General English (speaking & writing). Founder-led sessions right now.
+          </p>
+        </div>
+
+        <!-- Added the missing CTA button for English section -->
+        <a
+          href="https://docs.google.com/forms/d/e/1FAIpQLSfupDFGHrHKaVFtBk3r9nUqjozr-VqU_BKXER7Zl_1NZmvqlg/viewform?usp=publish-editor"
+          class="inline-flex items-center justify-center rounded-2xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-soft hover:bg-slate-800"
+        >
+          Book an English session
+        </a>
+      </div>
 
       <div class="mt-8 grid gap-6 md:grid-cols-3">
         <!-- Card 1: Active (Harshit) -->
@@ -441,13 +444,14 @@
               Become a Mentor on Megaverse Live
             </h2>
             <p class="mt-3 max-w-2xl text-slate-600">
-              Megaverse Live is an early-stage, founder-led platform for live 1:1 mentoring.
-              We’re onboarding a small number of mentors who already teach/mentor online or have an audience.
+              We’re onboarding a small number of mentors for live 1:1 sessions.
+              This is a partnership model: mentors bring their audience; Megaverse Live provides a clean setup and workflow.
             </p>
           </div>
 
+          <!-- Mentor form link UPDATED -->
           <a
-            href="https://docs.google.com/forms/d/e/REPLACE_WITH_MENTOR_FORM_ID/viewform"
+            href="https://docs.google.com/forms/d/e/1FAIpQLSdblRvBiftISdkO1kZUgTeocVvTsALBKlmIx9SGFhtb0NEMkQ/viewform?usp=publish-editor"
             class="inline-flex items-center justify-center rounded-2xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-soft hover:bg-slate-800"
           >
             Apply to Become a Mentor
@@ -522,7 +526,8 @@
             Start with focused 1:1 mentoring. We’ll expand categories over time.
           </p>
 
-          <div class="mt-4 grid gap-3 md:grid-cols-4">
+          <!-- Removed "More later" tile as requested -->
+          <div class="mt-4 grid gap-3 md:grid-cols-3">
             <div class="rounded-2xl border border-slate-200 p-4">
               <div class="font-semibold">Tech</div>
               <div class="mt-1 text-sm text-slate-600">Backend, System Design, DSA</div>
@@ -535,10 +540,6 @@
               <div class="font-semibold">Career</div>
               <div class="mt-1 text-sm text-slate-600">Resume, interviews, growth</div>
             </div>
-            <div class="rounded-2xl border border-slate-200 p-4">
-              <div class="font-semibold">More later</div>
-              <div class="mt-1 text-sm text-slate-600">Music, cooking, etc.</div>
-            </div>
           </div>
 
           <div class="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -546,7 +547,7 @@
               Ready to mentor on Megaverse Live?
             </div>
             <a
-              href="https://docs.google.com/forms/d/e/REPLACE_WITH_MENTOR_FORM_ID/viewform"
+              href="https://docs.google.com/forms/d/e/1FAIpQLSdblRvBiftISdkO1kZUgTeocVvTsALBKlmIx9SGFhtb0NEMkQ/viewform?usp=publish-editor"
               class="inline-flex items-center justify-center rounded-2xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-soft hover:bg-slate-800"
             >
               Apply to Become a Mentor
