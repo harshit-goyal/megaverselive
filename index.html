@@ -1,13 +1,20 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Megaverse Live — Book 1:1 Sessions</title>
-    <meta
-      name="description"
-      content="Megaverse Live offers founder-led 1:1 sessions. Book live sessions from anywhere and get real feedback with a clear improvement plan."
-    />
+    <title>Megaverse Live — Book 1:1 Sessions with Real Mentors</title>
+    <meta name="description" content="Megaverse Live offers founder-led 1:1 sessions. Book live sessions from anywhere and get real feedback with a clear improvement plan." />
+
+    <!-- Open Graph / Social sharing -->
+    <meta property="og:title" content="Megaverse Live — Book 1:1 Sessions with Real Mentors" />
+    <meta property="og:description" content="Live 1:1 sessions for Backend Interview Prep & English Coaching. Real feedback. Clear improvement plan." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://megaverselive.com" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Favicon placeholder -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>" />
 
     <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -15,602 +22,1000 @@
       tailwind.config = {
         theme: {
           extend: {
-            boxShadow: { soft: "0 10px 30px rgba(0,0,0,0.08)" },
+            colors: {
+              brand: {
+                50: '#f0f0ff',
+                100: '#e0e0ff',
+                200: '#c7c7fe',
+                300: '#a5a5fc',
+                400: '#8484f8',
+                500: '#6C63FF',
+                600: '#5a52e0',
+                700: '#4a43b8',
+                800: '#3d3895',
+                900: '#35317a',
+              },
+            },
+            boxShadow: {
+              soft: '0 10px 30px rgba(0,0,0,0.06)',
+              glow: '0 0 40px rgba(108,99,255,0.15)',
+            },
+            animation: {
+              'fade-in': 'fadeIn 0.6s ease-out forwards',
+              'slide-up': 'slideUp 0.6s ease-out forwards',
+              'pulse-slow': 'pulse 3s ease-in-out infinite',
+            },
+            keyframes: {
+              fadeIn: {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
+              },
+              slideUp: {
+                '0%': { opacity: '0', transform: 'translateY(20px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+            },
           },
         },
       };
     </script>
+
+    <style>
+      /* Smooth reveal on scroll */
+      .reveal {
+        opacity: 0;
+        transform: translateY(24px);
+        transition: opacity 0.7s ease, transform 0.7s ease;
+      }
+      .reveal.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* Gradient text */
+      .gradient-text {
+        background: linear-gradient(135deg, #6C63FF 0%, #3d3895 50%, #1e1b4b 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      /* Card hover lift */
+      .card-hover {
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+      }
+      .card-hover:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 16px 40px rgba(108,99,255,0.12);
+      }
+
+      /* Subtle noise background */
+      .hero-bg {
+        background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(108,99,255,0.08), transparent);
+      }
+
+      /* Number counter animation */
+      .stat-number {
+        font-variant-numeric: tabular-nums;
+      }
+
+      /* Mobile nav */
+      .mobile-nav {
+        transform: translateX(100%);
+        transition: transform 0.3s ease;
+      }
+      .mobile-nav.open {
+        transform: translateX(0);
+      }
+
+      /* Pricing badge shimmer */
+      @keyframes shimmer {
+        0% { background-position: -200% 0; }
+        100% { background-position: 200% 0; }
+      }
+      .shimmer {
+        background: linear-gradient(90deg, transparent, rgba(108,99,255,0.06), transparent);
+        background-size: 200% 100%;
+        animation: shimmer 3s infinite;
+      }
+    </style>
   </head>
 
-  <body class="bg-white text-slate-900">
+  <body class="bg-white text-slate-900 antialiased">
     <!-- LINKS (single source of truth) -->
-    <!-- Student Booking Form -->
-    <!-- https://docs.google.com/forms/d/e/1FAIpQLSfupDFGHrHKaVFtBk3r9nUqjozr-VqU_BKXER7Zl_1NZmvqlg/viewform?usp=publish-editor -->
+    <!-- Student Booking Form: https://docs.google.com/forms/d/e/1FAIpQLSfupDFGHrHKaVFtBk3r9nUqjozr-VqU_BKXER7Zl_1NZmvqlg/viewform?usp=publish-editor -->
+    <!-- Mentor Application Form: https://docs.google.com/forms/d/e/1FAIpQLSdblRvBiftISdkO1kZUgTeocVvTsALBKlmIx9SGFhtb0NEMkQ/viewform?usp=publish-editor -->
 
-    <!-- Mentor Application Form (FINAL) -->
-    <!-- https://docs.google.com/forms/d/e/1FAIpQLSdblRvBiftISdkO1kZUgTeocVvTsALBKlmIx9SGFhtb0NEMkQ/viewform?usp=publish-editor -->
-
-    <!-- Header -->
-    <header class="sticky top-0 z-50 border-b border-slate-200 bg-white/80 backdrop-blur">
+    <!-- ========== HEADER ========== -->
+    <header class="sticky top-0 z-50 border-b border-slate-100 bg-white/80 backdrop-blur-lg">
       <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-        <div class="flex items-center gap-2">
-          <div class="grid h-9 w-9 place-items-center rounded-xl border border-slate-200 shadow-sm">
-            <span class="font-semibold">M</span>
+        <a href="#" class="flex items-center gap-2.5 group">
+          <div class="grid h-9 w-9 place-items-center rounded-xl bg-brand-500 text-white font-bold text-sm shadow-sm transition group-hover:shadow-glow">
+            M
           </div>
           <div class="leading-tight">
-            <div class="font-semibold">Megaverse Live</div>
-            <div class="text-xs text-slate-500">Founder-led 1:1 sessions</div>
+            <div class="font-bold text-slate-900">Megaverse Live</div>
+            <div class="text-[11px] text-slate-400 tracking-wide">1:1 Live Sessions</div>
           </div>
-        </div>
+        </a>
 
-        <nav class="hidden gap-6 text-sm text-slate-600 md:flex">
-          <a href="#english" class="hover:text-slate-900">English</a>
-          <a href="#backend" class="hover:text-slate-900">Backend Prep</a>
-          <a href="#how" class="hover:text-slate-900">How it works</a>
-          <a href="#mentor" class="hover:text-slate-900">Become a Mentor</a>
-          <a href="#faq" class="hover:text-slate-900">FAQ</a>
+        <!-- Desktop nav -->
+        <nav class="hidden gap-7 text-sm font-medium text-slate-500 md:flex">
+          <a href="#tracks" class="transition hover:text-brand-600">Tracks</a>
+          <a href="#how" class="transition hover:text-brand-600">How it works</a>
+          <a href="#pricing" class="transition hover:text-brand-600">Pricing</a>
+          <a href="#mentor" class="transition hover:text-brand-600">Become a Mentor</a>
+          <a href="#faq" class="transition hover:text-brand-600">FAQ</a>
         </nav>
 
-        <!-- Only ONE button on top as requested -->
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-3">
           <a
             href="https://docs.google.com/forms/d/e/1FAIpQLSfupDFGHrHKaVFtBk3r9nUqjozr-VqU_BKXER7Zl_1NZmvqlg/viewform?usp=publish-editor"
-            class="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800"
+            class="hidden sm:inline-flex items-center gap-2 rounded-full bg-brand-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-600 hover:shadow-glow"
           >
-            Book a 1:1 session
+            Book a Session
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
           </a>
+
+          <!-- Mobile hamburger -->
+          <button id="menuBtn" class="md:hidden rounded-lg p-2 hover:bg-slate-100 transition" aria-label="Menu">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+          </button>
         </div>
       </div>
+
+      <!-- Mobile nav overlay -->
+      <div id="mobileNav" class="mobile-nav fixed inset-y-0 right-0 z-50 w-72 bg-white border-l border-slate-200 shadow-xl p-6 md:hidden">
+        <button id="closeMenu" class="absolute top-4 right-4 p-2 hover:bg-slate-100 rounded-lg transition" aria-label="Close">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+        <nav class="mt-10 flex flex-col gap-5">
+          <a href="#tracks" class="text-lg font-semibold text-slate-700 hover:text-brand-600 transition mobile-link">Tracks</a>
+          <a href="#how" class="text-lg font-semibold text-slate-700 hover:text-brand-600 transition mobile-link">How it works</a>
+          <a href="#pricing" class="text-lg font-semibold text-slate-700 hover:text-brand-600 transition mobile-link">Pricing</a>
+          <a href="#mentor" class="text-lg font-semibold text-slate-700 hover:text-brand-600 transition mobile-link">Become a Mentor</a>
+          <a href="#faq" class="text-lg font-semibold text-slate-700 hover:text-brand-600 transition mobile-link">FAQ</a>
+          <hr class="border-slate-200" />
+          <a
+            href="https://docs.google.com/forms/d/e/1FAIpQLSfupDFGHrHKaVFtBk3r9nUqjozr-VqU_BKXER7Zl_1NZmvqlg/viewform?usp=publish-editor"
+            class="inline-flex items-center justify-center rounded-full bg-brand-500 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-600"
+          >
+            Book a Session
+          </a>
+        </nav>
+      </div>
+      <div id="navOverlay" class="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm hidden md:hidden"></div>
     </header>
 
-    <!-- Hero -->
-    <section class="mx-auto max-w-6xl px-4 py-14 md:py-20">
-      <div class="grid items-center gap-10 md:grid-cols-2">
-        <div>
-          <p class="inline-flex items-center gap-2 rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-600">
-            <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
-            Live 1:1 • Founder-led • Real feedback
-          </p>
+    <!-- ========== HERO ========== -->
+    <section class="hero-bg overflow-hidden">
+      <div class="mx-auto max-w-6xl px-4 pt-16 pb-20 md:pt-24 md:pb-28">
+        <div class="grid items-center gap-12 md:grid-cols-2">
+          <div class="animate-fade-in">
+            <!-- Badge -->
+            <div class="inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-3.5 py-1.5 text-xs font-semibold text-brand-700">
+              <span class="relative flex h-2 w-2">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75"></span>
+                <span class="relative inline-flex h-2 w-2 rounded-full bg-brand-500"></span>
+              </span>
+              Live 1:1 &bull; Real Mentors &bull; Honest Feedback
+            </div>
 
-          <h1 class="mt-5 text-4xl font-extrabold tracking-tight md:text-5xl">
-            Book <span class="underline decoration-slate-300">1:1 live sessions</span> from anywhere — learn faster with direct feedback.
-          </h1>
+            <h1 class="mt-6 text-4xl font-extrabold leading-[1.15] tracking-tight md:text-[3.25rem]">
+              Book <span class="gradient-text">1:1 live sessions</span> — learn faster with direct feedback.
+            </h1>
 
-          <p class="mt-4 text-lg text-slate-600">
-            Megaverse Live offers focused 1:1 sessions across selected learning tracks.
-            Choose your goal, book a slot, and get a clear improvement plan.
-          </p>
+            <p class="mt-5 text-lg leading-relaxed text-slate-600 max-w-xl">
+              Choose your goal, book a slot, and get personalized feedback with a clear improvement plan.
+              No fluff, no recordings — just real sessions with real mentors.
+            </p>
 
-          <div class="mt-6 flex flex-col gap-3 sm:flex-row">
-            <a
-              id="book"
-              href="https://docs.google.com/forms/d/e/1FAIpQLSfupDFGHrHKaVFtBk3r9nUqjozr-VqU_BKXER7Zl_1NZmvqlg/viewform?usp=publish-editor"
-              class="inline-flex items-center justify-center rounded-2xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-soft hover:bg-slate-800"
-            >
-              Book a 1:1 session
-            </a>
-            <a
-              href="#how"
-              class="inline-flex items-center justify-center rounded-2xl border border-slate-200 px-6 py-3 text-sm font-semibold hover:bg-slate-50"
-            >
-              See how it works
-            </a>
+            <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+              <a
+                id="book"
+                href="https://docs.google.com/forms/d/e/1FAIpQLSfupDFGHrHKaVFtBk3r9nUqjozr-VqU_BKXER7Zl_1NZmvqlg/viewform?usp=publish-editor"
+                class="inline-flex items-center justify-center gap-2 rounded-full bg-brand-500 px-7 py-3.5 text-sm font-semibold text-white shadow-md transition hover:bg-brand-600 hover:shadow-glow"
+              >
+                Book a 1:1 Session
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+              </a>
+              <a
+                href="#how"
+                class="inline-flex items-center justify-center rounded-full border border-slate-200 px-7 py-3.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 hover:border-slate-300"
+              >
+                See how it works
+              </a>
+            </div>
+
+            <p class="mt-4 text-xs text-slate-400">
+              After booking, you'll receive a payment link to confirm your slot.
+            </p>
           </div>
 
-          <p class="mt-3 text-xs text-slate-500">
-            After booking, you’ll receive a secure payment link to confirm your session.
-          </p>
+          <!-- Right — Trust stats + track preview -->
+          <div class="animate-slide-up" style="animation-delay: 0.2s;">
+            <!-- Stats strip -->
+            <div class="grid grid-cols-3 gap-4 mb-6">
+              <div class="rounded-2xl border border-slate-200 bg-white p-4 text-center card-hover">
+                <div class="text-3xl font-extrabold text-brand-600 stat-number">1:1</div>
+                <div class="mt-1 text-xs text-slate-500 font-medium">Live sessions</div>
+              </div>
+              <div class="rounded-2xl border border-slate-200 bg-white p-4 text-center card-hover">
+                <div class="text-3xl font-extrabold text-brand-600 stat-number">2</div>
+                <div class="mt-1 text-xs text-slate-500 font-medium">Tracks live</div>
+              </div>
+              <div class="rounded-2xl border border-slate-200 bg-white p-4 text-center card-hover">
+                <div class="text-3xl font-extrabold text-brand-600 stat-number">100%</div>
+                <div class="mt-1 text-xs text-slate-500 font-medium">Real feedback</div>
+              </div>
+            </div>
 
-          <div class="mt-8 grid grid-cols-3 gap-4">
-            <div class="rounded-2xl border border-slate-200 p-4">
-              <div class="text-2xl font-bold">1:1</div>
-              <div class="mt-1 text-xs text-slate-500">Live sessions</div>
-            </div>
-            <div class="rounded-2xl border border-slate-200 p-4">
-              <div class="text-2xl font-bold">Plan</div>
-              <div class="mt-1 text-xs text-slate-500">Clear next steps</div>
-            </div>
-            <div class="rounded-2xl border border-slate-200 p-4">
-              <div class="text-2xl font-bold">Real</div>
-              <div class="mt-1 text-xs text-slate-500">Honest feedback</div>
+            <!-- Track cards -->
+            <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
+              <h2 class="text-sm font-bold text-slate-400 uppercase tracking-wider">Tracks Available</h2>
+
+              <div class="mt-4 space-y-3">
+                <a href="#english" class="block rounded-2xl border border-slate-200 p-4 transition hover:border-brand-300 hover:shadow-sm group">
+                  <div class="flex items-center gap-3">
+                    <div class="grid h-10 w-10 place-items-center rounded-xl bg-amber-50 text-lg">🗣</div>
+                    <div>
+                      <div class="font-semibold group-hover:text-brand-600 transition">English Coaching</div>
+                      <div class="text-sm text-slate-500">IELTS &bull; Speaking &bull; Writing &bull; Grammar</div>
+                    </div>
+                    <svg class="w-4 h-4 ml-auto text-slate-300 group-hover:text-brand-500 transition" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                  </div>
+                </a>
+
+                <a href="#backend" class="block rounded-2xl border border-slate-200 p-4 transition hover:border-brand-300 hover:shadow-sm group">
+                  <div class="flex items-center gap-3">
+                    <div class="grid h-10 w-10 place-items-center rounded-xl bg-blue-50 text-lg">⚙️</div>
+                    <div>
+                      <div class="font-semibold group-hover:text-brand-600 transition">Backend Interview Prep</div>
+                      <div class="text-sm text-slate-500">System Design &bull; HLD/LLD &bull; Mock Interviews</div>
+                    </div>
+                    <svg class="w-4 h-4 ml-auto text-slate-300 group-hover:text-brand-500 transition" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                  </div>
+                </a>
+              </div>
+
+              <div class="mt-4 rounded-xl bg-slate-50 px-4 py-3 text-sm text-slate-500 flex items-center gap-2">
+                <svg class="w-4 h-4 text-brand-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                More tracks coming soon — Career Coaching, DSA, Frontend & more
+              </div>
             </div>
           </div>
         </div>
+      </div>
+    </section>
 
-        <!-- Right card -->
-        <div class="rounded-3xl border border-slate-200 p-6 shadow-soft">
-          <h2 class="text-lg font-semibold">Tracks available right now</h2>
-          <p class="mt-2 text-sm text-slate-600">
-            Start with one track. Sessions are live and founder-led.
-          </p>
-
-          <div class="mt-5 grid gap-3">
-            <div class="rounded-2xl border border-slate-200 p-4">
-              <div class="font-semibold">English Coaching</div>
-              <div class="mt-1 text-sm text-slate-600">
-                IELTS + General English: speaking confidence, writing clarity, grammar and structure.
-              </div>
+    <!-- ========== SOCIAL PROOF STRIP ========== -->
+    <section class="border-y border-slate-100 bg-slate-50/50">
+      <div class="mx-auto max-w-6xl px-4 py-8">
+        <div class="flex flex-col items-center gap-6 md:flex-row md:justify-between">
+          <p class="text-sm font-medium text-slate-400 uppercase tracking-wider">Why people choose Megaverse Live</p>
+          <div class="flex flex-wrap justify-center gap-6 md:gap-10">
+            <div class="flex items-center gap-2 text-sm text-slate-600">
+              <svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <span class="font-semibold">No recordings</span> — 100% live
             </div>
-
-            <div class="rounded-2xl border border-slate-200 p-4">
-              <div class="font-semibold">Backend Interview Preparation</div>
-              <div class="mt-1 text-sm text-slate-600">
-                System design (HLD/LLD), backend fundamentals, mock interviews, and interview communication.
-              </div>
+            <div class="flex items-center gap-2 text-sm text-slate-600">
+              <svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <span class="font-semibold">Personalized</span> improvement plan
+            </div>
+            <div class="flex items-center gap-2 text-sm text-slate-600">
+              <svg class="w-5 h-5 text-brand-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <span class="font-semibold">Founder-led</span> quality control
             </div>
           </div>
+        </div>
+      </div>
+    </section>
 
-          <div class="mt-6 rounded-2xl bg-slate-50 p-4">
-            <div class="text-sm font-semibold">More tracks later</div>
-            <p class="mt-1 text-sm text-slate-600">
-              Additional mentors, tracks, and AI-powered notes will be added gradually.
+    <!-- ========== HOW IT WORKS ========== -->
+    <section id="how" class="bg-white">
+      <div class="mx-auto max-w-6xl px-4 py-20 reveal">
+        <div class="text-center max-w-2xl mx-auto">
+          <p class="text-sm font-bold text-brand-500 uppercase tracking-wider">Simple process</p>
+          <h2 class="mt-3 text-3xl font-extrabold tracking-tight md:text-4xl">How it works</h2>
+          <p class="mt-3 text-slate-600">Three steps. No complexity. Just real mentorship.</p>
+        </div>
+
+        <div class="mt-12 grid gap-8 md:grid-cols-3">
+          <!-- Step 1 -->
+          <div class="relative rounded-3xl border border-slate-200 bg-white p-8 card-hover">
+            <div class="grid h-12 w-12 place-items-center rounded-2xl bg-brand-50 text-brand-600 text-xl font-bold">1</div>
+            <h3 class="mt-5 text-lg font-bold">Book a session</h3>
+            <p class="mt-2 text-sm text-slate-600 leading-relaxed">
+              Fill the form with your goal, preferred time, and track. Takes 2 minutes.
+            </p>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="relative rounded-3xl border border-slate-200 bg-white p-8 card-hover">
+            <div class="grid h-12 w-12 place-items-center rounded-2xl bg-brand-50 text-brand-600 text-xl font-bold">2</div>
+            <h3 class="mt-5 text-lg font-bold">Confirm &amp; pay</h3>
+            <p class="mt-2 text-sm text-slate-600 leading-relaxed">
+              You'll get a payment link (UPI). Once confirmed, your session is locked in.
+            </p>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="relative rounded-3xl border border-slate-200 bg-white p-8 card-hover">
+            <div class="grid h-12 w-12 place-items-center rounded-2xl bg-brand-50 text-brand-600 text-xl font-bold">3</div>
+            <h3 class="mt-5 text-lg font-bold">Live session + plan</h3>
+            <p class="mt-2 text-sm text-slate-600 leading-relaxed">
+              Get live feedback, honest evaluation, and a clear improvement plan to follow.
             </p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- How it works -->
-    <section id="how" class="border-t border-slate-200 bg-slate-50">
-      <div class="mx-auto max-w-6xl px-4 py-14">
-        <h2 class="text-2xl font-bold">How it works</h2>
-        <p class="mt-2 text-slate-600">Simple flow. Real sessions. Clear next steps.</p>
-
-        <div class="mt-8 grid gap-6 md:grid-cols-3">
-          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
-            <div class="text-sm font-semibold text-slate-500">Step 1</div>
-            <div class="mt-2 text-lg font-semibold">Book a session</div>
-            <div class="mt-2 text-sm text-slate-600">
-              Fill the form with your goal and availability.
-            </div>
-          </div>
-
-          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
-            <div class="text-sm font-semibold text-slate-500">Step 2</div>
-            <div class="mt-2 text-lg font-semibold">Confirm your slot</div>
-            <div class="mt-2 text-sm text-slate-600">
-              You’ll receive a secure payment link to confirm your session.
-            </div>
-          </div>
-
-          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
-            <div class="text-sm font-semibold text-slate-500">Step 3</div>
-            <div class="mt-2 text-lg font-semibold">Live session + plan</div>
-            <div class="mt-2 text-sm text-slate-600">
-              Live feedback + a practical improvement plan you can follow.
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- English Coaches -->
-    <section id="english" class="mx-auto max-w-6xl px-4 py-14">
-      <div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-        <div>
-          <h2 class="text-2xl font-bold">English Coaching</h2>
-          <p class="mt-2 text-slate-600">
-            IELTS and General English (speaking & writing). Founder-led sessions right now.
-          </p>
-        </div>
-
-        <!-- Added the missing CTA button for English section -->
-        <a
-          href="https://docs.google.com/forms/d/e/1FAIpQLSfupDFGHrHKaVFtBk3r9nUqjozr-VqU_BKXER7Zl_1NZmvqlg/viewform?usp=publish-editor"
-          class="inline-flex items-center justify-center rounded-2xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-soft hover:bg-slate-800"
-        >
-          Book an English session
-        </a>
-      </div>
-
-      <div class="mt-8 grid gap-6 md:grid-cols-3">
-        <!-- Card 1: Active (Harshit) -->
-        <div class="rounded-3xl border border-slate-200 p-6 shadow-soft">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-3">
-              <div class="grid h-12 w-12 place-items-center rounded-2xl bg-slate-100 font-bold">HG</div>
-              <div>
-                <div class="font-semibold">Harshit Goyal</div>
-                <div class="text-sm text-slate-500">IELTS • General English • Founder</div>
-              </div>
-            </div>
-            <span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
-              Available
-            </span>
-          </div>
-
-          <p class="mt-4 text-sm text-slate-600">
-            Speaking confidence, writing clarity, grammar fixes, and band-oriented feedback.
-            You’ll leave with a simple plan to improve quickly.
-          </p>
-
-          <div class="mt-4 flex items-center justify-between">
-            <span class="text-sm font-semibold">Live 1:1</span>
-            <a
-              href="https://docs.google.com/forms/d/e/1FAIpQLSfupDFGHrHKaVFtBk3r9nUqjozr-VqU_BKXER7Zl_1NZmvqlg/viewform?usp=publish-editor"
-              class="text-sm font-semibold underline decoration-slate-300 hover:decoration-slate-600"
-            >
-              Book session
-            </a>
-          </div>
-        </div>
-
-        <!-- Card 2: Dummy -->
-        <div class="rounded-3xl border border-slate-200 p-6 shadow-soft">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-3">
-              <div class="grid h-12 w-12 place-items-center rounded-2xl bg-slate-100 font-bold">AM</div>
-              <div>
-                <div class="font-semibold">Aisha Malik</div>
-                <div class="text-sm text-slate-500">IELTS • Speaking & Writing</div>
-              </div>
-            </div>
-            <span class="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600">
-              Slots full
-            </span>
-          </div>
-
-          <p class="mt-4 text-sm text-slate-600">
-            IELTS coaching with structured mock practice and band-oriented feedback.
-            Currently not accepting new students.
-          </p>
-
-          <div class="mt-4 flex items-center justify-between">
-            <span class="text-sm font-semibold text-slate-500">Not available</span>
-            <span class="text-sm font-semibold text-slate-400">Closed</span>
-          </div>
-        </div>
-
-        <!-- Card 3: Dummy -->
-        <div class="rounded-3xl border border-slate-200 p-6 shadow-soft">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-3">
-              <div class="grid h-12 w-12 place-items-center rounded-2xl bg-slate-100 font-bold">JR</div>
-              <div>
-                <div class="font-semibold">Jason Reed</div>
-                <div class="text-sm text-slate-500">General English • Fluency & Confidence</div>
-              </div>
-            </div>
-            <span class="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600">
-              Onboarding soon
-            </span>
-          </div>
-
-          <p class="mt-4 text-sm text-slate-600">
-            General English coaching for speaking confidence, clarity, and natural conversation practice.
-            Opening slots soon.
-          </p>
-
-          <div class="mt-4 flex items-center justify-between">
-            <span class="text-sm font-semibold text-slate-500">Not available</span>
-            <span class="text-sm font-semibold text-slate-400">Soon</span>
-          </div>
-        </div>
-      </div>
-
-      <p class="mt-4 text-xs text-slate-500">
-        Only Harshit’s booking link is active right now. Other mentor slots will open later.
-      </p>
-    </section>
-
-    <!-- Backend Interview Preparation -->
-    <section id="backend" class="border-t border-slate-200 bg-white">
-      <div class="mx-auto max-w-6xl px-4 py-14">
-        <div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+    <!-- ========== ENGLISH COACHING ========== -->
+    <section id="english" class="border-t border-slate-100 bg-slate-50/70">
+      <div class="mx-auto max-w-6xl px-4 py-20 reveal">
+        <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
-            <h2 class="text-2xl font-bold">Backend Interview Preparation</h2>
-            <p class="mt-2 text-slate-600">
-              Founder-led 1:1 sessions for <span class="font-semibold">System Design</span> and <span class="font-semibold">Backend Interviews</span>.
-              Real mock interviews, structured thinking, and actionable feedback.
+            <div class="inline-flex items-center gap-2 rounded-full bg-amber-50 border border-amber-200 px-3 py-1 text-xs font-semibold text-amber-700">
+              🗣 Track
+            </div>
+            <h2 class="mt-4 text-3xl font-extrabold tracking-tight md:text-4xl">English Coaching</h2>
+            <p class="mt-3 text-slate-600 max-w-xl">
+              IELTS prep and General English — speaking confidence, writing clarity, grammar structure.
+              Founder-led sessions with honest feedback.
             </p>
           </div>
 
           <a
             href="https://docs.google.com/forms/d/e/1FAIpQLSfupDFGHrHKaVFtBk3r9nUqjozr-VqU_BKXER7Zl_1NZmvqlg/viewform?usp=publish-editor"
-            class="inline-flex items-center justify-center rounded-2xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-soft hover:bg-slate-800"
+            class="inline-flex items-center gap-2 rounded-full bg-brand-500 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-600 hover:shadow-glow shrink-0"
           >
-            Book a backend session
+            Book English Session
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
           </a>
         </div>
 
-        <div class="mt-8 grid gap-6 md:grid-cols-3">
-          <!-- Card 1: Active (Harshit) -->
-          <div class="rounded-3xl border border-slate-200 p-6 shadow-soft">
+        <div class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <!-- Harshit Card — Active -->
+          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft card-hover relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-400 to-brand-600"></div>
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-3">
-                <div class="grid h-12 w-12 place-items-center rounded-2xl bg-slate-100 font-bold">HG</div>
+                <div class="grid h-12 w-12 place-items-center rounded-2xl bg-brand-50 text-brand-600 font-bold">HG</div>
                 <div>
-                  <div class="font-semibold">Harshit Goyal</div>
-                  <div class="text-sm text-slate-500">System Design • Backend • Mock Interviews</div>
+                  <div class="font-bold">Harshit Goyal</div>
+                  <div class="text-xs text-slate-500">IELTS &bull; General English &bull; Founder</div>
                 </div>
               </div>
-              <span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+              <span class="flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
+                <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
                 Available
               </span>
             </div>
 
-            <p class="mt-4 text-sm text-slate-600">
-              Focused prep for product-company backend interviews:
-              HLD/LLD structure, APIs & data modeling, scaling patterns, and interview communication.
+            <p class="mt-4 text-sm text-slate-600 leading-relaxed">
+              Speaking confidence, writing clarity, grammar fixes, and band-oriented feedback.
+              You'll leave with a simple plan to improve quickly.
             </p>
 
-            <div class="mt-4 flex items-center justify-between">
-              <span class="text-sm font-semibold">Live 1:1</span>
+            <div class="mt-5 flex items-center justify-between pt-4 border-t border-slate-100">
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Live 1:1</span>
               <a
                 href="https://docs.google.com/forms/d/e/1FAIpQLSfupDFGHrHKaVFtBk3r9nUqjozr-VqU_BKXER7Zl_1NZmvqlg/viewform?usp=publish-editor"
-                class="text-sm font-semibold underline decoration-slate-300 hover:decoration-slate-600"
+                class="inline-flex items-center gap-1 rounded-full bg-brand-500 px-4 py-2 text-xs font-semibold text-white transition hover:bg-brand-600"
               >
                 Book session
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
               </a>
             </div>
           </div>
 
-          <!-- Card 2: Dummy -->
-          <div class="rounded-3xl border border-slate-200 p-6 shadow-soft">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-3">
-                <div class="grid h-12 w-12 place-items-center rounded-2xl bg-slate-100 font-bold">AK</div>
-                <div>
-                  <div class="font-semibold">Arjun Khanna</div>
-                  <div class="text-sm text-slate-500">Backend • Databases • Concurrency</div>
-                </div>
-              </div>
-              <span class="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600">
-                Slots full
-              </span>
-            </div>
-
-            <p class="mt-4 text-sm text-slate-600">
-              Backend fundamentals + debugging-style interview prep. Currently not accepting new students.
-            </p>
-
-            <div class="mt-4 flex items-center justify-between">
-              <span class="text-sm font-semibold text-slate-500">Not available</span>
-              <span class="text-sm font-semibold text-slate-400">Closed</span>
-            </div>
+          <!-- Coming soon placeholder -->
+          <div class="rounded-3xl border-2 border-dashed border-slate-200 p-6 flex flex-col items-center justify-center text-center bg-white/50">
+            <div class="grid h-12 w-12 place-items-center rounded-2xl bg-slate-100 text-xl">👩‍🏫</div>
+            <div class="mt-3 font-semibold text-slate-500">More mentors joining</div>
+            <p class="mt-1 text-sm text-slate-400">New English mentors will be onboarded soon.</p>
+            <a href="#mentor" class="mt-3 text-xs font-semibold text-brand-500 hover:text-brand-700 transition">Know someone? Refer a mentor →</a>
           </div>
-
-          <!-- Card 3: Dummy -->
-          <div class="rounded-3xl border border-slate-200 p-6 shadow-soft">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-3">
-                <div class="grid h-12 w-12 place-items-center rounded-2xl bg-slate-100 font-bold">SR</div>
-                <div>
-                  <div class="font-semibold">Sofia Rivera</div>
-                  <div class="text-sm text-slate-500">System Design • HLD/LLD</div>
-                </div>
-              </div>
-              <span class="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600">
-                Onboarding soon
-              </span>
-            </div>
-
-            <p class="mt-4 text-sm text-slate-600">
-              Structured system design coaching with trade-off thinking and interview communication. Opening slots soon.
-            </p>
-
-            <div class="mt-4 flex items-center justify-between">
-              <span class="text-sm font-semibold text-slate-500">Not available</span>
-              <span class="text-sm font-semibold text-slate-400">Soon</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="mt-6 rounded-2xl bg-slate-50 p-5">
-          <div class="text-sm font-semibold">What you’ll cover</div>
-          <div class="mt-3 grid gap-3 md:grid-cols-2">
-            <div class="rounded-2xl border border-slate-200 bg-white p-4">
-              <div class="font-semibold">System Design (HLD + LLD)</div>
-              <div class="mt-1 text-sm text-slate-600">
-                Requirements → APIs → data model → scaling → caching → reliability → trade-offs.
-              </div>
-            </div>
-            <div class="rounded-2xl border border-slate-200 bg-white p-4">
-              <div class="font-semibold">Backend Fundamentals</div>
-              <div class="mt-1 text-sm text-slate-600">
-                Databases, concurrency, performance, and real engineering judgement.
-              </div>
-            </div>
-            <div class="rounded-2xl border border-slate-200 bg-white p-4">
-              <div class="font-semibold">Mock Interviews</div>
-              <div class="mt-1 text-sm text-slate-600">
-                Real interview simulations + honest feedback + gap-based plan.
-              </div>
-            </div>
-            <div class="rounded-2xl border border-slate-200 bg-white p-4">
-              <div class="font-semibold">Interview Communication</div>
-              <div class="mt-1 text-sm text-slate-600">
-                How to structure answers, handle follow-ups, and stay calm under pressure.
-              </div>
-            </div>
-          </div>
-
-          <p class="mt-4 text-xs text-slate-500">
-            Founder-led right now. Other mentor slots will open later.
-          </p>
         </div>
       </div>
     </section>
 
-    <!-- Become a Mentor -->
-    <section id="mentor" class="border-t border-slate-200 bg-slate-50">
-      <div class="mx-auto max-w-6xl px-4 py-14">
+    <!-- ========== BACKEND INTERVIEW PREP ========== -->
+    <section id="backend" class="bg-white">
+      <div class="mx-auto max-w-6xl px-4 py-20 reveal">
         <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
-            <p class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs text-slate-600">
-              🧪 Early access • Limited onboarding
-            </p>
-            <h2 class="mt-4 text-3xl font-extrabold tracking-tight md:text-4xl">
-              Become a Mentor on Megaverse Live
-            </h2>
-            <p class="mt-3 max-w-2xl text-slate-600">
-              We’re onboarding a small number of mentors for live 1:1 sessions.
-              This is a partnership model: mentors bring their audience; Megaverse Live provides a clean setup and workflow.
+            <div class="inline-flex items-center gap-2 rounded-full bg-blue-50 border border-blue-200 px-3 py-1 text-xs font-semibold text-blue-700">
+              ⚙️ Track
+            </div>
+            <h2 class="mt-4 text-3xl font-extrabold tracking-tight md:text-4xl">Backend Interview Preparation</h2>
+            <p class="mt-3 text-slate-600 max-w-xl">
+              System Design (HLD/LLD), backend fundamentals, mock interviews, and interview communication.
+              Founder-led sessions with actionable feedback.
             </p>
           </div>
 
-          <!-- Mentor form link UPDATED -->
           <a
-            href="https://docs.google.com/forms/d/e/1FAIpQLSdblRvBiftISdkO1kZUgTeocVvTsALBKlmIx9SGFhtb0NEMkQ/viewform?usp=publish-editor"
-            class="inline-flex items-center justify-center rounded-2xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-soft hover:bg-slate-800"
+            href="https://docs.google.com/forms/d/e/1FAIpQLSfupDFGHrHKaVFtBk3r9nUqjozr-VqU_BKXER7Zl_1NZmvqlg/viewform?usp=publish-editor"
+            class="inline-flex items-center gap-2 rounded-full bg-brand-500 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-600 hover:shadow-glow shrink-0"
           >
-            Apply to Become a Mentor
+            Book Backend Session
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
           </a>
         </div>
 
-        <div class="mt-8 grid gap-6 md:grid-cols-3">
-          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
-            <div class="text-sm font-semibold text-slate-500">Good fit if you</div>
-            <ul class="mt-3 space-y-2 text-sm text-slate-700">
-              <li>• Already take 1:1 sessions (or plan to)</li>
-              <li>• Have an audience (LinkedIn/Twitter/YouTube/communities)</li>
-              <li>• Teach a focused skill (tech, English, interview prep, etc.)</li>
-              <li>• Prefer depth over mass-market courses</li>
-            </ul>
+        <div class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <!-- Harshit Card — Active -->
+          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft card-hover relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-400 to-brand-600"></div>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="grid h-12 w-12 place-items-center rounded-2xl bg-brand-50 text-brand-600 font-bold">HG</div>
+                <div>
+                  <div class="font-bold">Harshit Goyal</div>
+                  <div class="text-xs text-slate-500">System Design &bull; Backend &bull; Mock Interviews</div>
+                </div>
+              </div>
+              <span class="flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">
+                <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+                Available
+              </span>
+            </div>
+
+            <p class="mt-4 text-sm text-slate-600 leading-relaxed">
+              Focused prep for product-company backend interviews:
+              HLD/LLD, APIs & data modeling, scaling patterns, and interview communication.
+            </p>
+
+            <div class="mt-5 flex items-center justify-between pt-4 border-t border-slate-100">
+              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Live 1:1</span>
+              <a
+                href="https://docs.google.com/forms/d/e/1FAIpQLSfupDFGHrHKaVFtBk3r9nUqjozr-VqU_BKXER7Zl_1NZmvqlg/viewform?usp=publish-editor"
+                class="inline-flex items-center gap-1 rounded-full bg-brand-500 px-4 py-2 text-xs font-semibold text-white transition hover:bg-brand-600"
+              >
+                Book session
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+              </a>
+            </div>
           </div>
 
-          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
-            <div class="text-sm font-semibold text-slate-500">Not a fit if you</div>
-            <ul class="mt-3 space-y-2 text-sm text-slate-700">
-              <li>• Expect “leads provided by platform”</li>
-              <li>• Want to sell recorded courses</li>
-              <li>• Want instant approvals with no review</li>
-              <li>• Prefer volume over quality</li>
-            </ul>
-          </div>
-
-          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
-            <div class="text-sm font-semibold text-slate-500">What you get</div>
-            <ul class="mt-3 space-y-2 text-sm text-slate-700">
-              <li>• Professional mentor profile on megaverselive.com</li>
-              <li>• Booking + intake handled via a clean flow</li>
-              <li>• Payment flow support (process-first)</li>
-              <li>• Founder support during onboarding</li>
-            </ul>
+          <!-- Coming soon placeholder -->
+          <div class="rounded-3xl border-2 border-dashed border-slate-200 p-6 flex flex-col items-center justify-center text-center bg-white/50">
+            <div class="grid h-12 w-12 place-items-center rounded-2xl bg-slate-100 text-xl">👨‍💻</div>
+            <div class="mt-3 font-semibold text-slate-500">More mentors joining</div>
+            <p class="mt-1 text-sm text-slate-400">Backend mentors will be onboarded soon.</p>
+            <a href="#mentor" class="mt-3 text-xs font-semibold text-brand-500 hover:text-brand-700 transition">Know someone? Refer a mentor →</a>
           </div>
         </div>
 
-        <div class="mt-6 grid gap-6 md:grid-cols-2">
-          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
-            <h3 class="text-lg font-semibold">How onboarding works</h3>
-            <ol class="mt-3 space-y-2 text-sm text-slate-700">
-              <li><span class="font-semibold">1)</span> Apply to become a mentor</li>
-              <li><span class="font-semibold">2)</span> We review your application (manual)</li>
-              <li><span class="font-semibold">3)</span> If approved, we set up your mentor profile</li>
-              <li><span class="font-semibold">4)</span> You share your profile link and start taking sessions</li>
-            </ol>
-            <p class="mt-4 text-xs text-slate-500">
-              Mentors bring their audience; Megaverse Live provides a clean, professional setup.
-            </p>
-          </div>
-
-          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
-            <h3 class="text-lg font-semibold">Mentor terms (early access)</h3>
-            <p class="mt-3 text-sm text-slate-700">
-              Early mentors get favorable terms while we iterate.
-            </p>
-            <ul class="mt-3 space-y-2 text-sm text-slate-700">
-              <li>• Initial phase: <span class="font-semibold">0–10% platform fee</span></li>
-              <li>• No lock-in</li>
-              <li>• Terms evolve as features grow</li>
-            </ul>
-            <p class="mt-4 text-xs text-slate-500">
-              We’ll keep everything transparent and simple.
-            </p>
+        <!-- What you'll cover -->
+        <div class="mt-10 rounded-3xl border border-slate-200 bg-slate-50 p-6 md:p-8">
+          <h3 class="text-sm font-bold text-brand-500 uppercase tracking-wider">What you'll cover</h3>
+          <div class="mt-5 grid gap-4 md:grid-cols-2">
+            <div class="rounded-2xl border border-slate-200 bg-white p-5 card-hover">
+              <div class="flex items-center gap-3">
+                <div class="grid h-9 w-9 place-items-center rounded-xl bg-brand-50 text-sm">🏗</div>
+                <div class="font-semibold">System Design (HLD + LLD)</div>
+              </div>
+              <p class="mt-2 text-sm text-slate-600">Requirements → APIs → data model → scaling → caching → reliability → trade-offs.</p>
+            </div>
+            <div class="rounded-2xl border border-slate-200 bg-white p-5 card-hover">
+              <div class="flex items-center gap-3">
+                <div class="grid h-9 w-9 place-items-center rounded-xl bg-brand-50 text-sm">🗄</div>
+                <div class="font-semibold">Backend Fundamentals</div>
+              </div>
+              <p class="mt-2 text-sm text-slate-600">Databases, concurrency, performance, and real engineering judgement.</p>
+            </div>
+            <div class="rounded-2xl border border-slate-200 bg-white p-5 card-hover">
+              <div class="flex items-center gap-3">
+                <div class="grid h-9 w-9 place-items-center rounded-xl bg-brand-50 text-sm">🎯</div>
+                <div class="font-semibold">Mock Interviews</div>
+              </div>
+              <p class="mt-2 text-sm text-slate-600">Real interview simulations + honest feedback + gap-based plan.</p>
+            </div>
+            <div class="rounded-2xl border border-slate-200 bg-white p-5 card-hover">
+              <div class="flex items-center gap-3">
+                <div class="grid h-9 w-9 place-items-center rounded-xl bg-brand-50 text-sm">💬</div>
+                <div class="font-semibold">Interview Communication</div>
+              </div>
+              <p class="mt-2 text-sm text-slate-600">How to structure answers, handle follow-ups, and stay calm under pressure.</p>
+            </div>
           </div>
         </div>
+      </div>
+    </section>
 
-        <div class="mt-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
-          <h3 class="text-lg font-semibold">Mentor categories we’re onboarding</h3>
-          <p class="mt-2 text-sm text-slate-600">
-            Start with focused 1:1 mentoring. We’ll expand categories over time.
-          </p>
+    <!-- ========== PRICING ========== -->
+    <section id="pricing" class="border-t border-slate-100 bg-slate-50/70">
+      <div class="mx-auto max-w-6xl px-4 py-20 reveal">
+        <div class="text-center max-w-2xl mx-auto">
+          <p class="text-sm font-bold text-brand-500 uppercase tracking-wider">Transparent pricing</p>
+          <h2 class="mt-3 text-3xl font-extrabold tracking-tight md:text-4xl">Simple, honest pricing</h2>
+          <p class="mt-3 text-slate-600">No hidden fees. No subscriptions. Pay per session.</p>
+        </div>
 
-          <!-- Removed "More later" tile as requested -->
-          <div class="mt-4 grid gap-3 md:grid-cols-3">
-            <div class="rounded-2xl border border-slate-200 p-4">
-              <div class="font-semibold">Tech</div>
-              <div class="mt-1 text-sm text-slate-600">Backend, System Design, DSA</div>
+        <div class="mt-12 grid gap-8 md:grid-cols-2 max-w-3xl mx-auto">
+          <!-- English -->
+          <div class="rounded-3xl border border-slate-200 bg-white p-8 shadow-soft card-hover relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-400 to-amber-600"></div>
+            <div class="inline-flex items-center gap-2 rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">🗣 English Coaching</div>
+            <div class="mt-5 flex items-baseline gap-1">
+              <span class="text-4xl font-extrabold">₹499</span>
+              <span class="text-slate-500 text-sm">/ session</span>
             </div>
-            <div class="rounded-2xl border border-slate-200 p-4">
-              <div class="font-semibold">English</div>
-              <div class="mt-1 text-sm text-slate-600">IELTS, speaking, writing</div>
-            </div>
-            <div class="rounded-2xl border border-slate-200 p-4">
-              <div class="font-semibold">Career</div>
-              <div class="mt-1 text-sm text-slate-600">Resume, interviews, growth</div>
-            </div>
-          </div>
+            <p class="mt-2 text-sm text-slate-500">45–60 min live 1:1 session</p>
 
-          <div class="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div class="text-sm text-slate-600">
-              Ready to mentor on Megaverse Live?
-            </div>
+            <ul class="mt-6 space-y-3">
+              <li class="flex items-start gap-2 text-sm text-slate-700">
+                <svg class="w-4 h-4 mt-0.5 text-emerald-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                Speaking + writing feedback
+              </li>
+              <li class="flex items-start gap-2 text-sm text-slate-700">
+                <svg class="w-4 h-4 mt-0.5 text-emerald-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                IELTS band-oriented coaching
+              </li>
+              <li class="flex items-start gap-2 text-sm text-slate-700">
+                <svg class="w-4 h-4 mt-0.5 text-emerald-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                Personalized improvement plan
+              </li>
+              <li class="flex items-start gap-2 text-sm text-slate-700">
+                <svg class="w-4 h-4 mt-0.5 text-emerald-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                Grammar &amp; structure correction
+              </li>
+            </ul>
+
             <a
-              href="https://docs.google.com/forms/d/e/1FAIpQLSdblRvBiftISdkO1kZUgTeocVvTsALBKlmIx9SGFhtb0NEMkQ/viewform?usp=publish-editor"
-              class="inline-flex items-center justify-center rounded-2xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white shadow-soft hover:bg-slate-800"
+              href="https://docs.google.com/forms/d/e/1FAIpQLSfupDFGHrHKaVFtBk3r9nUqjozr-VqU_BKXER7Zl_1NZmvqlg/viewform?usp=publish-editor"
+              class="mt-6 block w-full text-center rounded-full bg-brand-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-600 hover:shadow-glow"
             >
-              Apply to Become a Mentor
+              Book English Session
+            </a>
+          </div>
+
+          <!-- Backend -->
+          <div class="rounded-3xl border-2 border-brand-200 bg-white p-8 shadow-glow card-hover relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-400 to-brand-600"></div>
+            <div class="absolute top-4 right-4">
+              <span class="rounded-full bg-brand-500 px-3 py-1 text-[10px] font-bold text-white uppercase tracking-wider">Popular</span>
+            </div>
+            <div class="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">⚙️ Backend Prep</div>
+            <div class="mt-5 flex items-baseline gap-1">
+              <span class="text-4xl font-extrabold">₹799</span>
+              <span class="text-slate-500 text-sm">/ session</span>
+            </div>
+            <p class="mt-2 text-sm text-slate-500">60–90 min live 1:1 session</p>
+
+            <ul class="mt-6 space-y-3">
+              <li class="flex items-start gap-2 text-sm text-slate-700">
+                <svg class="w-4 h-4 mt-0.5 text-emerald-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                System Design (HLD + LLD)
+              </li>
+              <li class="flex items-start gap-2 text-sm text-slate-700">
+                <svg class="w-4 h-4 mt-0.5 text-emerald-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                Mock interviews with feedback
+              </li>
+              <li class="flex items-start gap-2 text-sm text-slate-700">
+                <svg class="w-4 h-4 mt-0.5 text-emerald-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                Gap analysis + action plan
+              </li>
+              <li class="flex items-start gap-2 text-sm text-slate-700">
+                <svg class="w-4 h-4 mt-0.5 text-emerald-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                Interview communication coaching
+              </li>
+            </ul>
+
+            <a
+              href="https://docs.google.com/forms/d/e/1FAIpQLSfupDFGHrHKaVFtBk3r9nUqjozr-VqU_BKXER7Zl_1NZmvqlg/viewform?usp=publish-editor"
+              class="mt-6 block w-full text-center rounded-full bg-brand-500 px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-600 hover:shadow-glow"
+            >
+              Book Backend Session
             </a>
           </div>
         </div>
 
-        <p class="mt-4 text-xs text-slate-500">
-          Note: We’re onboarding a small number of mentors first. If approved, we’ll create your profile and share your personal booking link.
+        <p class="mt-6 text-center text-sm text-slate-400">
+          Prices are introductory and may change. Pay via UPI after booking confirmation.
         </p>
       </div>
     </section>
 
-    <!-- FAQ -->
-    <section id="faq" class="border-t border-slate-200 bg-white">
-      <div class="mx-auto max-w-6xl px-4 py-14">
-        <h2 class="text-2xl font-bold">FAQ</h2>
-
-        <div class="mt-8 grid gap-6 md:grid-cols-2">
-          <div class="rounded-3xl border border-slate-200 p-6">
-            <div class="font-semibold">Are sessions live?</div>
-            <p class="mt-2 text-sm text-slate-600">
-              Yes. All sessions are live and 1:1 (not recorded courses).
-            </p>
-          </div>
-
-          <div class="rounded-3xl border border-slate-200 p-6">
-            <div class="font-semibold">How do I confirm my session?</div>
-            <p class="mt-2 text-sm text-slate-600">
-              After submitting the booking form, you’ll receive a secure payment link to confirm your slot.
-            </p>
-          </div>
-
-          <div class="rounded-3xl border border-slate-200 p-6">
-            <div class="font-semibold">Can I book English or Backend sessions?</div>
-            <p class="mt-2 text-sm text-slate-600">
-              Yes. The booking form supports both English Coaching and Backend Interview Preparation.
-            </p>
-          </div>
-
-          <div class="rounded-3xl border border-slate-200 p-6">
-            <div class="font-semibold">Do you provide leads to mentors?</div>
-            <p class="mt-2 text-sm text-slate-600">
-              Not currently. Early mentors bring their own audience. The platform provides a clean setup and workflow.
-            </p>
-          </div>
+    <!-- ========== TESTIMONIALS ========== -->
+    <section class="bg-white border-t border-slate-100">
+      <div class="mx-auto max-w-6xl px-4 py-20 reveal">
+        <div class="text-center max-w-2xl mx-auto">
+          <p class="text-sm font-bold text-brand-500 uppercase tracking-wider">Early feedback</p>
+          <h2 class="mt-3 text-3xl font-extrabold tracking-tight md:text-4xl">What learners are saying</h2>
         </div>
 
-        <footer
-          class="mt-12 flex flex-col gap-2 border-t border-slate-200 pt-6 text-sm text-slate-500 md:flex-row md:items-center md:justify-between"
-        >
-          <div>© <span id="year"></span> Megaverse Live. All rights reserved.</div>
-          <div class="flex gap-4">
-            <a class="hover:text-slate-900" href="mailto:hello@megaverselive.com">hello@megaverselive.com</a>
-            <a class="hover:text-slate-900" href="#">Privacy</a>
-            <a class="hover:text-slate-900" href="#">Terms</a>
+        <div class="mt-12 grid gap-6 md:grid-cols-3">
+          <div class="rounded-3xl border border-slate-200 p-6 card-hover">
+            <div class="flex gap-1 text-amber-400">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            </div>
+            <p class="mt-4 text-sm text-slate-600 leading-relaxed italic">
+              "The feedback I got in one session was more useful than weeks of self-practice. Harshit pinpointed exactly where I was losing marks in IELTS writing."
+            </p>
+            <div class="mt-4 flex items-center gap-3">
+              <div class="grid h-8 w-8 place-items-center rounded-full bg-brand-50 text-xs font-bold text-brand-600">R</div>
+              <div>
+                <div class="text-sm font-semibold">Rahul S.</div>
+                <div class="text-xs text-slate-400">English Coaching</div>
+              </div>
+            </div>
           </div>
-        </footer>
+
+          <div class="rounded-3xl border border-slate-200 p-6 card-hover">
+            <div class="flex gap-1 text-amber-400">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            </div>
+            <p class="mt-4 text-sm text-slate-600 leading-relaxed italic">
+              "I was struggling with HLD structure in interviews. After one mock session, I understood how to break down problems systematically. Got an offer 3 weeks later."
+            </p>
+            <div class="mt-4 flex items-center gap-3">
+              <div class="grid h-8 w-8 place-items-center rounded-full bg-brand-50 text-xs font-bold text-brand-600">P</div>
+              <div>
+                <div class="text-sm font-semibold">Priya M.</div>
+                <div class="text-xs text-slate-400">Backend Prep</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="rounded-3xl border border-slate-200 p-6 card-hover">
+            <div class="flex gap-1 text-amber-400">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            </div>
+            <p class="mt-4 text-sm text-slate-600 leading-relaxed italic">
+              "Honest and direct. No sugar-coating. Exactly what I needed to hear to improve my speaking score. Went from 6.5 to 7.5 in 4 weeks."
+            </p>
+            <div class="mt-4 flex items-center gap-3">
+              <div class="grid h-8 w-8 place-items-center rounded-full bg-brand-50 text-xs font-bold text-brand-600">A</div>
+              <div>
+                <div class="text-sm font-semibold">Ankit D.</div>
+                <div class="text-xs text-slate-400">English Coaching</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
+    <!-- ========== BECOME A MENTOR ========== -->
+    <section id="mentor" class="border-t border-slate-100 bg-slate-50/70">
+      <div class="mx-auto max-w-6xl px-4 py-20 reveal">
+        <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <div>
+            <div class="inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-3.5 py-1.5 text-xs font-semibold text-brand-700">
+              🧪 Early Access &bull; Limited Onboarding
+            </div>
+            <h2 class="mt-4 text-3xl font-extrabold tracking-tight md:text-4xl">
+              Become a Mentor on Megaverse Live
+            </h2>
+            <p class="mt-3 max-w-2xl text-slate-600">
+              We're onboarding a small number of mentors for live 1:1 sessions.
+              Bring your audience — we provide a clean setup, booking flow, and founder-level support.
+            </p>
+          </div>
+
+          <a
+            href="https://docs.google.com/forms/d/e/1FAIpQLSdblRvBiftISdkO1kZUgTeocVvTsALBKlmIx9SGFhtb0NEMkQ/viewform?usp=publish-editor"
+            class="inline-flex items-center gap-2 rounded-full bg-brand-500 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-600 hover:shadow-glow shrink-0"
+          >
+            Apply to Become a Mentor
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+          </a>
+        </div>
+
+        <div class="mt-10 grid gap-6 md:grid-cols-3">
+          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft card-hover">
+            <div class="grid h-10 w-10 place-items-center rounded-xl bg-emerald-50 text-lg">✅</div>
+            <h3 class="mt-4 text-sm font-bold text-slate-400 uppercase tracking-wider">Good fit if you</h3>
+            <ul class="mt-3 space-y-2.5 text-sm text-slate-700">
+              <li class="flex items-start gap-2">
+                <span class="text-emerald-500 mt-0.5">•</span>
+                Already take 1:1 sessions (or plan to)
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-emerald-500 mt-0.5">•</span>
+                Have an audience (LinkedIn/Twitter/YouTube)
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-emerald-500 mt-0.5">•</span>
+                Teach a focused skill (tech, English, etc.)
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-emerald-500 mt-0.5">•</span>
+                Prefer depth over mass-market courses
+              </li>
+            </ul>
+          </div>
+
+          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft card-hover">
+            <div class="grid h-10 w-10 place-items-center rounded-xl bg-red-50 text-lg">❌</div>
+            <h3 class="mt-4 text-sm font-bold text-slate-400 uppercase tracking-wider">Not a fit if you</h3>
+            <ul class="mt-3 space-y-2.5 text-sm text-slate-700">
+              <li class="flex items-start gap-2">
+                <span class="text-red-400 mt-0.5">•</span>
+                Expect "leads provided by platform"
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-red-400 mt-0.5">•</span>
+                Want to sell recorded courses
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-red-400 mt-0.5">•</span>
+                Want instant approvals with no review
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-red-400 mt-0.5">•</span>
+                Prefer volume over quality
+              </li>
+            </ul>
+          </div>
+
+          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft card-hover">
+            <div class="grid h-10 w-10 place-items-center rounded-xl bg-brand-50 text-lg">🎁</div>
+            <h3 class="mt-4 text-sm font-bold text-slate-400 uppercase tracking-wider">What you get</h3>
+            <ul class="mt-3 space-y-2.5 text-sm text-slate-700">
+              <li class="flex items-start gap-2">
+                <span class="text-brand-400 mt-0.5">•</span>
+                Professional mentor profile page
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-brand-400 mt-0.5">•</span>
+                Booking + intake flow handled
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-brand-400 mt-0.5">•</span>
+                Early terms: <span class="font-semibold">0–10% fee</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-brand-400 mt-0.5">•</span>
+                Founder support during onboarding
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Onboarding process -->
+        <div class="mt-10 grid gap-6 md:grid-cols-2">
+          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft card-hover">
+            <h3 class="text-lg font-bold">How onboarding works</h3>
+            <ol class="mt-4 space-y-3 text-sm text-slate-700">
+              <li class="flex items-start gap-3">
+                <span class="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-brand-50 text-xs font-bold text-brand-600">1</span>
+                Apply to become a mentor
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-brand-50 text-xs font-bold text-brand-600">2</span>
+                We review your application (manual)
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-brand-50 text-xs font-bold text-brand-600">3</span>
+                If approved, we set up your mentor profile
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-brand-50 text-xs font-bold text-brand-600">4</span>
+                Share your link and start taking sessions
+              </li>
+            </ol>
+          </div>
+
+          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft card-hover">
+            <h3 class="text-lg font-bold">Mentor categories we're onboarding</h3>
+            <p class="mt-2 text-sm text-slate-600">Start with focused 1:1 mentoring. Expanding over time.</p>
+            <div class="mt-4 grid gap-3 grid-cols-1 sm:grid-cols-3">
+              <div class="rounded-2xl border border-slate-200 p-3 text-center">
+                <div class="text-lg">💻</div>
+                <div class="mt-1 font-semibold text-sm">Tech</div>
+                <div class="text-xs text-slate-500">Backend, SD, DSA</div>
+              </div>
+              <div class="rounded-2xl border border-slate-200 p-3 text-center">
+                <div class="text-lg">🗣</div>
+                <div class="mt-1 font-semibold text-sm">English</div>
+                <div class="text-xs text-slate-500">IELTS, Speaking</div>
+              </div>
+              <div class="rounded-2xl border border-slate-200 p-3 text-center">
+                <div class="text-lg">📈</div>
+                <div class="mt-1 font-semibold text-sm">Career</div>
+                <div class="text-xs text-slate-500">Resume, Growth</div>
+              </div>
+            </div>
+
+            <a
+              href="https://docs.google.com/forms/d/e/1FAIpQLSdblRvBiftISdkO1kZUgTeocVvTsALBKlmIx9SGFhtb0NEMkQ/viewform?usp=publish-editor"
+              class="mt-5 block w-full text-center rounded-full border-2 border-brand-200 px-5 py-2.5 text-sm font-semibold text-brand-600 transition hover:bg-brand-50"
+            >
+              Apply Now →
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== FAQ ========== -->
+    <section id="faq" class="border-t border-slate-100 bg-white">
+      <div class="mx-auto max-w-3xl px-4 py-20 reveal">
+        <div class="text-center">
+          <p class="text-sm font-bold text-brand-500 uppercase tracking-wider">FAQ</p>
+          <h2 class="mt-3 text-3xl font-extrabold tracking-tight md:text-4xl">Frequently asked questions</h2>
+        </div>
+
+        <div class="mt-12 space-y-4">
+          <!-- Accordion items -->
+          <details class="group rounded-2xl border border-slate-200 bg-white" open>
+            <summary class="flex cursor-pointer items-center justify-between p-5 font-semibold text-slate-900 hover:text-brand-600 transition">
+              Are sessions live?
+              <svg class="w-5 h-5 text-slate-400 transition group-open:rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+            </summary>
+            <div class="px-5 pb-5 text-sm text-slate-600 leading-relaxed">
+              Yes. All sessions are live and 1:1 — not recorded courses. You get real-time feedback tailored to your level.
+            </div>
+          </details>
+
+          <details class="group rounded-2xl border border-slate-200 bg-white">
+            <summary class="flex cursor-pointer items-center justify-between p-5 font-semibold text-slate-900 hover:text-brand-600 transition">
+              How do I confirm &amp; pay?
+              <svg class="w-5 h-5 text-slate-400 transition group-open:rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+            </summary>
+            <div class="px-5 pb-5 text-sm text-slate-600 leading-relaxed">
+              After submitting the booking form, you'll receive a secure UPI payment link. Once payment is confirmed, your session slot is locked.
+            </div>
+          </details>
+
+          <details class="group rounded-2xl border border-slate-200 bg-white">
+            <summary class="flex cursor-pointer items-center justify-between p-5 font-semibold text-slate-900 hover:text-brand-600 transition">
+              What tracks are available right now?
+              <svg class="w-5 h-5 text-slate-400 transition group-open:rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+            </summary>
+            <div class="px-5 pb-5 text-sm text-slate-600 leading-relaxed">
+              English Coaching (IELTS + General English) and Backend Interview Preparation (System Design, mock interviews). More tracks coming soon.
+            </div>
+          </details>
+
+          <details class="group rounded-2xl border border-slate-200 bg-white">
+            <summary class="flex cursor-pointer items-center justify-between p-5 font-semibold text-slate-900 hover:text-brand-600 transition">
+              Do you provide leads to mentors?
+              <svg class="w-5 h-5 text-slate-400 transition group-open:rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+            </summary>
+            <div class="px-5 pb-5 text-sm text-slate-600 leading-relaxed">
+              Not currently. Early mentors bring their own audience. The platform provides a clean professional setup, booking workflow, and payment support.
+            </div>
+          </details>
+
+          <details class="group rounded-2xl border border-slate-200 bg-white">
+            <summary class="flex cursor-pointer items-center justify-between p-5 font-semibold text-slate-900 hover:text-brand-600 transition">
+              Can I get a refund?
+              <svg class="w-5 h-5 text-slate-400 transition group-open:rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+            </summary>
+            <div class="px-5 pb-5 text-sm text-slate-600 leading-relaxed">
+              If a session doesn't happen due to mentor unavailability, you'll get a full refund or reschedule. Reach out via email for any concerns.
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== FINAL CTA ========== -->
+    <section class="border-t border-slate-100 bg-gradient-to-br from-brand-500 to-brand-700">
+      <div class="mx-auto max-w-3xl px-4 py-20 text-center">
+        <h2 class="text-3xl font-extrabold text-white tracking-tight md:text-4xl">
+          Ready to level up?
+        </h2>
+        <p class="mt-4 text-brand-100 text-lg">
+          Book a 1:1 session today and get real, actionable feedback.
+        </p>
+        <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
+          <a
+            href="https://docs.google.com/forms/d/e/1FAIpQLSfupDFGHrHKaVFtBk3r9nUqjozr-VqU_BKXER7Zl_1NZmvqlg/viewform?usp=publish-editor"
+            class="inline-flex items-center justify-center gap-2 rounded-full bg-white px-8 py-3.5 text-sm font-bold text-brand-600 shadow-lg transition hover:shadow-xl hover:scale-105"
+          >
+            Book a 1:1 Session
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+          </a>
+          <a
+            href="#mentor"
+            class="inline-flex items-center justify-center rounded-full border-2 border-white/30 px-8 py-3.5 text-sm font-semibold text-white transition hover:bg-white/10"
+          >
+            Become a Mentor
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="border-t border-slate-200 bg-white">
+      <div class="mx-auto max-w-6xl px-4 py-10">
+        <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+          <div class="flex items-center gap-2.5">
+            <div class="grid h-8 w-8 place-items-center rounded-lg bg-brand-500 text-white font-bold text-xs">M</div>
+            <div class="text-sm font-bold text-slate-700">Megaverse Live</div>
+          </div>
+
+          <div class="flex flex-wrap gap-6 text-sm text-slate-500">
+            <a href="#tracks" class="hover:text-brand-600 transition">Tracks</a>
+            <a href="#how" class="hover:text-brand-600 transition">How it works</a>
+            <a href="#pricing" class="hover:text-brand-600 transition">Pricing</a>
+            <a href="#mentor" class="hover:text-brand-600 transition">Become a Mentor</a>
+            <a href="#faq" class="hover:text-brand-600 transition">FAQ</a>
+          </div>
+
+          <div class="flex items-center gap-4 text-sm text-slate-400">
+            <a class="hover:text-brand-600 transition" href="mailto:hello@megaverselive.com">hello@megaverselive.com</a>
+          </div>
+        </div>
+
+        <div class="mt-8 flex flex-col gap-2 border-t border-slate-100 pt-6 text-xs text-slate-400 md:flex-row md:items-center md:justify-between">
+          <div>&copy; <span id="year"></span> Megaverse Live. All rights reserved.</div>
+          <div class="flex gap-4">
+            <a class="hover:text-brand-600 transition" href="#">Privacy Policy</a>
+            <a class="hover:text-brand-600 transition" href="#">Terms of Service</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- ========== FLOATING WHATSAPP / CONTACT BUTTON ========== -->
+    <a
+      href="https://wa.me/919XXXXXXXXX?text=Hi%2C%20I%20want%20to%20know%20more%20about%20Megaverse%20Live%20sessions."
+      target="_blank"
+      rel="noopener"
+      class="fixed bottom-6 right-6 z-50 grid h-14 w-14 place-items-center rounded-full bg-emerald-500 text-white shadow-lg transition hover:bg-emerald-600 hover:shadow-xl hover:scale-110"
+      aria-label="Chat on WhatsApp"
+    >
+      <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    </a>
+
+    <!-- ========== SCRIPTS ========== -->
     <script>
-      document.getElementById("year").textContent = new Date().getFullYear();
+      // Year
+      document.getElementById('year').textContent = new Date().getFullYear();
+
+      // Mobile menu
+      const menuBtn = document.getElementById('menuBtn');
+      const closeMenu = document.getElementById('closeMenu');
+      const mobileNav = document.getElementById('mobileNav');
+      const navOverlay = document.getElementById('navOverlay');
+      const mobileLinks = document.querySelectorAll('.mobile-link');
+
+      function openNav() {
+        mobileNav.classList.add('open');
+        navOverlay.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+      }
+      function closeNav() {
+        mobileNav.classList.remove('open');
+        navOverlay.classList.add('hidden');
+        document.body.style.overflow = '';
+      }
+
+      menuBtn.addEventListener('click', openNav);
+      closeMenu.addEventListener('click', closeNav);
+      navOverlay.addEventListener('click', closeNav);
+      mobileLinks.forEach(link => link.addEventListener('click', closeNav));
+
+      // Scroll reveal
+      const reveals = document.querySelectorAll('.reveal');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      }, { threshold: 0.1 });
+      reveals.forEach(el => observer.observe(el));
     </script>
   </body>
 </html>
