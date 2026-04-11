@@ -1,0 +1,1587 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Megaverse Live — Book 1:1 Sessions with Real Mentors</title>
+    <meta name="description" content="Megaverse Live offers founder-led 1:1 sessions. Book live sessions from anywhere and get real feedback with a clear improvement plan." />
+
+    <!-- Open Graph / Social sharing -->
+    <meta property="og:title" content="Megaverse Live — Book 1:1 Sessions with Real Mentors" />
+    <meta property="og:description" content="Live 1:1 sessions for Backend Interview Prep & English Coaching. Real feedback. Clear improvement plan." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://megaverselive.com" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Favicon placeholder -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>" />
+
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://cdn.tailwindcss.com" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://megaverselive.com" />
+
+    <!-- Structured Data for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "EducationalOrganization",
+      "name": "Megaverse Live",
+      "url": "https://megaverselive.com",
+      "description": "Live 1:1 sessions for Backend Interview Prep and English Coaching. Real feedback with a clear improvement plan.",
+      "sameAs": [],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "email": "hello@megaverselive.com",
+        "contactType": "customer support"
+      },
+      "offers": [
+        {
+          "@type": "Offer",
+          "name": "English Coaching Session",
+          "description": "IELTS + General English: speaking, writing, grammar",
+          "availability": "https://schema.org/InStock"
+        },
+        {
+          "@type": "Offer",
+          "name": "Backend Interview Prep Session",
+          "description": "System Design, HLD/LLD, Mock Interviews",
+          "availability": "https://schema.org/InStock"
+        }
+      ]
+    }
+    </script>
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+            },
+            colors: {
+              brand: {
+                50: '#faf5ff',
+                100: '#f3e8ff',
+                200: '#e9d5ff',
+                300: '#d8b4fe',
+                400: '#c084fc',
+                500: '#a855f7',
+                600: '#9333ea',
+                700: '#7e22ce',
+                800: '#6b21a8',
+                900: '#581c87',
+              },
+              accent: {
+                50: '#ecfdf5',
+                100: '#d1fae5',
+                200: '#a7f3d0',
+                300: '#6ee7b7',
+                400: '#34d399',
+                500: '#10b981',
+              },
+              neon: {
+                blue: '#3b82f6',
+                cyan: '#06b6d4',
+                pink: '#ec4899',
+                orange: '#f97316',
+              },
+            },
+            boxShadow: {
+              soft: '0 10px 40px rgba(0,0,0,0.08)',
+              glow: '0 0 50px rgba(168,85,247,0.25)',
+              'glow-lg': '0 0 80px rgba(168,85,247,0.3)',
+              'neon': '0 0 20px rgba(168,85,247,0.4), 0 0 60px rgba(168,85,247,0.1)',
+              'card': '0 4px 30px rgba(0,0,0,0.05)',
+            },
+            animation: {
+              'fade-in': 'fadeIn 0.8s cubic-bezier(0.16,1,0.3,1) forwards',
+              'slide-up': 'slideUp 0.8s cubic-bezier(0.16,1,0.3,1) forwards',
+              'float': 'float 6s ease-in-out infinite',
+              'float-delayed': 'float 6s ease-in-out 2s infinite',
+              'float-slow': 'float 8s ease-in-out 1s infinite',
+              'gradient-shift': 'gradientShift 8s ease infinite',
+              'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
+              'spin-slow': 'spin 20s linear infinite',
+              'bounce-gentle': 'bounceGentle 2s ease-in-out infinite',
+            },
+            keyframes: {
+              fadeIn: {
+                '0%': { opacity: '0', transform: 'translateY(10px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+              slideUp: {
+                '0%': { opacity: '0', transform: 'translateY(30px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+              float: {
+                '0%, 100%': { transform: 'translateY(0px)' },
+                '50%': { transform: 'translateY(-20px)' },
+              },
+              gradientShift: {
+                '0%, 100%': { backgroundPosition: '0% 50%' },
+                '50%': { backgroundPosition: '100% 50%' },
+              },
+              pulseGlow: {
+                '0%, 100%': { opacity: '1' },
+                '50%': { opacity: '0.6' },
+              },
+              bounceGentle: {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-6px)' },
+              },
+            },
+          },
+        },
+      };
+    </script>
+
+    <style>
+      * { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+
+      /* Smooth reveal on scroll */
+      .reveal {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1);
+      }
+      .reveal.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* Animated gradient text */
+      .gradient-text {
+        background: linear-gradient(135deg, #a855f7, #ec4899, #f97316, #a855f7);
+        background-size: 300% 300%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: gradientShift 6s ease infinite;
+      }
+
+      /* Glass card */
+      .glass-card {
+        background: rgba(255,255,255,0.7);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255,255,255,0.3);
+        transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
+      }
+      .glass-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 20px 60px rgba(168,85,247,0.15);
+        border-color: rgba(168,85,247,0.3);
+      }
+
+      /* Gradient border card */
+      .gradient-border {
+        position: relative;
+        background: white;
+        border-radius: 1.5rem;
+        overflow: hidden;
+      }
+      .gradient-border::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        padding: 2px;
+        border-radius: 1.5rem;
+        background: linear-gradient(135deg, #a855f7, #ec4899, #06b6d4, #a855f7);
+        background-size: 300% 300%;
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        opacity: 0;
+        transition: opacity 0.4s ease;
+        pointer-events: none;
+      }
+      .gradient-border:hover::before {
+        opacity: 1;
+        animation: gradientShift 3s ease infinite;
+      }
+
+      /* Dark hero */
+      .hero-dark {
+        background: linear-gradient(135deg, #0f0720 0%, #1a0a3e 30%, #0d1b3e 60%, #0a0f1f 100%);
+        position: relative;
+        overflow: hidden;
+      }
+      .hero-dark::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(ellipse at 30% 50%, rgba(168,85,247,0.15) 0%, transparent 50%),
+                    radial-gradient(ellipse at 70% 30%, rgba(236,72,153,0.1) 0%, transparent 50%),
+                    radial-gradient(ellipse at 50% 80%, rgba(6,182,212,0.08) 0%, transparent 50%);
+        animation: gradientShift 15s ease infinite;
+        background-size: 100% 100%;
+      }
+
+      /* Floating orbs */
+      .orb {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(60px);
+        opacity: 0.4;
+        pointer-events: none;
+      }
+
+      /* Mesh gradient background for sections */
+      .mesh-bg {
+        background: 
+          radial-gradient(at 20% 80%, rgba(168,85,247,0.06) 0%, transparent 50%),
+          radial-gradient(at 80% 20%, rgba(236,72,153,0.04) 0%, transparent 50%),
+          radial-gradient(at 50% 50%, rgba(6,182,212,0.03) 0%, transparent 50%);
+      }
+
+      /* Interactive card hover */
+      .card-interactive {
+        transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
+        cursor: default;
+      }
+      .card-interactive:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 25px 60px rgba(168,85,247,0.12);
+      }
+
+      /* Gradient button */
+      .btn-gradient {
+        background: linear-gradient(135deg, #a855f7 0%, #ec4899 50%, #f97316 100%);
+        background-size: 200% 200%;
+        transition: all 0.4s ease;
+        position: relative;
+        overflow: hidden;
+      }
+      .btn-gradient:hover {
+        background-position: 100% 100%;
+        box-shadow: 0 10px 40px rgba(168,85,247,0.3);
+        transform: translateY(-2px);
+      }
+      .btn-gradient::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.2) 50%, transparent 100%);
+        transform: translateX(-100%);
+        transition: transform 0.6s ease;
+      }
+      .btn-gradient:hover::after {
+        transform: translateX(100%);
+      }
+
+      /* Stat number */
+      .stat-number {
+        font-variant-numeric: tabular-nums;
+      }
+
+      /* Mobile nav */
+      .mobile-nav {
+        transform: translateX(100%);
+        transition: transform 0.35s cubic-bezier(0.16,1,0.3,1);
+      }
+      .mobile-nav.open {
+        transform: translateX(0);
+      }
+
+      /* Shimmer effect */
+      @keyframes shimmer {
+        0% { background-position: -200% 0; }
+        100% { background-position: 200% 0; }
+      }
+      .shimmer {
+        background: linear-gradient(90deg, transparent, rgba(168,85,247,0.08), transparent);
+        background-size: 200% 100%;
+        animation: shimmer 3s infinite;
+      }
+
+      /* Pricing card popular glow */
+      .pricing-popular {
+        position: relative;
+      }
+      .pricing-popular::before {
+        content: '';
+        position: absolute;
+        inset: -2px;
+        border-radius: 1.75rem;
+        background: linear-gradient(135deg, #a855f7, #ec4899, #06b6d4, #a855f7);
+        background-size: 300% 300%;
+        animation: gradientShift 4s ease infinite;
+        z-index: -1;
+      }
+
+      /* Step connector line */
+      .step-connector {
+        position: relative;
+      }
+      .step-connector::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        right: -2rem;
+        width: 2rem;
+        height: 2px;
+        background: linear-gradient(90deg, #a855f7, #ec4899);
+        display: none;
+      }
+      @media (min-width: 768px) {
+        .step-connector::after {
+          display: block;
+        }
+        .step-connector:last-child::after {
+          display: none;
+        }
+      }
+
+      /* FAQ smooth toggle */
+      details[open] summary ~ * {
+        animation: fadeIn 0.3s ease;
+      }
+
+      /* Scroll indicator pulse */
+      @keyframes scrollPulse {
+        0%, 100% { transform: translateY(0); opacity: 1; }
+        50% { transform: translateY(8px); opacity: 0.5; }
+      }
+      .scroll-indicator {
+        animation: scrollPulse 2s ease-in-out infinite;
+      }
+
+      /* Glow ring on hover */
+      .glow-ring {
+        position: relative;
+      }
+      .glow-ring::after {
+        content: '';
+        position: absolute;
+        inset: -3px;
+        border-radius: inherit;
+        background: linear-gradient(135deg, #a855f7, #ec4899);
+        opacity: 0;
+        z-index: -1;
+        filter: blur(12px);
+        transition: opacity 0.4s ease;
+      }
+      .glow-ring:hover::after {
+        opacity: 0.5;
+      }
+
+      /* Ticker / marquee */
+      @keyframes ticker {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+      }
+      .ticker-track {
+        animation: ticker 30s linear infinite;
+      }
+
+      /* Custom scrollbar */
+      ::-webkit-scrollbar { width: 8px; }
+      ::-webkit-scrollbar-track { background: #f8fafc; }
+      ::-webkit-scrollbar-thumb { background: linear-gradient(#a855f7, #ec4899); border-radius: 10px; }
+    </style>
+  </head>
+
+  <body class="bg-slate-50 text-slate-900 antialiased">
+    <!-- LINKS (single source of truth) -->
+    <!-- Student Booking: Cal.com — https://cal.com/hgoyal925/1-1-connect -->
+    <!-- Mentor Application Form: https://docs.google.com/forms/d/e/1FAIpQLSdblRvBiftISdkO1kZUgTeocVvTsALBKlmIx9SGFhtb0NEMkQ/viewform?usp=publish-editor -->
+
+    <!-- ========== HEADER ========== -->
+    <header class="sticky top-0 z-50 bg-white/70 backdrop-blur-xl border-b border-slate-200/50">
+      <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
+        <a href="#" class="flex items-center gap-2.5 group">
+          <div class="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-brand-500 to-neon-pink text-white font-bold text-sm shadow-sm transition group-hover:shadow-neon group-hover:scale-110">
+            M
+          </div>
+          <div class="leading-tight">
+            <div class="font-extrabold text-slate-900">Megaverse <span class="text-brand-500">Live</span></div>
+            <div class="text-[10px] text-slate-400 tracking-widest uppercase">1:1 Live Sessions</div>
+          </div>
+        </a>
+
+        <!-- Desktop nav -->
+        <nav class="hidden gap-8 text-sm font-medium text-slate-500 md:flex">
+          <a href="#tracks" class="relative transition hover:text-brand-600 after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-0.5 after:bg-gradient-to-r after:from-brand-500 after:to-neon-pink after:transition-all hover:after:w-full">Tracks</a>
+          <a href="#how" class="relative transition hover:text-brand-600 after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-0.5 after:bg-gradient-to-r after:from-brand-500 after:to-neon-pink after:transition-all hover:after:w-full">How it works</a>
+          <a href="#pricing" class="relative transition hover:text-brand-600 after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-0.5 after:bg-gradient-to-r after:from-brand-500 after:to-neon-pink after:transition-all hover:after:w-full">Pricing</a>
+          <a href="#reviews" class="relative transition hover:text-brand-600 after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-0.5 after:bg-gradient-to-r after:from-brand-500 after:to-neon-pink after:transition-all hover:after:w-full">Reviews</a>
+          <a href="#mentor" class="relative transition hover:text-brand-600 after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-0.5 after:bg-gradient-to-r after:from-brand-500 after:to-neon-pink after:transition-all hover:after:w-full">Become a Mentor</a>
+          <a href="#faq" class="relative transition hover:text-brand-600 after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-0.5 after:bg-gradient-to-r after:from-brand-500 after:to-neon-pink after:transition-all hover:after:w-full">FAQ</a>
+        </nav>
+
+        <div class="flex items-center gap-3">
+          <a
+            href="https://cal.com/hgoyal925/1-1-connect"
+            data-cal-link="hgoyal925/1-1-connect"
+            data-cal-config='{"layout":"month_view"}'
+            class="hidden sm:inline-flex items-center gap-2 rounded-full btn-gradient px-5 py-2.5 text-sm font-semibold text-white"
+          >
+            Book a Session
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+          </a>
+
+          <!-- Mobile hamburger -->
+          <button id="menuBtn" class="md:hidden rounded-xl p-2 hover:bg-brand-50 transition" aria-label="Menu">
+            <svg class="w-5 h-5 text-brand-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile nav overlay -->
+      <div id="mobileNav" class="mobile-nav fixed inset-y-0 right-0 z-50 w-72 bg-white/95 backdrop-blur-xl border-l border-brand-100 shadow-2xl p-6 md:hidden">
+        <button id="closeMenu" class="absolute top-4 right-4 p-2 hover:bg-brand-50 rounded-xl transition" aria-label="Close">
+          <svg class="w-5 h-5 text-brand-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+        <nav class="mt-10 flex flex-col gap-5">
+          <a href="#tracks" class="text-lg font-semibold text-slate-700 hover:text-brand-600 transition mobile-link">Tracks</a>
+          <a href="#how" class="text-lg font-semibold text-slate-700 hover:text-brand-600 transition mobile-link">How it works</a>
+          <a href="#pricing" class="text-lg font-semibold text-slate-700 hover:text-brand-600 transition mobile-link">Pricing</a>
+          <a href="#reviews" class="text-lg font-semibold text-slate-700 hover:text-brand-600 transition mobile-link">Reviews</a>
+          <a href="#mentor" class="text-lg font-semibold text-slate-700 hover:text-brand-600 transition mobile-link">Become a Mentor</a>
+          <a href="#faq" class="text-lg font-semibold text-slate-700 hover:text-brand-600 transition mobile-link">FAQ</a>
+          <hr class="border-brand-100" />
+          <a
+            href="https://cal.com/hgoyal925/1-1-connect"
+            data-cal-link="hgoyal925/1-1-connect"
+            data-cal-config='{"layout":"month_view"}'
+            class="inline-flex items-center justify-center rounded-full btn-gradient px-5 py-3 text-sm font-semibold text-white"
+          >
+            Book a Session
+          </a>
+        </nav>
+      </div>
+      <div id="navOverlay" class="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm hidden md:hidden"></div>
+    </header>
+
+    <!-- ========== HERO ========== -->
+    <section class="hero-dark overflow-hidden">
+      <!-- Floating orbs -->
+      <div class="orb w-72 h-72 bg-brand-500 top-10 left-10 animate-float"></div>
+      <div class="orb w-96 h-96 bg-neon-pink top-40 right-0 animate-float-delayed"></div>
+      <div class="orb w-64 h-64 bg-neon-cyan bottom-10 left-1/3 animate-float-slow"></div>
+
+      <div class="relative mx-auto max-w-6xl px-4 pt-20 pb-24 md:pt-28 md:pb-32">
+        <div class="grid items-center gap-12 md:grid-cols-2">
+          <div class="animate-fade-in">
+            <!-- Badge -->
+            <div class="inline-flex items-center gap-2 rounded-full border border-brand-400/30 bg-brand-500/10 backdrop-blur-sm px-4 py-2 text-xs font-semibold text-brand-200">
+              <span class="relative flex h-2 w-2">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-400 opacity-75"></span>
+                <span class="relative inline-flex h-2 w-2 rounded-full bg-accent-400"></span>
+              </span>
+              Live 1:1 &bull; Real Mentors &bull; Honest Feedback
+            </div>
+
+            <h1 class="mt-8 text-4xl font-black leading-[1.1] tracking-tight text-white md:text-[3.5rem]">
+              Book <span class="gradient-text">1:1 live sessions</span> — learn faster with direct feedback.
+            </h1>
+
+            <p class="mt-6 text-lg leading-relaxed text-slate-300 max-w-xl">
+              Choose your goal, book a slot, and get personalized feedback with a clear improvement plan.
+              No fluff, no recordings — just real sessions with real mentors.
+            </p>
+
+            <div class="mt-10 flex flex-col gap-4 sm:flex-row">
+              <a
+                id="book"
+                href="https://cal.com/hgoyal925/1-1-connect"
+                data-cal-link="hgoyal925/1-1-connect"
+                data-cal-config='{"layout":"month_view"}'
+                class="inline-flex items-center justify-center gap-2 rounded-full btn-gradient px-8 py-4 text-sm font-bold text-white shadow-neon"
+              >
+                Book a 1:1 Session
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+              </a>
+              <a
+                href="#how"
+                class="inline-flex items-center justify-center rounded-full border border-white/20 px-8 py-4 text-sm font-semibold text-white transition hover:bg-white/10 hover:border-white/40 backdrop-blur-sm"
+              >
+                See how it works
+              </a>
+            </div>
+
+            <p class="mt-5 text-xs text-slate-400/70">
+              After booking, you'll receive a payment link to confirm your slot.
+            </p>
+
+            <!-- Urgency signal -->
+            <div class="mt-6 inline-flex items-center gap-2 rounded-xl border border-amber-400/30 bg-amber-500/10 backdrop-blur-sm px-4 py-2.5">
+              <svg class="w-4 h-4 text-amber-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <span class="text-xs font-semibold text-amber-200">Limited slots available this week — <span id="slotsLeft" class="text-amber-400">3</span> left</span>
+            </div>
+          </div>
+
+          <!-- Right — Trust stats + track preview -->
+          <div class="animate-slide-up" style="animation-delay: 0.2s;">
+            <!-- Stats strip -->
+            <div class="grid grid-cols-3 gap-4 mb-6">
+              <div class="rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 p-4 text-center transition hover:bg-white/10 hover:border-brand-400/30 hover:scale-105">
+                <div class="text-3xl font-black text-white stat-number">1:1</div>
+                <div class="mt-1 text-xs text-slate-400 font-medium">Live sessions</div>
+              </div>
+              <div class="rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 p-4 text-center transition hover:bg-white/10 hover:border-brand-400/30 hover:scale-105">
+                <div class="text-3xl font-black text-white stat-number" data-count="2">0</div>
+                <div class="mt-1 text-xs text-slate-400 font-medium">Tracks live</div>
+              </div>
+              <div class="rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 p-4 text-center transition hover:bg-white/10 hover:border-brand-400/30 hover:scale-105">
+                <div class="text-3xl font-black text-white stat-number">100%</div>
+                <div class="mt-1 text-xs text-slate-400 font-medium">Real feedback</div>
+              </div>
+            </div>
+
+            <!-- Track cards -->
+            <div id="tracks" class="rounded-3xl bg-white/5 backdrop-blur-md border border-white/10 p-6 shadow-soft">
+              <h2 class="text-sm font-bold text-slate-400 uppercase tracking-widest">Tracks Available</h2>
+
+              <div class="mt-4 space-y-3">
+                <a href="#english" class="block rounded-2xl border border-white/10 bg-white/5 p-4 transition hover:bg-white/10 hover:border-brand-400/30 hover:scale-[1.02] group">
+                  <div class="flex items-center gap-3">
+                    <div class="grid h-10 w-10 place-items-center rounded-xl bg-amber-500/20 text-lg">🗣</div>
+                    <div>
+                      <div class="font-semibold text-white group-hover:text-brand-300 transition">English Coaching</div>
+                      <div class="text-sm text-slate-400">IELTS &bull; Speaking &bull; Writing &bull; Grammar</div>
+                    </div>
+                    <svg class="w-4 h-4 ml-auto text-slate-500 group-hover:text-brand-400 transition group-hover:translate-x-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                  </div>
+                </a>
+
+                <a href="#backend" class="block rounded-2xl border border-white/10 bg-white/5 p-4 transition hover:bg-white/10 hover:border-brand-400/30 hover:scale-[1.02] group">
+                  <div class="flex items-center gap-3">
+                    <div class="grid h-10 w-10 place-items-center rounded-xl bg-blue-500/20 text-lg">⚙️</div>
+                    <div>
+                      <div class="font-semibold text-white group-hover:text-brand-300 transition">Backend Interview Prep</div>
+                      <div class="text-sm text-slate-400">System Design &bull; HLD/LLD &bull; Mock Interviews</div>
+                    </div>
+                    <svg class="w-4 h-4 ml-auto text-slate-500 group-hover:text-brand-400 transition group-hover:translate-x-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                  </div>
+                </a>
+              </div>
+
+              <div class="mt-4 rounded-xl bg-white/5 px-4 py-3 text-sm text-slate-400 flex items-center gap-2">
+                <svg class="w-4 h-4 text-brand-400 shrink-0 animate-bounce-gentle" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                More tracks coming soon — Career Coaching, DSA, Frontend & more
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scroll indicator -->
+        <div class="hidden md:flex justify-center mt-12">
+          <div class="scroll-indicator text-white/30">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== SOCIAL PROOF STRIP ========== -->
+    <section class="bg-white border-b border-slate-200/50 overflow-hidden">
+      <div class="mx-auto max-w-6xl px-4 py-6">
+        <div class="flex flex-col items-center gap-4 md:flex-row md:justify-center md:gap-12">
+          <div class="flex items-center gap-2.5 text-sm text-slate-600 group">
+            <div class="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-brand-500 to-neon-pink text-white text-xs">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <span><span class="font-bold text-slate-800">No recordings</span> — 100% live</span>
+          </div>
+          <div class="hidden md:block w-px h-6 bg-slate-200"></div>
+          <div class="flex items-center gap-2.5 text-sm text-slate-600 group">
+            <div class="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-neon-cyan to-brand-500 text-white text-xs">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <span><span class="font-bold text-slate-800">Personalized</span> improvement plan</span>
+          </div>
+          <div class="hidden md:block w-px h-6 bg-slate-200"></div>
+          <div class="flex items-center gap-2.5 text-sm text-slate-600 group">
+            <div class="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-neon-orange to-neon-pink text-white text-xs">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <span><span class="font-bold text-slate-800">Founder-led</span> quality control</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== HOW IT WORKS ========== -->
+    <section id="how" class="bg-white mesh-bg">
+      <div class="mx-auto max-w-6xl px-4 py-24 reveal">
+        <div class="text-center max-w-2xl mx-auto">
+          <div class="inline-flex items-center gap-2 rounded-full bg-brand-50 border border-brand-200 px-4 py-1.5 text-xs font-bold text-brand-600 uppercase tracking-widest mb-4">Simple process</div>
+          <h2 class="text-3xl font-black tracking-tight md:text-4xl">How it works</h2>
+          <p class="mt-3 text-slate-500">Three steps. No complexity. Just real mentorship.</p>
+        </div>
+
+        <div class="mt-16 grid gap-8 md:grid-cols-3">
+          <!-- Step 1 -->
+          <div class="step-connector relative rounded-3xl bg-white border border-slate-200 p-8 card-interactive gradient-border">
+            <div class="grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br from-brand-500 to-neon-pink text-white text-xl font-black shadow-lg">1</div>
+            <h3 class="mt-6 text-lg font-bold">Book a session</h3>
+            <p class="mt-3 text-sm text-slate-500 leading-relaxed">
+              Fill the form with your goal, preferred time, and track. Takes 2 minutes.
+            </p>
+            <div class="mt-4 flex items-center gap-1 text-xs font-semibold text-brand-500">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3"/></svg>
+              ~2 min
+            </div>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="step-connector relative rounded-3xl bg-white border border-slate-200 p-8 card-interactive gradient-border">
+            <div class="grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br from-neon-cyan to-brand-500 text-white text-xl font-black shadow-lg">2</div>
+            <h3 class="mt-6 text-lg font-bold">Confirm &amp; pay</h3>
+            <p class="mt-3 text-sm text-slate-500 leading-relaxed">
+              You'll get a payment link (UPI). Once confirmed, your session is locked in.
+            </p>
+            <div class="mt-4 flex items-center gap-1 text-xs font-semibold text-accent-500">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4"/></svg>
+              Secure UPI
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="relative rounded-3xl bg-white border border-slate-200 p-8 card-interactive gradient-border">
+            <div class="grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br from-neon-orange to-neon-pink text-white text-xl font-black shadow-lg">3</div>
+            <h3 class="mt-6 text-lg font-bold">Live session + plan</h3>
+            <p class="mt-3 text-sm text-slate-500 leading-relaxed">
+              Get live feedback, honest evaluation, and a clear improvement plan to follow.
+            </p>
+            <div class="mt-4 flex items-center gap-1 text-xs font-semibold text-neon-orange">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+              Actionable plan
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== ENGLISH COACHING ========== -->
+    <section id="english" class="bg-slate-50 mesh-bg">
+      <div class="mx-auto max-w-6xl px-4 py-24 reveal">
+        <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <div>
+            <div class="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-300/50 px-4 py-1.5 text-xs font-bold text-amber-700 uppercase tracking-widest">
+              🗣 Track
+            </div>
+            <h2 class="mt-4 text-3xl font-black tracking-tight md:text-4xl">English Coaching</h2>
+            <p class="mt-3 text-slate-500 max-w-xl">
+              IELTS prep and General English — speaking confidence, writing clarity, grammar structure.
+              Founder-led sessions with honest feedback.
+            </p>
+          </div>
+
+          <a
+            href="https://cal.com/hgoyal925/1-1-connect"
+            data-cal-link="hgoyal925/1-1-connect"
+            data-cal-config='{"layout":"month_view"}'
+            class="inline-flex items-center gap-2 rounded-full btn-gradient px-6 py-3 text-sm font-semibold text-white shrink-0"
+          >
+            Book English Session
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+          </a>
+        </div>
+
+        <div class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <!-- Harshit Card — Active -->
+          <div class="rounded-3xl bg-white border border-slate-200 p-6 shadow-card card-interactive relative overflow-hidden gradient-border">
+            <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-amber-400 via-neon-orange to-neon-pink"></div>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-brand-500 to-neon-pink text-white font-bold">HG</div>
+                <div>
+                  <div class="font-bold">Harshit Goyal</div>
+                  <div class="text-xs text-slate-500">IELTS &bull; General English &bull; Founder</div>
+                </div>
+              </div>
+              <span class="flex items-center gap-1.5 rounded-full bg-accent-50 px-3 py-1.5 text-xs font-bold text-accent-500">
+                <span class="h-2 w-2 rounded-full bg-accent-400 animate-pulse"></span>
+                Available
+              </span>
+            </div>
+
+            <p class="mt-4 text-sm text-slate-500 leading-relaxed">
+              Speaking confidence, writing clarity, grammar fixes, and band-oriented feedback.
+              You'll leave with a simple plan to improve quickly.
+            </p>
+
+            <div class="mt-5 flex items-center justify-between pt-4 border-t border-slate-100">
+              <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Live 1:1</span>
+              <a
+                href="https://cal.com/hgoyal925/1-1-connect"
+                data-cal-link="hgoyal925/1-1-connect"
+                data-cal-config='{"layout":"month_view"}'
+                class="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-brand-500 to-neon-pink px-4 py-2 text-xs font-semibold text-white transition hover:shadow-neon hover:scale-105"
+              >
+                Book session
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- Coming soon placeholder -->
+          <div class="rounded-3xl border-2 border-dashed border-brand-200 p-6 flex flex-col items-center justify-center text-center bg-white/50 transition hover:border-brand-400 hover:bg-brand-50/30">
+            <div class="grid h-12 w-12 place-items-center rounded-2xl bg-brand-50 text-xl">👩‍🏫</div>
+            <div class="mt-3 font-semibold text-slate-600">More mentors joining</div>
+            <p class="mt-1 text-sm text-slate-400">New English mentors will be onboarded soon.</p>
+            <a href="#mentor" class="mt-3 text-xs font-bold text-brand-500 hover:text-brand-700 transition hover:underline">Know someone? Refer a mentor →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== BACKEND INTERVIEW PREP ========== -->
+    <section id="backend" class="bg-white mesh-bg">
+      <div class="mx-auto max-w-6xl px-4 py-24 reveal">
+        <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <div>
+            <div class="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-blue-500/10 to-cyan-500/10 border border-blue-300/50 px-4 py-1.5 text-xs font-bold text-blue-700 uppercase tracking-widest">
+              ⚙️ Track
+            </div>
+            <h2 class="mt-4 text-3xl font-black tracking-tight md:text-4xl">Backend Interview Preparation</h2>
+            <p class="mt-3 text-slate-500 max-w-xl">
+              System Design (HLD/LLD), backend fundamentals, mock interviews, and interview communication.
+              Founder-led sessions with actionable feedback.
+            </p>
+          </div>
+
+          <a
+            href="https://cal.com/hgoyal925/1-1-connect"
+            data-cal-link="hgoyal925/1-1-connect"
+            data-cal-config='{"layout":"month_view"}'
+            class="inline-flex items-center gap-2 rounded-full btn-gradient px-6 py-3 text-sm font-semibold text-white shrink-0"
+          >
+            Book Backend Session
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+          </a>
+        </div>
+
+        <div class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <!-- Harshit Card — Active -->
+          <div class="rounded-3xl bg-white border border-slate-200 p-6 shadow-card card-interactive relative overflow-hidden gradient-border">
+            <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-neon-blue via-brand-500 to-neon-cyan"></div>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-neon-blue to-brand-500 text-white font-bold">HG</div>
+                <div>
+                  <div class="font-bold">Harshit Goyal</div>
+                  <div class="text-xs text-slate-500">System Design &bull; Backend &bull; Mock Interviews</div>
+                </div>
+              </div>
+              <span class="flex items-center gap-1.5 rounded-full bg-accent-50 px-3 py-1.5 text-xs font-bold text-accent-500">
+                <span class="h-2 w-2 rounded-full bg-accent-400 animate-pulse"></span>
+                Available
+              </span>
+            </div>
+
+            <p class="mt-4 text-sm text-slate-500 leading-relaxed">
+              Focused prep for product-company backend interviews:
+              HLD/LLD, APIs & data modeling, scaling patterns, and interview communication.
+            </p>
+
+            <div class="mt-5 flex items-center justify-between pt-4 border-t border-slate-100">
+              <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Live 1:1</span>
+              <a
+                href="https://cal.com/hgoyal925/1-1-connect"
+                data-cal-link="hgoyal925/1-1-connect"
+                data-cal-config='{"layout":"month_view"}'
+                class="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-neon-blue to-brand-500 px-4 py-2 text-xs font-semibold text-white transition hover:shadow-neon hover:scale-105"
+              >
+                Book session
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- Coming soon placeholder -->
+          <div class="rounded-3xl border-2 border-dashed border-brand-200 p-6 flex flex-col items-center justify-center text-center bg-white/50 transition hover:border-brand-400 hover:bg-brand-50/30">
+            <div class="grid h-12 w-12 place-items-center rounded-2xl bg-brand-50 text-xl">👨‍💻</div>
+            <div class="mt-3 font-semibold text-slate-600">More mentors joining</div>
+            <p class="mt-1 text-sm text-slate-400">Backend mentors will be onboarded soon.</p>
+            <a href="#mentor" class="mt-3 text-xs font-bold text-brand-500 hover:text-brand-700 transition hover:underline">Know someone? Refer a mentor →</a>
+          </div>
+        </div>
+
+        <!-- What you'll cover -->
+        <div class="mt-10 rounded-3xl bg-gradient-to-br from-slate-900 to-slate-800 p-6 md:p-8 border border-slate-700">
+          <h3 class="text-sm font-bold text-brand-300 uppercase tracking-widest">What you'll cover</h3>
+          <div class="mt-6 grid gap-4 md:grid-cols-2">
+            <div class="rounded-2xl border border-slate-700 bg-slate-800/50 backdrop-blur-sm p-5 transition hover:border-brand-500/50 hover:bg-slate-700/50 group">
+              <div class="flex items-center gap-3">
+                <div class="grid h-10 w-10 place-items-center rounded-xl bg-brand-500/20 text-sm group-hover:bg-brand-500/30 transition">🏗</div>
+                <div class="font-semibold text-white">System Design (HLD + LLD)</div>
+              </div>
+              <p class="mt-3 text-sm text-slate-400 leading-relaxed">Requirements → APIs → data model → scaling → caching → reliability → trade-offs.</p>
+            </div>
+            <div class="rounded-2xl border border-slate-700 bg-slate-800/50 backdrop-blur-sm p-5 transition hover:border-neon-cyan/50 hover:bg-slate-700/50 group">
+              <div class="flex items-center gap-3">
+                <div class="grid h-10 w-10 place-items-center rounded-xl bg-neon-cyan/20 text-sm group-hover:bg-neon-cyan/30 transition">🗄</div>
+                <div class="font-semibold text-white">Backend Fundamentals</div>
+              </div>
+              <p class="mt-3 text-sm text-slate-400 leading-relaxed">Databases, concurrency, performance, and real engineering judgement.</p>
+            </div>
+            <div class="rounded-2xl border border-slate-700 bg-slate-800/50 backdrop-blur-sm p-5 transition hover:border-neon-pink/50 hover:bg-slate-700/50 group">
+              <div class="flex items-center gap-3">
+                <div class="grid h-10 w-10 place-items-center rounded-xl bg-neon-pink/20 text-sm group-hover:bg-neon-pink/30 transition">🎯</div>
+                <div class="font-semibold text-white">Mock Interviews</div>
+              </div>
+              <p class="mt-3 text-sm text-slate-400 leading-relaxed">Real interview simulations + honest feedback + gap-based plan.</p>
+            </div>
+            <div class="rounded-2xl border border-slate-700 bg-slate-800/50 backdrop-blur-sm p-5 transition hover:border-neon-orange/50 hover:bg-slate-700/50 group">
+              <div class="flex items-center gap-3">
+                <div class="grid h-10 w-10 place-items-center rounded-xl bg-neon-orange/20 text-sm group-hover:bg-neon-orange/30 transition">💬</div>
+                <div class="font-semibold text-white">Interview Communication</div>
+              </div>
+              <p class="mt-3 text-sm text-slate-400 leading-relaxed">How to structure answers, handle follow-ups, and stay calm under pressure.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== PRICING ========== -->
+    <section id="pricing" class="bg-slate-50 mesh-bg">
+      <div class="mx-auto max-w-6xl px-4 py-24 reveal">
+        <div class="text-center max-w-2xl mx-auto">
+          <div class="inline-flex items-center gap-2 rounded-full bg-brand-50 border border-brand-200 px-4 py-1.5 text-xs font-bold text-brand-600 uppercase tracking-widest mb-4">Tailored for you</div>
+          <h2 class="text-3xl font-black tracking-tight md:text-4xl">Custom pricing for every learner</h2>
+          <p class="mt-3 text-slate-500">Every session is tailored to your goals. Fill the form and we'll share a quote within 24 hours.</p>
+        </div>
+
+        <div class="mt-14 grid gap-8 md:grid-cols-2 max-w-3xl mx-auto">
+          <!-- English -->
+          <div class="rounded-3xl bg-white border border-slate-200 p-8 shadow-card card-interactive relative overflow-hidden gradient-border">
+            <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-amber-400 via-neon-orange to-neon-pink"></div>
+            <div class="flex items-center gap-2 flex-wrap">
+              <div class="inline-flex items-center gap-2 rounded-full bg-amber-50 border border-amber-200 px-3 py-1.5 text-xs font-bold text-amber-700">🗣 English Coaching</div>
+            </div>
+            <div class="mt-6">
+              <span class="text-3xl font-black bg-gradient-to-r from-amber-500 to-neon-orange bg-clip-text text-transparent">Pricing on Enquiry</span>
+            </div>
+            <p class="mt-2 text-sm text-slate-500">45–60 min live 1:1 session · Customised to your needs</p>
+
+            <ul class="mt-6 space-y-3">
+              <li class="flex items-start gap-3 text-sm text-slate-700">
+                <div class="grid h-5 w-5 shrink-0 mt-0.5 place-items-center rounded-full bg-gradient-to-br from-accent-400 to-accent-500 text-white">
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                Speaking + writing feedback
+              </li>
+              <li class="flex items-start gap-3 text-sm text-slate-700">
+                <div class="grid h-5 w-5 shrink-0 mt-0.5 place-items-center rounded-full bg-gradient-to-br from-accent-400 to-accent-500 text-white">
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                IELTS band-oriented coaching
+              </li>
+              <li class="flex items-start gap-3 text-sm text-slate-700">
+                <div class="grid h-5 w-5 shrink-0 mt-0.5 place-items-center rounded-full bg-gradient-to-br from-accent-400 to-accent-500 text-white">
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                Personalized improvement plan
+              </li>
+              <li class="flex items-start gap-3 text-sm text-slate-700">
+                <div class="grid h-5 w-5 shrink-0 mt-0.5 place-items-center rounded-full bg-gradient-to-br from-accent-400 to-accent-500 text-white">
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                Grammar &amp; structure correction
+              </li>
+            </ul>
+
+            <a
+              href="https://wa.me/918269683510?text=Hi%21%20I%20came%20across%20Megaverse%20Live%20and%20I%27m%20interested%20in%20the%20*English%20Coaching*%20session%20%28Speaking%2C%20Writing%20%26%20IELTS%20Prep%29.%20Could%20you%20help%20me%20with%20the%20pricing%20details%3F%20%F0%9F%99%8F"
+              target="_blank"
+              rel="noopener"
+              class="mt-8 flex items-center justify-center gap-2 w-full text-center rounded-full bg-gradient-to-r from-amber-500 to-neon-orange px-5 py-3.5 text-sm font-bold text-white transition hover:shadow-lg hover:scale-[1.02]"
+            >
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+              Enquire on WhatsApp
+            </a>
+          </div>
+
+          <!-- Backend — Popular -->
+          <div class="pricing-popular rounded-3xl bg-white p-8 shadow-glow card-interactive relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-brand-400 via-neon-pink to-neon-cyan"></div>
+            <div class="absolute top-4 right-4">
+              <span class="rounded-full bg-gradient-to-r from-brand-500 to-neon-pink px-3 py-1 text-[10px] font-black text-white uppercase tracking-widest shadow-lg">Popular</span>
+            </div>
+            <div class="flex items-center gap-2 flex-wrap">
+              <div class="inline-flex items-center gap-2 rounded-full bg-blue-50 border border-blue-200 px-3 py-1.5 text-xs font-bold text-blue-700">⚙️ Backend Prep</div>
+            </div>
+            <div class="mt-6">
+              <span class="text-3xl font-black bg-gradient-to-r from-brand-500 to-neon-pink bg-clip-text text-transparent">Pricing on Enquiry</span>
+            </div>
+            <p class="mt-2 text-sm text-slate-500">60–90 min live 1:1 session · Customised to your needs</p>
+
+            <ul class="mt-6 space-y-3">
+              <li class="flex items-start gap-3 text-sm text-slate-700">
+                <div class="grid h-5 w-5 shrink-0 mt-0.5 place-items-center rounded-full bg-gradient-to-br from-brand-500 to-neon-pink text-white">
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                System Design (HLD + LLD)
+              </li>
+              <li class="flex items-start gap-3 text-sm text-slate-700">
+                <div class="grid h-5 w-5 shrink-0 mt-0.5 place-items-center rounded-full bg-gradient-to-br from-brand-500 to-neon-pink text-white">
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                Mock interviews with feedback
+              </li>
+              <li class="flex items-start gap-3 text-sm text-slate-700">
+                <div class="grid h-5 w-5 shrink-0 mt-0.5 place-items-center rounded-full bg-gradient-to-br from-brand-500 to-neon-pink text-white">
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                Gap analysis + action plan
+              </li>
+              <li class="flex items-start gap-3 text-sm text-slate-700">
+                <div class="grid h-5 w-5 shrink-0 mt-0.5 place-items-center rounded-full bg-gradient-to-br from-brand-500 to-neon-pink text-white">
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                Interview communication coaching
+              </li>
+            </ul>
+
+            <a
+              href="https://wa.me/918269683510?text=Hi%21%20I%20came%20across%20Megaverse%20Live%20and%20I%27m%20interested%20in%20the%20*Backend%20Interview%20Prep*%20session%20%28System%20Design%2C%20HLD%2FLLD%20%26%20Mock%20Interviews%29.%20Could%20you%20help%20me%20with%20the%20pricing%20details%3F%20%F0%9F%99%8F"
+              target="_blank"
+              rel="noopener"
+              class="mt-8 flex items-center justify-center gap-2 w-full text-center rounded-full btn-gradient px-5 py-3.5 text-sm font-bold text-white"
+            >
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+              Enquire on WhatsApp
+            </a>
+          </div>
+        </div>
+
+        <p class="mt-8 text-center text-sm text-slate-400">
+          Pricing depends on session type, duration, and goals. Student-friendly rates available. We'll share a custom quote after you fill the form.
+        </p>
+      </div>
+    </section>
+
+    <!-- ========== TESTIMONIALS ========== -->
+    <section id="reviews" class="bg-white mesh-bg">
+      <div class="mx-auto max-w-6xl px-4 py-24 reveal">
+        <div class="text-center max-w-2xl mx-auto">
+          <div class="inline-flex items-center gap-2 rounded-full bg-brand-50 border border-brand-200 px-4 py-1.5 text-xs font-bold text-brand-600 uppercase tracking-widest mb-4">Real feedback</div>
+          <h2 class="text-3xl font-black tracking-tight md:text-4xl">What learners say</h2>
+          <p class="mt-3 text-slate-500">Honest reviews from real 1:1 sessions.</p>
+        </div>
+
+        <div class="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <!-- Smita -->
+          <div class="rounded-3xl bg-white border border-slate-200 p-6 shadow-card card-interactive gradient-border relative">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="grid h-10 w-10 place-items-center rounded-full bg-gradient-to-br from-brand-500 to-neon-pink text-white text-sm font-bold">SP</div>
+              <div>
+                <div class="font-bold text-sm">Smita Patil</div>
+                <div class="text-xs text-slate-400">Software Engineer &bull; Backend Prep</div>
+              </div>
+            </div>
+            <div class="flex gap-0.5 mb-3">
+              <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            </div>
+            <p class="text-sm text-slate-600 leading-relaxed">
+              "He is really good at creating a roadmap according to need. He can help you cover all areas — DSA, System Design, and Programming Language. Very professional. I would highly recommend to anyone seeking proper guidance."
+            </p>
+          </div>
+
+          <!-- Soumya -->
+          <div class="rounded-3xl bg-white border border-slate-200 p-6 shadow-card card-interactive gradient-border relative">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="grid h-10 w-10 place-items-center rounded-full bg-gradient-to-br from-neon-cyan to-brand-500 text-white text-sm font-bold">S</div>
+              <div>
+                <div class="font-bold text-sm">Soumya</div>
+                <div class="text-xs text-slate-400">1:1 Mentoring</div>
+              </div>
+            </div>
+            <div class="flex gap-0.5 mb-3">
+              <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            </div>
+            <p class="text-sm text-slate-600 leading-relaxed">
+              "An exceptional mentor providing invaluable guidance and support. He significantly enhanced my learning experience and helped me understand and resolve my doubts. Truly grateful for his encouragement and insightful advice."
+            </p>
+          </div>
+
+          <!-- Palvi -->
+          <div class="rounded-3xl bg-white border border-slate-200 p-6 shadow-card card-interactive gradient-border relative">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="grid h-10 w-10 place-items-center rounded-full bg-gradient-to-br from-neon-orange to-neon-pink text-white text-sm font-bold">P</div>
+              <div>
+                <div class="font-bold text-sm">Palvi</div>
+                <div class="text-xs text-slate-400">Tech Mentoring</div>
+              </div>
+            </div>
+            <div class="flex gap-0.5 mb-3">
+              <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            </div>
+            <p class="text-sm text-slate-600 leading-relaxed">
+              "Harshit possesses an incredible depth of technical knowledge and has a unique ability to break down difficult concepts into understandable pieces. He is always willing to provide support and insight. I highly recommend him as a mentor."
+            </p>
+          </div>
+
+          <!-- Vishaal -->
+          <div class="rounded-3xl bg-white border border-slate-200 p-6 shadow-card card-interactive gradient-border relative">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="grid h-10 w-10 place-items-center rounded-full bg-gradient-to-br from-brand-500 to-neon-cyan text-white text-sm font-bold">V</div>
+              <div>
+                <div class="font-bold text-sm">Vishaal</div>
+                <div class="text-xs text-slate-400">Roadmap &bull; Career Guidance</div>
+              </div>
+            </div>
+            <div class="flex gap-0.5 mb-3">
+              <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            </div>
+            <p class="text-sm text-slate-600 leading-relaxed">
+              "The session was very insightful and informative. Harshit answered all my queries and even helped with the roadmap and timeframe to be followed."
+            </p>
+          </div>
+
+          <!-- Aniketh -->
+          <div class="rounded-3xl bg-white border border-slate-200 p-6 shadow-card card-interactive gradient-border relative">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="grid h-10 w-10 place-items-center rounded-full bg-gradient-to-br from-accent-400 to-neon-cyan text-white text-sm font-bold">A</div>
+              <div>
+                <div class="font-bold text-sm">Aniketh</div>
+                <div class="text-xs text-slate-400">DSA &bull; Problem Solving</div>
+              </div>
+            </div>
+            <div class="flex gap-0.5 mb-3">
+              <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            </div>
+            <p class="text-sm text-slate-600 leading-relaxed">
+              "Harshit has been guiding me as I started learning Data Structures and Algorithms. Thanks to his constant guidance, my problem-solving abilities have seen significant improvement."
+            </p>
+          </div>
+
+          <!-- Ruturaj -->
+          <div class="rounded-3xl bg-white border border-slate-200 p-6 shadow-card card-interactive gradient-border relative">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="grid h-10 w-10 place-items-center rounded-full bg-gradient-to-br from-neon-blue to-brand-500 text-white text-sm font-bold">R</div>
+              <div>
+                <div class="font-bold text-sm">Ruturaj</div>
+                <div class="text-xs text-slate-400">1:1 Mentoring</div>
+              </div>
+            </div>
+            <div class="flex gap-0.5 mb-3">
+              <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            </div>
+            <p class="text-sm text-slate-600 leading-relaxed">
+              "Harshit has been a constant guide through my journey. He not only extended support during sessions but also helped beyond them."
+            </p>
+          </div>
+        </div>
+
+        <!-- Bottom CTA -->
+        <div class="mt-12 text-center">
+          <a
+            href="https://cal.com/hgoyal925/1-1-connect"
+            data-cal-link="hgoyal925/1-1-connect"
+            data-cal-config='{"layout":"month_view"}'
+            class="inline-flex items-center gap-2 rounded-full btn-gradient px-8 py-4 text-sm font-bold text-white"
+          >
+            Book your session now
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== EARLY ADOPTER CTA ========== -->
+    <section class="bg-white mesh-bg">
+      <div class="mx-auto max-w-4xl px-4 py-24 reveal">
+        <div class="rounded-3xl bg-gradient-to-br from-brand-900 via-brand-800 to-slate-900 p-8 md:p-12 text-center relative overflow-hidden">
+          <!-- Background orbs -->
+          <div class="absolute top-0 right-0 w-64 h-64 bg-brand-500/20 rounded-full filter blur-[80px]"></div>
+          <div class="absolute bottom-0 left-0 w-48 h-48 bg-neon-pink/15 rounded-full filter blur-[60px]"></div>
+          
+          <div class="relative">
+            <div class="inline-flex items-center gap-2 rounded-full border border-brand-400/30 bg-brand-500/20 px-4 py-2 text-xs font-bold text-brand-200 uppercase tracking-widest mb-6">
+              🚀 Early stage — real humans, real sessions
+            </div>
+            <h2 class="text-2xl font-black tracking-tight text-white md:text-3xl">Be among our first learners</h2>
+            <p class="mt-4 text-brand-200 max-w-xl mx-auto leading-relaxed">
+              We just launched. Every session right now is founder-led, and we're collecting honest feedback to make this better.
+              Early learners get the most attention and the best introductory pricing.
+            </p>
+
+            <div class="mt-8 grid gap-5 md:grid-cols-3 max-w-2xl mx-auto">
+              <div class="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-5 transition hover:bg-white/10 hover:border-brand-400/30">
+                <div class="text-2xl">🎯</div>
+                <div class="mt-2 font-bold text-sm text-white">Direct access</div>
+                <div class="mt-1 text-xs text-brand-200/70">Talk directly to the founder — no middlemen, no assistants</div>
+              </div>
+              <div class="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-5 transition hover:bg-white/10 hover:border-neon-pink/30">
+                <div class="text-2xl">💰</div>
+                <div class="mt-2 font-bold text-sm text-white">Launch pricing</div>
+                <div class="mt-1 text-xs text-brand-200/70">Current prices are introductory — they will go up as we grow</div>
+              </div>
+              <div class="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-5 transition hover:bg-white/10 hover:border-neon-cyan/30">
+                <div class="text-2xl">📝</div>
+                <div class="mt-2 font-bold text-sm text-white">Shape the product</div>
+                <div class="mt-1 text-xs text-brand-200/70">Your feedback directly influences what we build next</div>
+              </div>
+            </div>
+
+            <a
+              href="https://cal.com/hgoyal925/1-1-connect"
+              data-cal-link="hgoyal925/1-1-connect"
+              data-cal-config='{"layout":"month_view"}'
+              class="mt-10 inline-flex items-center gap-2 rounded-full bg-white px-8 py-4 text-sm font-black text-brand-700 shadow-xl transition hover:shadow-2xl hover:scale-105"
+            >
+              Book your first session
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== BECOME A MENTOR ========== -->
+    <section id="mentor" class="bg-slate-50 mesh-bg">
+      <div class="mx-auto max-w-6xl px-4 py-24 reveal">
+        <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <div>
+            <div class="inline-flex items-center gap-2 rounded-full bg-brand-50 border border-brand-200 px-4 py-1.5 text-xs font-bold text-brand-600 uppercase tracking-widest">
+              🧪 Early Access &bull; Limited Onboarding
+            </div>
+            <h2 class="mt-4 text-3xl font-black tracking-tight md:text-4xl">
+              Become a Mentor on Megaverse Live
+            </h2>
+            <p class="mt-3 max-w-2xl text-slate-500">
+              We're onboarding a small number of mentors for live 1:1 sessions.
+              Bring your audience — we provide a clean setup, booking flow, and founder-level support.
+            </p>
+          </div>
+
+          <a
+            href="https://docs.google.com/forms/d/e/1FAIpQLSdblRvBiftISdkO1kZUgTeocVvTsALBKlmIx9SGFhtb0NEMkQ/viewform?usp=publish-editor"
+            class="inline-flex items-center gap-2 rounded-full btn-gradient px-6 py-3 text-sm font-semibold text-white shrink-0"
+          >
+            Apply to Become a Mentor
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+          </a>
+        </div>
+
+        <div class="mt-10 grid gap-6 md:grid-cols-3">
+          <div class="rounded-3xl bg-white border border-slate-200 p-6 shadow-card card-interactive gradient-border">
+            <div class="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-accent-400 to-accent-500 text-white text-sm font-bold">✓</div>
+            <h3 class="mt-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Good fit if you</h3>
+            <ul class="mt-3 space-y-2.5 text-sm text-slate-600">
+              <li class="flex items-start gap-2">
+                <span class="text-accent-500 mt-0.5 font-bold">•</span>
+                Already take 1:1 sessions (or plan to)
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-accent-500 mt-0.5 font-bold">•</span>
+                Have an audience (LinkedIn/Twitter/YouTube)
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-accent-500 mt-0.5 font-bold">•</span>
+                Teach a focused skill (tech, English, etc.)
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-accent-500 mt-0.5 font-bold">•</span>
+                Prefer depth over mass-market courses
+              </li>
+            </ul>
+          </div>
+
+          <div class="rounded-3xl bg-white border border-slate-200 p-6 shadow-card card-interactive gradient-border">
+            <div class="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-red-400 to-neon-pink text-white text-sm font-bold">✕</div>
+            <h3 class="mt-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Not a fit if you</h3>
+            <ul class="mt-3 space-y-2.5 text-sm text-slate-600">
+              <li class="flex items-start gap-2">
+                <span class="text-red-400 mt-0.5 font-bold">•</span>
+                Expect "leads provided by platform"
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-red-400 mt-0.5 font-bold">•</span>
+                Want to sell recorded courses
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-red-400 mt-0.5 font-bold">•</span>
+                Want instant approvals with no review
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-red-400 mt-0.5 font-bold">•</span>
+                Prefer volume over quality
+              </li>
+            </ul>
+          </div>
+
+          <div class="rounded-3xl bg-white border border-slate-200 p-6 shadow-card card-interactive gradient-border">
+            <div class="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-brand-500 to-neon-pink text-white text-sm font-bold">★</div>
+            <h3 class="mt-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">What you get</h3>
+            <ul class="mt-3 space-y-2.5 text-sm text-slate-600">
+              <li class="flex items-start gap-2">
+                <span class="text-brand-400 mt-0.5 font-bold">•</span>
+                Professional mentor profile page
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-brand-400 mt-0.5 font-bold">•</span>
+                Booking + intake flow handled
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-brand-400 mt-0.5 font-bold">•</span>
+                Early terms: <span class="font-bold text-brand-600">0–10% fee</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-brand-400 mt-0.5 font-bold">•</span>
+                Founder support during onboarding
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Onboarding process -->
+        <div class="mt-10 grid gap-6 md:grid-cols-2">
+          <div class="rounded-3xl bg-white border border-slate-200 p-6 shadow-card card-interactive gradient-border">
+            <h3 class="text-lg font-black">How onboarding works</h3>
+            <ol class="mt-4 space-y-4 text-sm text-slate-600">
+              <li class="flex items-start gap-3">
+                <span class="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-gradient-to-br from-brand-500 to-neon-pink text-[10px] font-black text-white">1</span>
+                Apply to become a mentor
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-gradient-to-br from-brand-500 to-neon-pink text-[10px] font-black text-white">2</span>
+                We review your application (manual)
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-gradient-to-br from-brand-500 to-neon-pink text-[10px] font-black text-white">3</span>
+                If approved, we set up your mentor profile
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-gradient-to-br from-brand-500 to-neon-pink text-[10px] font-black text-white">4</span>
+                Share your link and start taking sessions
+              </li>
+            </ol>
+          </div>
+
+          <div class="rounded-3xl bg-white border border-slate-200 p-6 shadow-card card-interactive gradient-border">
+            <h3 class="text-lg font-black">Mentor categories we're onboarding</h3>
+            <p class="mt-2 text-sm text-slate-500">Start with focused 1:1 mentoring. Expanding over time.</p>
+            <div class="mt-4 grid gap-3 grid-cols-1 sm:grid-cols-3">
+              <div class="rounded-2xl border border-slate-200 p-3 text-center transition hover:border-brand-300 hover:bg-brand-50/50 hover:scale-105">
+                <div class="text-lg">💻</div>
+                <div class="mt-1 font-bold text-sm">Tech</div>
+                <div class="text-xs text-slate-500">Backend, SD, DSA</div>
+              </div>
+              <div class="rounded-2xl border border-slate-200 p-3 text-center transition hover:border-amber-300 hover:bg-amber-50/50 hover:scale-105">
+                <div class="text-lg">🗣</div>
+                <div class="mt-1 font-bold text-sm">English</div>
+                <div class="text-xs text-slate-500">IELTS, Speaking</div>
+              </div>
+              <div class="rounded-2xl border border-slate-200 p-3 text-center transition hover:border-neon-cyan hover:bg-cyan-50/50 hover:scale-105">
+                <div class="text-lg">📈</div>
+                <div class="mt-1 font-bold text-sm">Career</div>
+                <div class="text-xs text-slate-500">Resume, Growth</div>
+              </div>
+            </div>
+
+            <a
+              href="https://docs.google.com/forms/d/e/1FAIpQLSdblRvBiftISdkO1kZUgTeocVvTsALBKlmIx9SGFhtb0NEMkQ/viewform?usp=publish-editor"
+              class="mt-5 block w-full text-center rounded-full border-2 border-brand-200 px-5 py-2.5 text-sm font-bold text-brand-600 transition hover:bg-brand-50 hover:border-brand-400 hover:scale-[1.02]"
+            >
+              Apply Now →
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== FAQ ========== -->
+    <section id="faq" class="bg-white mesh-bg">
+      <div class="mx-auto max-w-3xl px-4 py-24 reveal">
+        <div class="text-center">
+          <div class="inline-flex items-center gap-2 rounded-full bg-brand-50 border border-brand-200 px-4 py-1.5 text-xs font-bold text-brand-600 uppercase tracking-widest mb-4">FAQ</div>
+          <h2 class="text-3xl font-black tracking-tight md:text-4xl">Frequently asked questions</h2>
+        </div>
+
+        <div class="mt-12 space-y-4">
+          <!-- Accordion items -->
+          <details class="group rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:shadow-card hover:border-brand-200" open>
+            <summary class="flex cursor-pointer items-center justify-between p-5 font-bold text-slate-900 hover:text-brand-600 transition">
+              Are sessions live?
+              <div class="grid h-7 w-7 place-items-center rounded-lg bg-brand-50 group-open:bg-brand-500 transition">
+                <svg class="w-4 h-4 text-brand-500 group-open:text-white transition group-open:rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+              </div>
+            </summary>
+            <div class="px-5 pb-5 text-sm text-slate-500 leading-relaxed">
+              Yes. All sessions are live and 1:1 — not recorded courses. You get real-time feedback tailored to your level.
+            </div>
+          </details>
+
+          <details class="group rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:shadow-card hover:border-brand-200">
+            <summary class="flex cursor-pointer items-center justify-between p-5 font-bold text-slate-900 hover:text-brand-600 transition">
+              How do I confirm &amp; pay?
+              <div class="grid h-7 w-7 place-items-center rounded-lg bg-brand-50 group-open:bg-brand-500 transition">
+                <svg class="w-4 h-4 text-brand-500 group-open:text-white transition group-open:rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+              </div>
+            </summary>
+            <div class="px-5 pb-5 text-sm text-slate-500 leading-relaxed">
+              After submitting the booking form, you'll receive a secure UPI payment link. Once payment is confirmed, your session slot is locked.
+            </div>
+          </details>
+
+          <details class="group rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:shadow-card hover:border-brand-200">
+            <summary class="flex cursor-pointer items-center justify-between p-5 font-bold text-slate-900 hover:text-brand-600 transition">
+              What tracks are available right now?
+              <div class="grid h-7 w-7 place-items-center rounded-lg bg-brand-50 group-open:bg-brand-500 transition">
+                <svg class="w-4 h-4 text-brand-500 group-open:text-white transition group-open:rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+              </div>
+            </summary>
+            <div class="px-5 pb-5 text-sm text-slate-500 leading-relaxed">
+              English Coaching (IELTS + General English) and Backend Interview Preparation (System Design, mock interviews). More tracks coming soon.
+            </div>
+          </details>
+
+          <details class="group rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:shadow-card hover:border-brand-200">
+            <summary class="flex cursor-pointer items-center justify-between p-5 font-bold text-slate-900 hover:text-brand-600 transition">
+              Do you provide leads to mentors?
+              <div class="grid h-7 w-7 place-items-center rounded-lg bg-brand-50 group-open:bg-brand-500 transition">
+                <svg class="w-4 h-4 text-brand-500 group-open:text-white transition group-open:rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+              </div>
+            </summary>
+            <div class="px-5 pb-5 text-sm text-slate-500 leading-relaxed">
+              Not currently. Early mentors bring their own audience. The platform provides a clean professional setup, booking workflow, and payment support.
+            </div>
+          </details>
+
+          <details class="group rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:shadow-card hover:border-brand-200">
+            <summary class="flex cursor-pointer items-center justify-between p-5 font-bold text-slate-900 hover:text-brand-600 transition">
+              Can I get a refund?
+              <div class="grid h-7 w-7 place-items-center rounded-lg bg-brand-50 group-open:bg-brand-500 transition">
+                <svg class="w-4 h-4 text-brand-500 group-open:text-white transition group-open:rotate-180" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+              </div>
+            </summary>
+            <div class="px-5 pb-5 text-sm text-slate-500 leading-relaxed">
+              If a session doesn't happen due to mentor unavailability, you'll get a full refund or reschedule. Reach out via email for any concerns.
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== FINAL CTA ========== -->
+    <section class="hero-dark relative overflow-hidden">
+      <!-- Floating orbs -->
+      <div class="orb w-60 h-60 bg-brand-500 top-10 right-20 animate-float"></div>
+      <div class="orb w-40 h-40 bg-neon-pink bottom-0 left-10 animate-float-delayed"></div>
+      
+      <div class="relative mx-auto max-w-3xl px-4 py-24 text-center">
+        <h2 class="text-3xl font-black text-white tracking-tight md:text-5xl">
+          Ready to <span class="gradient-text">level up</span>?
+        </h2>
+        <p class="mt-5 text-lg text-slate-300">
+          Book a 1:1 session today and get real, actionable feedback.
+        </p>
+        <div class="mt-10 flex flex-col gap-4 sm:flex-row sm:justify-center">
+          <a
+            href="https://cal.com/hgoyal925/1-1-connect"
+            data-cal-link="hgoyal925/1-1-connect"
+            data-cal-config='{"layout":"month_view"}'
+            class="inline-flex items-center justify-center gap-2 rounded-full bg-white px-8 py-4 text-sm font-black text-brand-700 shadow-xl transition hover:shadow-2xl hover:scale-105"
+          >
+            Book a 1:1 Session
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+          </a>
+          <a
+            href="#mentor"
+            class="inline-flex items-center justify-center rounded-full border-2 border-white/20 px-8 py-4 text-sm font-semibold text-white transition hover:bg-white/10 hover:border-white/40 backdrop-blur-sm"
+          >
+            Become a Mentor
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="bg-slate-900 border-t border-slate-800">
+      <div class="mx-auto max-w-6xl px-4 py-12">
+        <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+          <div class="flex items-center gap-2.5">
+            <div class="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-brand-500 to-neon-pink text-white font-bold text-xs">M</div>
+            <div class="text-sm font-bold text-white">Megaverse <span class="text-brand-400">Live</span></div>
+          </div>
+
+          <div class="flex flex-wrap gap-6 text-sm text-slate-400">
+            <a href="#tracks" class="hover:text-brand-400 transition">Tracks</a>
+            <a href="#how" class="hover:text-brand-400 transition">How it works</a>
+            <a href="#pricing" class="hover:text-brand-400 transition">Pricing</a>
+            <a href="#reviews" class="hover:text-brand-400 transition">Reviews</a>
+            <a href="#mentor" class="hover:text-brand-400 transition">Become a Mentor</a>
+            <a href="#faq" class="hover:text-brand-400 transition">FAQ</a>
+          </div>
+
+          <div class="flex items-center gap-4 text-sm text-slate-500">
+            <a class="hover:text-brand-400 transition" href="mailto:hello@megaverselive.com">hello@megaverselive.com</a>
+          </div>
+        </div>
+
+        <!-- SEO-friendly content blurb for search engines -->
+        <div class="mt-8 rounded-2xl bg-slate-800/50 border border-slate-700 p-5 text-xs text-slate-500 leading-relaxed">
+          <strong class="text-slate-400">Megaverse Live</strong> offers affordable 1:1 live sessions for
+          IELTS preparation, English speaking practice, backend interview preparation, system design coaching, and mock interviews.
+          Based in India. Sessions available globally via video call.
+          Looking for an IELTS tutor? Need system design interview help? Book a session today.
+        </div>
+
+        <div class="mt-8 flex flex-col gap-2 border-t border-slate-800 pt-6 text-xs text-slate-500 md:flex-row md:items-center md:justify-between">
+          <div>&copy; <span id="year"></span> Megaverse Live. All rights reserved.</div>
+          <div class="flex gap-4">
+            <a class="hover:text-brand-400 transition" href="#">Privacy Policy</a>
+            <a class="hover:text-brand-400 transition" href="#">Terms of Service</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- ========== FLOATING WHATSAPP BUTTON ========== -->
+    <a
+      href="https://wa.me/918269683510?text=Hi%2C%20I%20want%20to%20know%20more%20about%20Megaverse%20Live%20sessions."
+      target="_blank"
+      rel="noopener"
+      class="fixed bottom-6 right-6 z-50 grid h-14 w-14 place-items-center rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 text-white shadow-lg transition hover:shadow-xl hover:scale-110 glow-ring"
+      aria-label="Chat on WhatsApp"
+      title="Chat with us on WhatsApp"
+    >
+      <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    </a>
+
+    <!-- ========== SCRIPTS ========== -->
+    <script>
+      // Year
+      document.getElementById('year').textContent = new Date().getFullYear();
+
+      // Mobile menu
+      const menuBtn = document.getElementById('menuBtn');
+      const closeMenu = document.getElementById('closeMenu');
+      const mobileNav = document.getElementById('mobileNav');
+      const navOverlay = document.getElementById('navOverlay');
+      const mobileLinks = document.querySelectorAll('.mobile-link');
+
+      function openNav() {
+        mobileNav.classList.add('open');
+        navOverlay.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+      }
+      function closeNav() {
+        mobileNav.classList.remove('open');
+        navOverlay.classList.add('hidden');
+        document.body.style.overflow = '';
+      }
+
+      menuBtn.addEventListener('click', openNav);
+      closeMenu.addEventListener('click', closeNav);
+      navOverlay.addEventListener('click', closeNav);
+      mobileLinks.forEach(link => link.addEventListener('click', closeNav));
+
+      // Scroll reveal with staggered animation
+      const reveals = document.querySelectorAll('.reveal');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      }, { threshold: 0.08, rootMargin: '0px 0px -50px 0px' });
+      reveals.forEach(el => observer.observe(el));
+
+      // Number counter animation
+      const counters = document.querySelectorAll('[data-count]');
+      const counterObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const target = parseInt(entry.target.dataset.count);
+            let current = 0;
+            const increment = target / 30;
+            const timer = setInterval(() => {
+              current += increment;
+              if (current >= target) {
+                entry.target.textContent = target;
+                clearInterval(timer);
+              } else {
+                entry.target.textContent = Math.floor(current);
+              }
+            }, 40);
+            counterObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.5 });
+      counters.forEach(el => counterObserver.observe(el));
+
+      // Smooth header shadow on scroll
+      const header = document.querySelector('header');
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 10) {
+          header.classList.add('shadow-soft');
+        } else {
+          header.classList.remove('shadow-soft');
+        }
+      });
+
+      // Active nav link highlight
+      const sections = document.querySelectorAll('section[id]');
+      const navLinks = document.querySelectorAll('nav a[href^="#"]');
+      const navObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            navLinks.forEach(link => {
+              link.classList.toggle('text-brand-600', link.getAttribute('href') === '#' + entry.target.id);
+              link.classList.toggle('text-slate-500', link.getAttribute('href') !== '#' + entry.target.id);
+            });
+          }
+        });
+      }, { threshold: 0.3, rootMargin: '-80px 0px -60% 0px' });
+      sections.forEach(s => navObserver.observe(s));
+    </script>
+
+    <!-- Cal.com Embed -->
+    <script type="text/javascript">
+      (function (C, A, L) {
+        let p = function (a, ar) { a.q.push(ar); };
+        let d = C.document;
+        C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement('script')).src = A; cal.loaded = true; }
+        if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; if (typeof namespace === 'string') { cal.ns[namespace] = cal.ns[namespace] || api; p(cal.ns[namespace], ar); p(cal, ['initNamespace', namespace]); } else p(cal, ar); return; } p(cal, ar); };
+      })(window, 'https://app.cal.com/embed/embed.js', 'init');
+      Cal('init', {origin: 'https://cal.com'});
+      Cal('ui', {
+        theme: 'light',
+        styles: { branding: { brandColor: '#a855f7' } },
+        hideEventTypeDetails: false,
+        layout: 'month_view'
+      });
+    </script>
+  </body>
+</html>

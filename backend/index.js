@@ -24,24 +24,38 @@ const pool = new Pool({
 app.use(cors());
 app.use(express.json());
 
+// Serve static files (index.html, CSS, JS)
+// Looking for files in 'public' folder, or root if not found
+const path = require('path');
+app.use(express.static(path.join(__dirname, '../public')));
+
+// Fallback: serve index.html for root path if no API match
+// This allows frontend to be served from backend while keeping API routes intact
+
 // ============= ROUTES =============
 
-// Root endpoint
+// Root endpoint - serve API info or frontend
 app.get('/', (req, res) => {
-  res.json({ 
-    service: 'Megaverse Live API',
-    version: '1.0.0',
-    status: 'running',
-    endpoints: {
-      health: 'GET /api/health',
-      slots: 'GET /api/slots',
-      book: 'POST /api/book',
-      razorpayOrder: 'POST /api/razorpay/create-order',
-      paypalOrder: 'POST /api/paypal/create-order',
-      bookingDetails: 'GET /api/booking/:id',
-      cancelBooking: 'POST /api/booking/:id/cancel'
-    }
-  });
+  // Check if client wants JSON (API request) or HTML (browser)
+  if (req.accepts('json') && !req.accepts('html')) {
+    res.json({ 
+      service: 'Megaverse Live API',
+      version: '1.0.0',
+      status: 'running',
+      endpoints: {
+        health: 'GET /api/health',
+        slots: 'GET /api/slots',
+        book: 'POST /api/book',
+        razorpayOrder: 'POST /api/razorpay/create-order',
+        paypalOrder: 'POST /api/paypal/create-order',
+        bookingDetails: 'GET /api/booking/:id',
+        cancelBooking: 'POST /api/booking/:id/cancel'
+      }
+    });
+  } else {
+    // Try to serve index.html
+    res.sendFile(path.join(__dirname, '../public/index.html'));
+  }
 });
 
 // Health check
