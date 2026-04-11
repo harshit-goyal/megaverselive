@@ -26,6 +26,24 @@ app.use(express.json());
 
 // ============= ROUTES =============
 
+// Root endpoint
+app.get('/', (req, res) => {
+  res.json({ 
+    service: 'Megaverse Live API',
+    version: '1.0.0',
+    status: 'running',
+    endpoints: {
+      health: 'GET /api/health',
+      slots: 'GET /api/slots',
+      book: 'POST /api/book',
+      razorpayOrder: 'POST /api/razorpay/create-order',
+      paypalOrder: 'POST /api/paypal/create-order',
+      bookingDetails: 'GET /api/booking/:id',
+      cancelBooking: 'POST /api/booking/:id/cancel'
+    }
+  });
+});
+
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date(), message: 'Megaverse Live API is running' });
