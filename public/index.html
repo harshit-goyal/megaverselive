@@ -1650,12 +1650,17 @@
           return;
         }
         
-        // Don't render twice
+        // Don't render twice (only if SDK loaded AND render succeeded)
         if (paypalButtonsRendered) {
           return;
         }
         
-        paypalButtonsRendered = true;
+        const container = document.getElementById('paypalButtonContainer');
+        // If container is empty, SDK wasn't rendered yet - proceed
+        if (container.innerHTML.trim().length > 0) {
+          paypalButtonsRendered = true;
+          return;
+        }
         
         try {
           paypal.Buttons({
@@ -1685,6 +1690,7 @@
               paypalButtonsRendered = false;
             }
           }).render('#paypalButtonContainer');
+          paypalButtonsRendered = true;
         } catch (error) {
           console.error('PayPal button render error:', error);
           const errorMsg = document.getElementById('errorMessage');
