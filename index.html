@@ -392,7 +392,7 @@
 
     <!-- Payment SDKs -->
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-    <script src="https://www.paypal.com/sdk/js?client-id=AVhuMGkfL-xnk8FpJLbVVLjbmg5AKEYjVZXrMFiT7NyYNvgCQM1wWDGvNOQpZcLGHkc_yZ2TlCL0dxrX"></script>
+    <script src="https://www.paypal.com/sdk/js?client-id=AVhuMGkfL-xnk8FpJLbVVLjbmg5AKEYjVZXrMFiT7NyYNvgCQM1wWDGvNOQpZcLGHkc_yZ2TlCL0dxrX" defer></script>
   </head>
 
   <body class="bg-slate-50 text-slate-900 antialiased">
@@ -1616,16 +1616,7 @@
             </button>
 
             <!-- International PayPal Option -->
-            <button 
-              onclick="processPayment('paypal')"
-              id="paypalBtn"
-              class="w-full bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white py-4 px-6 rounded-xl font-bold text-lg transition transform hover:scale-105 flex items-center justify-center gap-2"
-            >
-              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M9.012 5C7.546 5 6.348 6.199 6.348 7.665c0 1.466 1.198 2.665 2.664 2.665h3.676V5H9.012m.024 8.33h-3.7c-1.466 0-2.664 1.199-2.664 2.665 0 1.466 1.198 2.665 2.664 2.665h3.7v-5.33m0 8h-3.7c-1.466 0-2.664 1.199-2.664 2.665 0 1.466 1.198 2.665 2.664 2.665h3.7v-5.33m5.988-16.33h-4c-1.466 0-2.664 1.199-2.664 2.665v1.998h6.664V7.665c0-1.466-1.198-2.665-2.664-2.665"/>
-              </svg>
-              <span>$15 - Pay with PayPal</span>
-            </button>
+            <div id="paypalButtonContainer" class="w-full rounded-xl overflow-hidden"></div>
           </div>
 
           <!-- Processing Message -->
@@ -1664,10 +1655,8 @@
         const processingMsg = document.getElementById('processingMessage');
         const errorMsg = document.getElementById('errorMessage');
         const upiBtn = document.getElementById('upiBtn');
-        const paypalBtn = document.getElementById('paypalBtn');
         
         upiBtn.disabled = true;
-        paypalBtn.disabled = true;
         processingMsg.classList.remove('hidden');
         errorMsg.classList.add('hidden');
 
@@ -1683,7 +1672,6 @@
           errorMsg.classList.remove('hidden');
           processingMsg.classList.add('hidden');
           upiBtn.disabled = false;
-          paypalBtn.disabled = false;
         }
       }
 
@@ -1722,15 +1710,33 @@
         if (!response.ok) throw new Error('Failed to create PayPal order');
         const data = await response.json();
 
-        if (typeof paypal === 'undefined') {
-          throw new Error('PayPal SDK not loaded');
+        // Wait for PayPal SDK to load (with timeout)
+        let attempts = 0;
+        while (typeof paypal === 'undefined' && attempts < 50) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+          attempts++;
         }
 
+        if (typeof paypal === 'undefined') {
+          throw new Error('PayPal SDK failed to load. Please refresh and try again.');
+        }
+
+        // Clear previous buttons and render PayPal buttons in dedicated container
+        const container = document.getElementById('paypalButtonContainer');
+        container.innerHTML = '';
+        
         paypal.Buttons({
-          createOrder: () => data.order_id,
-          onApprove: () => redirectToCalendar(),
-          onError: (err) => { throw new Error('PayPal payment failed: ' + err); }
-        }).render('#paymentModal');
+          createOrder: function() {
+            return data.order_id;
+          },
+          onApprove: function(details) {
+            redirectToCalendar();
+          },
+          onError: function(err) {
+            console.error('PayPal error:', err);
+            alert('PayPal payment failed. Please try again.');
+          }
+        }).render('#paypalButtonContainer');
       }
 
       function redirectToCalendar() {
