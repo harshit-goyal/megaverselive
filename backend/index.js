@@ -208,8 +208,7 @@ app.post('/api/razorpay/create-order', express.json(), async (req, res) => {
             res.json({
               order_id: response.id,
               razorpay_key: process.env.RAZORPAY_KEY_ID,
-              amount: amount,
-              booking_id
+              amount: amount
             });
           } else {
             res.status(400).json({ error: 'Failed to create Razorpay order' });
