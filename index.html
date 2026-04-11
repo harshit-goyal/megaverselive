@@ -1627,12 +1627,18 @@
     <script>
       const CAL_URL = 'https://cal.com/hgoyal925/1-1-connect';
 
+      let paypalButtonsRendered = false;
+
       function openPaymentModal() {
         document.getElementById('paymentModal').classList.remove('hidden');
         document.getElementById('errorMessage').classList.add('hidden');
         document.getElementById('processingMessage').classList.add('hidden');
         
-        // Render PayPal buttons when modal opens
+        // Clear PayPal container and re-render buttons when modal opens
+        const container = document.getElementById('paypalButtonContainer');
+        container.innerHTML = '';
+        paypalButtonsRendered = false;
+        
         renderPayPalButtons();
       }
       
@@ -1644,36 +1650,55 @@
           return;
         }
         
-        const container = document.getElementById('paypalButtonContainer');
-        // Don't render if already rendered (check if button exists)
-        if (container.innerHTML.trim().length > 0) {
+        // Don't render twice
+        if (paypalButtonsRendered) {
           return;
         }
         
-        paypal.Buttons({
-          createOrder: function(data, actions) {
-            return fetch('https://megaverse-live.onrender.com/api/paypal/create-order', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ amount: '15.00', currency: 'USD' })
-            })
-            .then(response => response.json())
-            .then(data => data.order_id);
-          },
-          onApprove: function(data, actions) {
-            redirectToCalendar();
-          },
-          onError: function(err) {
-            console.error('PayPal error:', err);
-            alert('PayPal payment failed. Please try again.');
-          }
-        }).render('#paypalButtonContainer');
+        paypalButtonsRendered = true;
+        
+        try {
+          paypal.Buttons({
+            createOrder: function(data, actions) {
+              return fetch('https://megaverse-live.onrender.com/api/paypal/create-order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ amount: '15.00', currency: 'USD' })
+              })
+              .then(response => {
+                if (!response.ok) throw new Error('Failed to create PayPal order');
+                return response.json();
+              })
+              .then(data => {
+                if (!data.order_id) throw new Error('No order ID returned');
+                return data.order_id;
+              });
+            },
+            onApprove: function(data, actions) {
+              redirectToCalendar();
+            },
+            onError: function(err) {
+              console.error('PayPal error:', err);
+              const errorMsg = document.getElementById('errorMessage');
+              errorMsg.textContent = 'PayPal payment failed: ' + (err.message || 'Unknown error');
+              errorMsg.classList.remove('hidden');
+              paypalButtonsRendered = false;
+            }
+          }).render('#paypalButtonContainer');
+        } catch (error) {
+          console.error('PayPal button render error:', error);
+          const errorMsg = document.getElementById('errorMessage');
+          errorMsg.textContent = 'Failed to load PayPal. Please try UPI or refresh the page.';
+          errorMsg.classList.remove('hidden');
+          paypalButtonsRendered = false;
+        }
       }
 
       function closePaymentModal() {
         document.getElementById('paymentModal').classList.add('hidden');
         document.getElementById('errorMessage').classList.add('hidden');
         document.getElementById('processingMessage').classList.add('hidden');
+        paypalButtonsRendered = false;
       }
 
       async function processPayment(method) {
