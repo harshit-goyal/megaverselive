@@ -1,0 +1,195 @@
+<!-- Booking Calendar Component (Add this to index.html in the #book section) -->
+
+<script>
+  // Frontend Booking Manager
+  class BookingManager {
+    constructor(apiUrl = 'http://localhost:8080/api') {
+      this.apiUrl = apiUrl;
+      this.selectedSlot = null;
+      this.stripePublishableKey = window.STRIPE_PUBLISHABLE_KEY || 'pk_test_your_key_here';
+    }
+
+    async fetchAvailableSlots() {
+      try {
+        const response = await fetch(`${this.apiUrl}/slots?mentor_id=1&limit=30`);
+        const data = await response.json();
+        return data.slots || [];
+      } catch (error) {
+        console.error('Error fetching slots:', error);
+        return [];
+      }
+    }
+
+    displaySlots(slots) {
+      const container = document.getElementById('slotsContainer');
+      if (!container) return;
+
+      container.innerHTML = '';
+
+      if (slots.length === 0) {
+        container.innerHTML = '<p class="text-center text-slate-400">No available slots. Please try again later.</p>';
+        return;
+      }
+
+      slots.forEach(slot => {
+        const date = new Date(slot.start_time);
+        const displayTime = date.toLocaleString('en-IN', {
+          timeZone: 'Asia/Kolkata',
+          weekday: 'short',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        });
+
+        const button = document.createElement('button');
+        button.className = 'w-full rounded-xl border border-brand-300/30 bg-brand-50 p-3 text-left transition hover:bg-brand-100 hover:border-brand-400';
+        button.innerHTML = `
+          <div class="font-semibold text-brand-700">${displayTime} IST</div>
+          <div class="text-sm text-brand-600">45 minutes</div>
+        `;
+        button.onclick = () => this.selectSlot(slot);
+        container.appendChild(button);
+      });
+    }
+
+    selectSlot(slot) {
+      this.selectedSlot = slot;
+      document.getElementById('selectedSlotDisplay').textContent = new Date(slot.start_time).toLocaleString('en-IN', {
+        timeZone: 'Asia/Kolkata',
+        weekday: 'long',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+      document.getElementById('bookingForm').style.display = 'block';
+    }
+
+    async submitBooking(formData) {
+      if (!this.selectedSlot) {
+        alert('Please select a time slot first');
+        return;
+      }
+
+      try {
+        // Create booking
+        const response = await fetch(`${this.apiUrl}/book`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            mentor_id: 1,
+            customer_name: formData.name,
+            customer_email: formData.email,
+            customer_phone: formData.phone,
+            session_topic: formData.topic,
+            start_time: this.selectedSlot.start_time,
+          }),
+        });
+
+        const bookingData = await response.json();
+
+        if (!response.ok) throw new Error(bookingData.error || 'Booking failed');
+
+        // Initialize Stripe payment
+        const stripe = Stripe(this.stripePublishableKey);
+        const result = await stripe.confirmCardPayment(bookingData.client_secret, {
+          payment_method: {
+            card: elements.getElement(CardElement),
+            billing_details: { name: formData.name, email: formData.email },
+          },
+        });
+
+        if (result.error) {
+          alert(`Payment error: ${result.error.message}`);
+        } else {
+          alert(`Booking confirmed! Check your email at ${formData.email}`);
+          location.reload();
+        }
+      } catch (error) {
+        alert(`Booking error: ${error.message}`);
+      }
+    }
+  }
+
+  // Initialize on page load
+  const bookingManager = new BookingManager();
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    const slots = await bookingManager.fetchAvailableSlots();
+    bookingManager.displaySlots(slots);
+
+    // Booking form submit
+    const form = document.getElementById('bookingFormSubmit');
+    if (form) {
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        bookingManager.submitBooking({
+          name: document.getElementById('customerName').value,
+          email: document.getElementById('customerEmail').value,
+          phone: document.getElementById('customerPhone').value,
+          topic: document.getElementById('sessionTopic').value,
+        });
+      });
+    }
+  });
+</script>
+
+<!-- HTML to add to index.html -->
+<div id="book" class="relative mx-auto max-w-6xl px-4 py-20">
+  <h2 class="text-3xl font-black text-white">Book Your Session</h2>
+  
+  <div class="mt-10 grid gap-8 md:grid-cols-2">
+    <!-- Slots Column -->
+    <div>
+      <h3 class="font-semibold text-white mb-4">Select a Time</h3>
+      <div id="slotsContainer" class="space-y-2 max-h-96 overflow-y-auto"></div>
+    </div>
+
+    <!-- Form Column -->
+    <div>
+      <div id="bookingForm" style="display: none;" class="rounded-2xl bg-white/5 border border-white/10 p-6">
+        <p class="text-slate-300 mb-4">
+          Selected: <span id="selectedSlotDisplay" class="font-semibold text-brand-300"></span>
+        </p>
+
+        <form id="bookingFormSubmit" class="space-y-4">
+          <input 
+            type="text" 
+            id="customerName" 
+            placeholder="Your Name" 
+            required
+            class="w-full rounded-lg bg-white/10 border border-white/20 px-4 py-2 text-white placeholder-slate-400"
+          />
+          <input 
+            type="email" 
+            id="customerEmail" 
+            placeholder="Your Email" 
+            required
+            class="w-full rounded-lg bg-white/10 border border-white/20 px-4 py-2 text-white placeholder-slate-400"
+          />
+          <input 
+            type="tel" 
+            id="customerPhone" 
+            placeholder="Phone (optional)" 
+            class="w-full rounded-lg bg-white/10 border border-white/20 px-4 py-2 text-white placeholder-slate-400"
+          />
+          <textarea 
+            id="sessionTopic" 
+            placeholder="What would you like to discuss?" 
+            required
+            class="w-full rounded-lg bg-white/10 border border-white/20 px-4 py-2 text-white placeholder-slate-400"
+            rows="3"
+          ></textarea>
+
+          <button 
+            type="submit" 
+            class="w-full rounded-lg bg-gradient-to-r from-brand-500 to-neon-pink py-3 font-semibold text-white transition hover:shadow-neon"
+          >
+            Complete Booking
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
