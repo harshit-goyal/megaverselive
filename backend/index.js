@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const https = require('https');
 const emailService = require('./services/email');
 const { generateAvailableSlots, getAvailableSlots } = require('./services/slots');
 
@@ -91,33 +91,33 @@ app.post('/api/book', async (req, res) => {
       [mentor_id]
     );
 
-    const amount_cents = mentorResult.rows[0].hourly_rate; // Assuming full session price
+    const amount = Math.round(mentorResult.rows[0].hourly_rate * 100) / 100; // Amount in INR
 
-    // Create Stripe payment intent
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: amount_cents,
-      currency: 'usd',
-      metadata: {
-        mentor_id,
-        customer_email,
-        start_time: start_time.toISOString(),
-      },
-    });
-
-    // Create booking record (payment_status: pending)
+    // Create booking record with pending status
     const bookingResult = await client.query(
       `INSERT INTO bookings 
-       (mentor_id, customer_name, customer_email, customer_phone, session_topic, start_time, end_time, stripe_payment_id, payment_status)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+       (mentor_id, customer_name, customer_email, customer_phone, session_topic, start_time, end_time, payment_status)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
        RETURNING id`,
-      [mentor_id, customer_name, customer_email, customer_phone, session_topic, start_time, end_time, paymentIntent.id, 'pending']
+      [mentor_id, customer_name, customer_email, customer_phone, session_topic, start_time, end_time, 'pending']
     );
 
+    const booking_id = bookingResult.rows[0].id;
+
+    // Return PayPal order details
     res.json({
-      booking_id: bookingResult.rows[0].id,
-      client_secret: paymentIntent.client_secret,
-      amount: amount_cents,
-      currency: 'usd',
+      booking_id,
+      amount,
+      currency: 'INR',
+      paypal_client_id: process.env.PAYPAL_CLIENT_ID,
+      booking_details: {
+        mentor_id,
+        customer_email,
+        customer_name,
+        session_topic,
+        start_time: start_time.toISOString(),
+        end_time: end_time.toISOString(),
+      }
     });
   } catch (error) {
     console.error('Error creating booking:', error);
@@ -127,64 +127,151 @@ app.post('/api/book', async (req, res) => {
   }
 });
 
-// Stripe webhook handler
-app.post('/api/webhook/stripe', express.raw({ type: 'application/json' }), async (req, res) => {
-  const sig = req.headers['stripe-signature'];
-  
+// PayPal webhook handler
+app.post('/api/webhook/paypal', express.json(), async (req, res) => {
   try {
-    const event = stripe.webhooks.constructEvent(
-      req.body,
-      sig,
-      process.env.STRIPE_WEBHOOK_SECRET
-    );
-
-    if (event.type === 'payment_intent.succeeded') {
-      const paymentIntent = event.data.object;
-      
-      // Get booking details
-      const bookingResult = await pool.query(
-        'SELECT * FROM bookings WHERE stripe_payment_id = $1',
-        [paymentIntent.id]
-      );
-
-      if (bookingResult.rows.length > 0) {
-        const booking = bookingResult.rows[0];
-
-        // Update booking status
-        await pool.query(
-          `UPDATE bookings 
-           SET payment_status = 'completed', booking_status = 'confirmed'
-           WHERE stripe_payment_id = $1`,
-          [paymentIntent.id]
-        );
-
-        // Mark time slot as booked
-        await pool.query(
-          `UPDATE time_slots 
-           SET is_booked = TRUE 
-           WHERE mentor_id = $1 AND start_time = $2`,
-          [booking.mentor_id, booking.start_time]
-        );
-
-        // Get mentor info for email
-        const mentorResult = await pool.query(
-          'SELECT name, email FROM mentors WHERE id = $1',
-          [booking.mentor_id]
-        );
-
-        // Send confirmation email
-        if (mentorResult.rows.length > 0) {
-          await emailService.sendBookingConfirmation(booking, mentorResult.rows[0]);
-        }
-
-        console.log(`✅ Booking confirmed: ${booking.id} for ${booking.customer_email}`);
-      }
+    const { event_type, resource } = req.body;
+    
+    // Only handle payment completed events
+    if (event_type !== 'CHECKOUT.ORDER.COMPLETED') {
+      return res.json({ success: true });
     }
 
-    res.json({ received: true });
+    const order_id = resource.id;
+    const booking_id = resource.purchase_units[0].custom_id; // We'll pass booking_id in custom field
+
+    if (!booking_id) {
+      return res.status(400).json({ error: 'No booking_id provided' });
+    }
+
+    // Get booking details
+    const bookingResult = await pool.query(
+      'SELECT * FROM bookings WHERE id = $1',
+      [booking_id]
+    );
+
+    if (bookingResult.rows.length > 0) {
+      const booking = bookingResult.rows[0];
+
+      // Update booking status
+      await pool.query(
+        `UPDATE bookings 
+         SET payment_status = 'completed', booking_status = 'confirmed'
+         WHERE id = $1`,
+        [booking_id]
+      );
+
+      // Mark time slot as booked
+      await pool.query(
+        `UPDATE time_slots 
+         SET is_booked = TRUE 
+         WHERE mentor_id = $1 AND start_time = $2`,
+        [booking.mentor_id, booking.start_time]
+      );
+
+      // Get mentor info for email
+      const mentorResult = await pool.query(
+        'SELECT name, email FROM mentors WHERE id = $1',
+        [booking.mentor_id]
+      );
+
+      // Send confirmation email
+      if (mentorResult.rows.length > 0) {
+        await emailService.sendBookingConfirmation(booking, mentorResult.rows[0]);
+      }
+
+      // Store payment record
+      const amount = resource.purchase_units[0].amount.value;
+      await pool.query(
+        `INSERT INTO payments (booking_id, amount, payment_method, payment_id, status)
+         VALUES ($1, $2, $3, $4, $5)`,
+        [booking_id, amount, 'paypal', order_id, 'completed']
+      );
+
+      console.log(`✅ Booking confirmed: ${booking_id} for ${booking.customer_email} (PayPal: ${order_id})`);
+    }
+
+    res.json({ success: true });
   } catch (error) {
     console.error('Webhook error:', error);
-    res.status(400).send(`Webhook Error: ${error.message}`);
+    res.status(400).json({ error: error.message });
+  }
+});
+
+// Create PayPal order
+app.post('/api/paypal/create-order', express.json(), async (req, res) => {
+  try {
+    const { booking_id, amount } = req.body;
+
+    // Get booking details
+    const bookingResult = await pool.query(
+      'SELECT * FROM bookings WHERE id = $1',
+      [booking_id]
+    );
+
+    if (bookingResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Booking not found' });
+    }
+
+    const booking = bookingResult.rows[0];
+
+    const createOrderUrl = 'https://api.sandbox.paypal.com/v2/checkout/orders';
+    const auth = Buffer.from(`${process.env.PAYPAL_CLIENT_ID}:${process.env.PAYPAL_SECRET}`).toString('base64');
+
+    const orderData = {
+      intent: 'CAPTURE',
+      purchase_units: [{
+        reference_id: booking_id,
+        custom_id: booking_id,
+        amount: {
+          currency_code: 'INR',
+          value: amount.toString()
+        },
+        description: `Booking with ${booking.session_topic || 'Mentor'}`
+      }],
+      application_context: {
+        brand_name: 'Megaverse Live',
+        landing_page: 'BILLING',
+        user_action: 'PAY_NOW',
+        return_url: `${process.env.FRONTEND_URL}/booking-success`,
+        cancel_url: `${process.env.FRONTEND_URL}/booking-cancel`
+      }
+    };
+
+    const options = {
+      hostname: 'api.sandbox.paypal.com',
+      port: 443,
+      path: '/v2/checkout/orders',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Basic ${auth}`
+      }
+    };
+
+    const request = https.request(options, (paypalRes) => {
+      let data = '';
+      paypalRes.on('data', chunk => data += chunk);
+      paypalRes.on('end', () => {
+        const response = JSON.parse(data);
+        if (response.id) {
+          res.json({ order_id: response.id });
+        } else {
+          res.status(400).json({ error: 'Failed to create PayPal order' });
+        }
+      });
+    });
+
+    request.on('error', error => {
+      console.error('PayPal request error:', error);
+      res.status(500).json({ error: 'PayPal service unavailable' });
+    });
+
+    request.write(JSON.stringify(orderData));
+    request.end();
+  } catch (error) {
+    console.error('Error creating PayPal order:', error);
+    res.status(500).json({ error: error.message });
   }
 });
 
