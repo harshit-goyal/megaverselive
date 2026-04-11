@@ -175,19 +175,7 @@ app.post('/api/book', async (req, res) => {
 // Create Razorpay order
 app.post('/api/razorpay/create-order', express.json(), async (req, res) => {
   try {
-    const { booking_id, amount } = req.body;
-
-    // Get booking details
-    const bookingResult = await pool.query(
-      'SELECT * FROM bookings WHERE id = $1',
-      [booking_id]
-    );
-
-    if (bookingResult.rows.length === 0) {
-      return res.status(404).json({ error: 'Booking not found' });
-    }
-
-    const booking = bookingResult.rows[0];
+    const { amount } = req.body;
 
     // Create Razorpay order using API
     const options = {
@@ -204,11 +192,9 @@ app.post('/api/razorpay/create-order', express.json(), async (req, res) => {
     const orderData = {
       amount: Math.round(amount * 100), // Convert to paise
       currency: 'INR',
-      receipt: `booking_${booking_id}`,
+      receipt: `order_${Date.now()}`,
       notes: {
-        booking_id,
-        customer_email: booking.customer_email,
-        session_topic: booking.session_topic
+        merchant: 'Megaverse Live'
       }
     };
 
@@ -390,40 +376,26 @@ app.post('/api/webhook/paypal', express.json(), async (req, res) => {
 // Create PayPal order
 app.post('/api/paypal/create-order', express.json(), async (req, res) => {
   try {
-    const { booking_id, amount } = req.body;
-
-    // Get booking details
-    const bookingResult = await pool.query(
-      'SELECT * FROM bookings WHERE id = $1',
-      [booking_id]
-    );
-
-    if (bookingResult.rows.length === 0) {
-      return res.status(404).json({ error: 'Booking not found' });
-    }
-
-    const booking = bookingResult.rows[0];
+    const { amount, currency } = req.body;
 
     const createOrderUrl = 'https://api.sandbox.paypal.com/v2/checkout/orders';
-    const auth = Buffer.from(`${process.env.PAYPAL_CLIENT_ID}:${process.env.PAYPAL_SECRET}`).toString('base64');
+    const auth = Buffer.from(`${process.env.PAYPAL_CLIENT_ID}:${process.env.PAYPAL_CLIENT_SECRET}`).toString('base64');
 
     const orderData = {
       intent: 'CAPTURE',
       purchase_units: [{
-        reference_id: booking_id,
-        custom_id: booking_id,
         amount: {
-          currency_code: 'INR',
+          currency_code: currency || 'USD',
           value: amount.toString()
         },
-        description: `Booking with ${booking.session_topic || 'Mentor'}`
+        description: 'Megaverse Live - 1:1 Mentorship Session'
       }],
       application_context: {
         brand_name: 'Megaverse Live',
         landing_page: 'BILLING',
         user_action: 'PAY_NOW',
-        return_url: `${process.env.FRONTEND_URL}/booking-success`,
-        cancel_url: `${process.env.FRONTEND_URL}/booking-cancel`
+        return_url: `https://megaverse-live.onrender.com/`,
+        cancel_url: `https://megaverse-live.onrender.com/`
       }
     };
 
