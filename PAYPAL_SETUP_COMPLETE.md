@@ -63,6 +63,12 @@ PAYPAL_CLIENT_SECRET = [YOUR_SECRET_FROM_STEP_2.3]
 PAYPAL_API_URL       = https://api.sandbox.paypal.com
 ```
 
+**⚠️ IMPORTANT: PAYPAL_API_URL is NOT in PayPal dashboard!**
+- It's a hardcoded URL that your backend uses
+- For testing: `https://api.sandbox.paypal.com`
+- For production: `https://api.paypal.com` (change later)
+- Just copy-paste the value above
+
 ### 3.2 Test Payment Flow
 1. Your frontend should now show "Pay with PayPal"
 2. Click it
@@ -97,6 +103,7 @@ When you're ready for real money:
    PAYPAL_CLIENT_SECRET = [YOUR_LIVE_SECRET]
    PAYPAL_API_URL       = https://api.paypal.com
    ```
+   **Note:** Only PAYPAL_API_URL changes from sandbox URL. Copy it exactly as shown.
 5. Save & redeploy (automatic)
 
 ### 4.3 You're Live!
