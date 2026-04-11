@@ -1,0 +1,49 @@
+DNS SETUP STATUS - April 11, 2026
+=================================
+
+CURRENT ISSUE:
+megaverselive.com is NOT yet pointing to Render
+It's still pointing to old Netlify server (paused)
+
+WHAT NEEDS TO HAPPEN:
+Add CNAME record in NSOne to point megaverselive.com → Render
+
+EXACT VALUES TO ADD IN NSONE:
+=============================
+
+LOG INTO: https://nsone.net
+DOMAIN: megaverselive.com
+
+ADD THIS RECORD:
+Name: @
+Type: CNAME
+Value: megaverse-live.onrender.com
+TTL: 3600
+Save
+
+OPTIONAL (for www):
+Name: www
+Type: CNAME
+Value: megaverse-live.onrender.com
+TTL: 3600
+Save
+
+AFTER ADDING:
+- Wait 10-15 minutes
+- DNS will propagate
+- megaverselive.com will point to Render
+- Your site will be live at https://megaverselive.com/
+
+CURRENT DNS STATUS:
+megaverselive.com → 52.74.6.109 (OLD Netlify)
+megaverse-live.onrender.com → Render (WORKING)
+
+AFTER CNAME ADDED:
+megaverselive.com → megaverse-live.onrender.com (WILL WORK)
+
+ACTION REQUIRED:
+User must add CNAME record in NSOne dashboard
+This is the ONLY step remaining!
+
+VERIFICATION:
+After DNS updates, test: curl https://megaverselive.com/
