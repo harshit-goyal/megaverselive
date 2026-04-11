@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
 const https = require('https');
+const crypto = require('crypto');
 const emailService = require('./services/email');
 const { generateAvailableSlots, getAvailableSlots } = require('./services/slots');
 
@@ -104,12 +105,22 @@ app.post('/api/book', async (req, res) => {
 
     const booking_id = bookingResult.rows[0].id;
 
-    // Return PayPal order details
+    // Return both payment options
     res.json({
       booking_id,
       amount,
       currency: 'INR',
-      paypal_client_id: process.env.PAYPAL_CLIENT_ID,
+      payment_methods: {
+        upi: {
+          available: !!process.env.RAZORPAY_KEY_ID,
+          provider: 'razorpay'
+        },
+        international: {
+          available: !!process.env.PAYPAL_CLIENT_ID,
+          provider: 'paypal',
+          client_id: process.env.PAYPAL_CLIENT_ID
+        }
+      },
       booking_details: {
         mentor_id,
         customer_email,
@@ -127,7 +138,153 @@ app.post('/api/book', async (req, res) => {
   }
 });
 
-// PayPal webhook handler
+// ============= RAZORPAY (UPI for India) =============
+
+// Create Razorpay order
+app.post('/api/razorpay/create-order', express.json(), async (req, res) => {
+  try {
+    const { booking_id, amount } = req.body;
+
+    // Get booking details
+    const bookingResult = await pool.query(
+      'SELECT * FROM bookings WHERE id = $1',
+      [booking_id]
+    );
+
+    if (bookingResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Booking not found' });
+    }
+
+    const booking = bookingResult.rows[0];
+
+    // Create Razorpay order using API
+    const options = {
+      hostname: 'api.razorpay.com',
+      port: 443,
+      path: '/v1/orders',
+      method: 'POST',
+      auth: `${process.env.RAZORPAY_KEY_ID}:${process.env.RAZORPAY_KEY_SECRET}`,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    };
+
+    const orderData = {
+      amount: Math.round(amount * 100), // Convert to paise
+      currency: 'INR',
+      receipt: `booking_${booking_id}`,
+      notes: {
+        booking_id,
+        customer_email: booking.customer_email,
+        session_topic: booking.session_topic
+      }
+    };
+
+    const request = https.request(options, (razorpayRes) => {
+      let data = '';
+      razorpayRes.on('data', chunk => data += chunk);
+      razorpayRes.on('end', () => {
+        try {
+          const response = JSON.parse(data);
+          if (response.id) {
+            res.json({
+              order_id: response.id,
+              razorpay_key: process.env.RAZORPAY_KEY_ID,
+              amount: amount,
+              booking_id
+            });
+          } else {
+            res.status(400).json({ error: 'Failed to create Razorpay order' });
+          }
+        } catch (e) {
+          res.status(500).json({ error: 'Invalid response from Razorpay' });
+        }
+      });
+    });
+
+    request.on('error', error => {
+      console.error('Razorpay request error:', error);
+      res.status(500).json({ error: 'Razorpay service unavailable' });
+    });
+
+    request.write(JSON.stringify(orderData));
+    request.end();
+  } catch (error) {
+    console.error('Error creating Razorpay order:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Razorpay webhook handler
+app.post('/api/webhook/razorpay', express.json(), async (req, res) => {
+  try {
+    const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = req.body;
+
+    // Verify webhook signature
+    const text = razorpay_order_id + "|" + razorpay_payment_id;
+    const expectedSignature = crypto
+      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+      .update(text)
+      .digest("hex");
+
+    if (expectedSignature !== razorpay_signature) {
+      return res.status(400).json({ error: 'Invalid signature' });
+    }
+
+    // Extract booking_id from receipt
+    const bookingResult = await pool.query(
+      'SELECT * FROM bookings WHERE payment_status = $1 ORDER BY created_at DESC LIMIT 1',
+      ['pending']
+    );
+
+    if (bookingResult.rows.length > 0) {
+      const booking = bookingResult.rows[0];
+
+      // Update booking status
+      await pool.query(
+        `UPDATE bookings 
+         SET payment_status = 'completed', booking_status = 'confirmed'
+         WHERE id = $1`,
+        [booking.id]
+      );
+
+      // Mark time slot as booked
+      await pool.query(
+        `UPDATE time_slots 
+         SET is_booked = TRUE 
+         WHERE mentor_id = $1 AND start_time = $2`,
+        [booking.mentor_id, booking.start_time]
+      );
+
+      // Get mentor info for email
+      const mentorResult = await pool.query(
+        'SELECT name, email FROM mentors WHERE id = $1',
+        [booking.mentor_id]
+      );
+
+      // Send confirmation email
+      if (mentorResult.rows.length > 0) {
+        await emailService.sendBookingConfirmation(booking, mentorResult.rows[0]);
+      }
+
+      // Store payment record
+      await pool.query(
+        `INSERT INTO payments (booking_id, amount, payment_method, payment_id, status)
+         VALUES ($1, $2, $3, $4, $5)`,
+        [booking.id, booking.amount_paid || 0, 'razorpay_upi', razorpay_payment_id, 'completed']
+      );
+
+      console.log(`✅ Booking confirmed via UPI: ${booking.id} for ${booking.customer_email} (Razorpay: ${razorpay_payment_id})`);
+    }
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Webhook error:', error);
+    res.status(400).json({ error: error.message });
+  }
+});
+
+// ============= PAYPAL (International) =============
 app.post('/api/webhook/paypal', express.json(), async (req, res) => {
   try {
     const { event_type, resource } = req.body;
