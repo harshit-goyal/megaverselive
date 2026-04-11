@@ -398,7 +398,11 @@ app.post('/api/paypal/create-order', express.json(), async (req, res) => {
       });
     }
 
-    const createOrderUrl = 'https://api.sandbox.paypal.com/v2/checkout/orders';
+    // Use live endpoint (api-m.paypal.com) or sandbox based on environment
+    const isLive = process.env.PAYPAL_MODE === 'live' || !process.env.PAYPAL_MODE;
+    const apiHost = isLive ? 'api-m.paypal.com' : 'api.sandbox.paypal.com';
+    const createOrderUrl = `https://${apiHost}/v2/checkout/orders`;
+    
     const auth = Buffer.from(`${process.env.PAYPAL_CLIENT_ID}:${process.env.PAYPAL_CLIENT_SECRET}`).toString('base64');
 
     const orderData = {
@@ -420,7 +424,7 @@ app.post('/api/paypal/create-order', express.json(), async (req, res) => {
     };
 
     const options = {
-      hostname: 'api.sandbox.paypal.com',
+      hostname: apiHost,
       port: 443,
       path: '/v2/checkout/orders',
       method: 'POST',
