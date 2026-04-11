@@ -392,6 +392,7 @@
 
     <!-- Payment SDKs -->
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="https://www.paypal.com/sdk/js?client-id=Ac7L8xqgyXhdb3SIeor_vzhHT0chDG0dml2n5wZ3pnzEpcthqUnXrBM7TMb-M1cmz7kL14WE93u7Ogh7&currency=USD" async></script>
   </head>
 
   <body class="bg-slate-50 text-slate-900 antialiased">
@@ -1602,12 +1603,8 @@
               <span>₹1200 - Pay with UPI</span>
             </button>
 
-            <!-- International PayPal Option - Coming Soon -->
-            <div class="w-full rounded-xl overflow-hidden p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-dashed border-blue-300 text-center">
-              <p class="text-sm font-semibold text-blue-900">🔵 PayPal Payment</p>
-              <p class="text-xs text-blue-700 mt-1">Coming Soon - International payments</p>
-              <p class="text-xs text-blue-600 mt-2">For now, please use UPI or contact us for international options</p>
-            </div>
+            <!-- International PayPal Option -->
+            <div id="paypalButtonContainer" class="w-full rounded-xl overflow-hidden"></div>
           </div>
 
           <!-- Processing Message -->
@@ -1630,11 +1627,76 @@
     <script>
       const CAL_URL = 'https://cal.com/hgoyal925/1-1-connect';
 
+      let paypalButtonsRendered = false;
+
       function openPaymentModal() {
         document.getElementById('paymentModal').classList.remove('hidden');
         document.getElementById('errorMessage').classList.add('hidden');
         document.getElementById('processingMessage').classList.add('hidden');
-        console.log('Payment modal opened');
+        
+        // Reset PayPal rendering state
+        const container = document.getElementById('paypalButtonContainer');
+        container.innerHTML = '';
+        paypalButtonsRendered = false;
+        
+        console.log('Payment modal opened - rendering PayPal buttons');
+        renderPayPalButtons();
+      }
+      
+      function renderPayPalButtons() {
+        // Wait for PayPal SDK to load
+        if (typeof paypal === 'undefined') {
+          console.log('Waiting for PayPal SDK to load...');
+          setTimeout(renderPayPalButtons, 100);
+          return;
+        }
+        
+        if (paypalButtonsRendered) {
+          console.log('PayPal buttons already rendered');
+          return;
+        }
+        
+        paypalButtonsRendered = true;
+        console.log('PayPal SDK loaded, creating buttons...');
+        
+        try {
+          paypal.Buttons({
+            style: {
+              layout: 'vertical',
+              color: 'blue',
+              shape: 'rect',
+              label: 'paypal'
+            },
+            createOrder: function(data, actions) {
+              console.log('Creating PayPal order...');
+              return fetch('https://megaverse-live.onrender.com/api/paypal/create-order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ amount: '15.00', currency: 'USD' })
+              })
+              .then(response => response.json())
+              .then(data => {
+                console.log('Order created:', data.order_id);
+                return data.order_id;
+              });
+            },
+            onApprove: function(data, actions) {
+              console.log('Payment approved, redirecting...');
+              redirectToCalendar();
+            },
+            onError: function(err) {
+              console.error('PayPal error:', err);
+              const errorMsg = document.getElementById('errorMessage');
+              errorMsg.textContent = 'PayPal error. Please try again or use UPI.';
+              errorMsg.classList.remove('hidden');
+              paypalButtonsRendered = false;
+            }
+          }).render('#paypalButtonContainer');
+          console.log('PayPal buttons rendered successfully');
+        } catch (error) {
+          console.error('Error rendering PayPal buttons:', error);
+          paypalButtonsRendered = false;
+        }
       }
 
       function closePaymentModal() {
