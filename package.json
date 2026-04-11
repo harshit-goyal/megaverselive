@@ -1,9 +1,20 @@
 {
+  "name": "megaverse-live-backend",
+  "version": "1.0.0",
+  "description": "Booking platform with Razorpay UPI and PayPal",
+  "main": "backend/index.js",
+  "scripts": {
+    "start": "node backend/index.js",
+    "dev": "nodemon backend/index.js"
+  },
   "dependencies": {
-    "@azure/arm-appservice": "^18.0.0",
-    "@azure/arm-postgresql": "^6.1.0",
-    "@azure/arm-resources": "^7.0.0",
-    "@azure/identity": "^4.13.1",
-    "axios": "^1.15.0"
+    "express": "^4.18.2",
+    "pg": "^8.11.3",
+    "axios": "^1.15.0",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
   }
 }
+
