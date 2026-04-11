@@ -1,0 +1,49 @@
+RENDER CUSTOM DOMAIN - VALIDATION ERROR FIX
+============================================
+
+ERROR YOU GOT:
+"value does not match regex pattern"
+
+ROOT CAUSE:
+You entered domain with invalid characters.
+
+VALID FORMAT:
+megaverselive.com
+
+COMMON MISTAKES (DON'T DO THESE):
+❌ https://megaverselive.com  (remove https://)
+❌ www.megaverselive.com (use root domain only)
+❌ megaverselive.com/ (no trailing slash)
+❌ megaverselive.com. (no period at end)
+❌ spaces or special characters
+
+EXACT STEPS TO FIX:
+1. Go to: https://dashboard.render.com
+2. Click service: megaverse-live
+3. Go to: Settings tab
+4. Find: Custom Domain section
+5. Click in the field
+6. DELETE everything in it
+7. Type EXACTLY: megaverselive.com
+8. Click: Add Custom Domain
+9. Click: Add
+
+WHAT RENDER WILL DO:
+- Create DNS validation records
+- Set up SSL certificate automatically
+- Make site available at https://megaverselive.com/
+
+AFTER RENDER ACCEPTS IT:
+Render will show you a CNAME record to add in NSOne:
+- Copy that CNAME value
+- Go to NSOne dashboard
+- Add it to megaverselive.com DNS records
+- Wait 10-15 minutes
+- Done!
+
+CURRENT STATUS:
+Render app: ✅ Running at megaverse-live.onrender.com
+Domain: ⏳ Waiting to be added to Render
+DNS: ⏳ Waiting to be configured in NSOne
+
+NEXT: Add domain to Render exactly as shown above
