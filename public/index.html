@@ -1605,6 +1605,9 @@
 
             <!-- International PayPal Option -->
             <div id="paypalButtonContainer" class="w-full rounded-xl overflow-hidden"></div>
+            <div id="paypalLoadingStatus" class="hidden mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded text-xs text-yellow-700">
+              Loading PayPal... Check browser console (F12) for details.
+            </div>
           </div>
 
           <!-- Processing Message -->
@@ -1628,37 +1631,58 @@
       const CAL_URL = 'https://cal.com/hgoyal925/1-1-connect';
 
       let paypalButtonsRendered = false;
+      let paypalSDKRetries = 0;
+      const MAX_SDK_RETRIES = 50; // 5 seconds max wait
 
       function openPaymentModal() {
         document.getElementById('paymentModal').classList.remove('hidden');
         document.getElementById('errorMessage').classList.add('hidden');
         document.getElementById('processingMessage').classList.add('hidden');
+        document.getElementById('paypalLoadingStatus').classList.add('hidden');
         
-        // Clear PayPal container and re-render buttons when modal opens
+        // Reset PayPal rendering state
         const container = document.getElementById('paypalButtonContainer');
         container.innerHTML = '';
         paypalButtonsRendered = false;
+        paypalSDKRetries = 0;
         
+        console.log('Modal opened, attempting to render PayPal buttons...');
         renderPayPalButtons();
       }
       
       function renderPayPalButtons() {
-        // Wait for PayPal SDK to load if not already loaded
+        paypalSDKRetries++;
+        
+        // Check if PayPal SDK is loaded
         if (typeof paypal === 'undefined') {
-          // SDK not loaded yet, try again in 100ms
+          if (paypalSDKRetries > MAX_SDK_RETRIES) {
+            console.error('PayPal SDK failed to load after 50 retries');
+            document.getElementById('paypalLoadingStatus').classList.add('hidden');
+            const errorMsg = document.getElementById('errorMessage');
+            errorMsg.textContent = 'PayPal SDK failed to load. Please use UPI or refresh the page.';
+            errorMsg.classList.remove('hidden');
+            return;
+          }
+          document.getElementById('paypalLoadingStatus').classList.remove('hidden');
+          console.log('PayPal SDK not loaded yet, retrying... (attempt ' + paypalSDKRetries + ')');
           setTimeout(renderPayPalButtons, 100);
           return;
         }
         
+        document.getElementById('paypalLoadingStatus').classList.add('hidden');
+        console.log('PayPal SDK loaded! Creating buttons...');
+        
         // Don't render twice
         if (paypalButtonsRendered) {
+          console.log('PayPal buttons already rendered');
           return;
         }
         
         paypalButtonsRendered = true;
         
         try {
-          paypal.Buttons({
+          console.log('Calling paypal.Buttons()...');
+          const buttonsInstance = paypal.Buttons({
             style: {
               layout: 'vertical',
               color: 'blue',
@@ -1666,18 +1690,20 @@
               label: 'paypal'
             },
             createOrder: function(data, actions) {
+              console.log('Creating PayPal order...');
               return fetch('https://megaverse-live.onrender.com/api/paypal/create-order', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ amount: '15.00', currency: 'USD' })
               })
               .then(response => {
+                console.log('PayPal order response:', response.status);
                 if (!response.ok) throw new Error('Failed to create PayPal order');
                 return response.json();
               })
               .then(data => {
-                if (!data.order_id) throw new Error('No order ID returned');
                 console.log('PayPal order created:', data.order_id);
+                if (!data.order_id) throw new Error('No order ID returned');
                 return data.order_id;
               });
             },
@@ -1686,21 +1712,19 @@
               redirectToCalendar();
             },
             onError: function(err) {
-              console.error('PayPal error:', err);
+              console.error('PayPal payment error:', err);
               const errorMsg = document.getElementById('errorMessage');
               errorMsg.textContent = 'PayPal error: ' + (err.message || JSON.stringify(err));
               errorMsg.classList.remove('hidden');
               paypalButtonsRendered = false;
             }
-          }).render('#paypalButtonContainer').catch(function(renderErr) {
-            console.error('PayPal render failed:', renderErr);
-            const errorMsg = document.getElementById('errorMessage');
-            errorMsg.textContent = 'Failed to load PayPal buttons: ' + renderErr.message;
-            errorMsg.classList.remove('hidden');
-            paypalButtonsRendered = false;
           });
+          
+          console.log('Rendering PayPal buttons into container...');
+          buttonsInstance.render('#paypalButtonContainer');
+          console.log('PayPal buttons rendered successfully');
         } catch (error) {
-          console.error('PayPal button render error:', error);
+          console.error('PayPal button creation error:', error);
           const errorMsg = document.getElementById('errorMessage');
           errorMsg.textContent = 'PayPal SDK error: ' + error.message;
           errorMsg.classList.remove('hidden');
