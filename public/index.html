@@ -1757,6 +1757,14 @@
         const modal = document.getElementById('paymentModal');
         if (e.target === modal) closePaymentModal();
       });
+
+      // Keep-alive: Ping backend every 10 minutes to prevent cold start on Render free tier
+      function keepAlive() {
+        fetch('https://megaverse-live.onrender.com/api/health', { method: 'GET' })
+          .catch(err => console.log('Keep-alive ping sent'));
+      }
+      setInterval(keepAlive, 600000); // Ping every 10 minutes
+      keepAlive(); // Initial ping on page load
     </script>
   </body>
 </html>
