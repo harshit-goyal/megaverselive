@@ -171,6 +171,8 @@ app.post('/api/book', async (req, res) => {
 });
 
 // ============= RAZORPAY (UPI for India) =============
+// Payment processing for UPI via Razorpay
+
 
 // Create Razorpay order
 app.post('/api/razorpay/create-order', express.json(), async (req, res) => {
