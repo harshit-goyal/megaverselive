@@ -1643,6 +1643,37 @@
         document.getElementById('paymentModal').classList.remove('hidden');
         document.getElementById('errorMessage').classList.add('hidden');
         document.getElementById('processingMessage').classList.add('hidden');
+        
+        // Render PayPal buttons when modal opens
+        renderPayPalButtons();
+      }
+      
+      function renderPayPalButtons() {
+        // Only render if PayPal SDK is loaded
+        if (typeof paypal !== 'undefined') {
+          const container = document.getElementById('paypalButtonContainer');
+          // Clear any existing buttons
+          container.innerHTML = '';
+          
+          paypal.Buttons({
+            createOrder: function(data, actions) {
+              return fetch('https://megaverse-live.onrender.com/api/paypal/create-order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ amount: '15.00', currency: 'USD' })
+              })
+              .then(response => response.json())
+              .then(data => data.order_id);
+            },
+            onApprove: function(data, actions) {
+              redirectToCalendar();
+            },
+            onError: function(err) {
+              console.error('PayPal error:', err);
+              alert('PayPal payment failed. Please try again.');
+            }
+          }).render('#paypalButtonContainer');
+        }
       }
 
       function closePaymentModal() {
@@ -1663,8 +1694,6 @@
         try {
           if (method === 'upi') {
             await processRazorpayPayment();
-          } else if (method === 'paypal') {
-            await processPayPalPayment();
           }
         } catch (error) {
           console.error('Payment error:', error);
@@ -1698,45 +1727,6 @@
 
         const rzp = new Razorpay(options);
         rzp.open();
-      }
-
-      async function processPayPalPayment() {
-        const response = await fetch('https://megaverse-live.onrender.com/api/paypal/create-order', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ amount: '15.00', currency: 'USD' })
-        });
-
-        if (!response.ok) throw new Error('Failed to create PayPal order');
-        const data = await response.json();
-
-        // Wait for PayPal SDK to load (with timeout)
-        let attempts = 0;
-        while (typeof paypal === 'undefined' && attempts < 50) {
-          await new Promise(resolve => setTimeout(resolve, 100));
-          attempts++;
-        }
-
-        if (typeof paypal === 'undefined') {
-          throw new Error('PayPal SDK failed to load. Please refresh and try again.');
-        }
-
-        // Clear previous buttons and render PayPal buttons in dedicated container
-        const container = document.getElementById('paypalButtonContainer');
-        container.innerHTML = '';
-        
-        paypal.Buttons({
-          createOrder: function() {
-            return data.order_id;
-          },
-          onApprove: function(details) {
-            redirectToCalendar();
-          },
-          onError: function(err) {
-            console.error('PayPal error:', err);
-            alert('PayPal payment failed. Please try again.');
-          }
-        }).render('#paypalButtonContainer');
       }
 
       function redirectToCalendar() {
