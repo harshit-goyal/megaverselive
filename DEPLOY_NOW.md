@@ -1,149 +1,181 @@
-# 🎯 ONE-STEP DEPLOYMENT GUIDE
+# 🚀 DEPLOY NOW - 38 Minutes to Production
 
-Your backend is **100% ready**. You just need to deploy it.
-
-## Current Status
-✅ Backend Code: Working (tested locally)
-✅ Database: Live on Azure
-✅ Domain: megaverselive.com (GoDaddy)
+Your booking platform is 100% ready. Follow these 13 steps.
 
 ---
 
-## Deploy in 2 Minutes - Choose One
+## STEP 1: Extract Azure Database Credentials (2 min)
 
-### Option 1: Render (RECOMMENDED - Easiest)
-**No credit card needed. Free forever for hobby projects.**
+Run:
+```bash
+bash extract-azure-db.sh
+```
+
+This will:
+1. Ask you to paste your Azure connection string
+2. Extract DB_HOST, DB_USER, DB_PASSWORD
+3. Create `RENDER_ENV_VARS.txt`
+
+**Get connection string from:**
+- https://portal.azure.com
+- Search: "postgres"
+- Click database
+- Settings → Connection Strings
+- Copy ANY connection string
+
+---
+
+## STEP 2: Edit RENDER_ENV_VARS.txt (1 min)
+
+Open the file and replace:
+```
+[YOUR_RAZORPAY_KEY_ID] → Your Razorpay Key
+[YOUR_RAZORPAY_KEY_SECRET] → Your Razorpay Secret
+[YOUR_PAYPAL_CLIENT_ID] → Your PayPal Client ID
+[YOUR_PAYPAL_CLIENT_SECRET] → Your PayPal Secret
+```
+
+---
+
+## STEP 3: Create Render Account (2 min)
+
+Go to: https://render.com
+Sign up (GitHub login recommended)
+
+---
+
+## STEP 4: Create Web Service (3 min)
+
+1. Click "New" → "Web Service"
+2. Select `megaverselive` repository
+3. Fill form:
+```
+Name: megaverselive-backend
+Branch: main
+Build Command: npm install
+Start Command: node backend/index.js
+Runtime: Node
+Plan: Free
+```
+
+---
+
+## STEP 5: Add Environment Variables (3 min)
+
+Copy all 11 values from `RENDER_ENV_VARS.txt` into Render form.
+
+---
+
+## STEP 6: Deploy (3 min)
+
+Click "Create Web Service" and wait 2-3 minutes.
+
+When you see green **"Live"** status, copy your Render URL:
+```
+https://megaverselive-backend.onrender.com
+```
+
+---
+
+## STEP 7: Test Backend (1 min)
 
 ```bash
-# 1. Create account at render.com
-# 2. Connect GitHub (auth with your account)
-# 3. Create New Web Service:
-#    - Repository: megaverselive
-#    - Root Directory: backend
-#    - Start Command: npm start
-# 4. Add Environment Variables (see below)
-# 5. Deploy (click Deploy button)
+bash test-backend.sh https://YOUR_RENDER_URL
 ```
 
-**Environment Variables to Add:**
-```
-DB_HOST=megaverse-db.postgres.database.azure.com
-DB_PORT=5432
-DB_USER=dbadmin
-DB_PASSWORD=!_E}#3!oA7p+DG?W
-DB_NAME=megaverse_db
-NODE_ENV=production
-STRIPE_SECRET_KEY=sk_test_YOUR_KEY
-STRIPE_WEBHOOK_SECRET=whsec_YOUR_KEY
-EMAIL_SERVICE=gmail
-EMAIL_USER=harshit-goyal@hotmail.com
-EMAIL_PASSWORD=your-16-char-app-password
-FRONTEND_URL=https://megaverselive.com
-```
-
-**After Deploy:**
-- You'll get URL: `https://megaverse-api.onrender.com`
-- Point GoDaddy to it (see Domain Setup below)
+Should see: ✅ Backend is responding
 
 ---
 
-### Option 2: Railway
-Same as Render but different UI. Go to railway.app
-
----
-
-### Option 3: Netlify Functions
-Uses your GoDaddy domain directly. More complex setup.
-
----
-
-## GoDaddy Domain Setup
-
-### After Backend is Deployed
-
-1. Go to **GoDaddy Dashboard** → Your Domain
-2. Click **Manage DNS**
-3. Add **CNAME Record**:
-   ```
-   Name: api
-   Type: CNAME
-   Value: megaverse-api.onrender.com (from Render)
-   TTL: 3600
-   ```
-4. Save and wait 15-30 minutes for DNS update
-
-5. Test it works:
-   ```bash
-   curl https://api.megaverselive.com/api/health
-   ```
-
----
-
-## Update Your Website
-
-Once backend is deployed and domain is set up:
-
-1. Edit `index.html`
-2. Change API URL:
-   ```javascript
-   const API_URL = 'https://api.megaverselive.com';
-   ```
-3. Add Stripe Publishable Key (from dashboard)
-4. Deploy HTML to your web hosting
-
----
-
-## Testing
+## STEP 8: Generate Webhook URLs (1 min)
 
 ```bash
-# 1. Check API is running
-curl https://api.megaverselive.com/api/health
-# Should return: {"status":"ok",...}
-
-# 2. Check database connection
-curl https://api.megaverselive.com/api/slots
-# Should return slot data (no error)
-
-# 3. Test full booking flow
-curl -X POST https://api.megaverselive.com/api/bookings \
-  -H "Content-Type: application/json" \
-  -d '{
-    "slotId": 1,
-    "name": "Test User",
-    "email": "test@example.com",
-    "timezone": "IST"
-  }'
+bash configure-webhooks.sh https://YOUR_RENDER_URL
 ```
+
+Creates: `WEBHOOK_URLS_TO_ADD.md`
 
 ---
 
-## Current Infrastructure
+## STEP 9: Add Razorpay Webhook (5 min)
 
-```
-Your Website (megaverselive.com)
-          ↓
-    Booking Calendar (HTML)
-          ↓
-Backend API (Render) ← api.megaverselive.com
-          ↓
-PostgreSQL (Azure) ← megaverse-db.postgres.database.azure.com
-          ↓
-    Stripe (Payments)
-    Gmail (Emails)
-```
+1. https://dashboard.razorpay.com/app/settings/webhooks
+2. Click "Add New Webhook"
+3. Paste Razorpay URL from `WEBHOOK_URLS_TO_ADD.md`
+4. Events: `payment.authorized`, `order.paid`
+5. Click Create
 
 ---
 
-## NEXT STEPS
+## STEP 10: Add PayPal Webhook (5 min)
 
-1. **Deploy Backend:** Choose Render or Railway (2 min)
-2. **Update DNS:** Add CNAME to GoDaddy (5 min)
-3. **Test API:** Run curl commands above (2 min)
-4. **Update Frontend:** Add booking calendar to index.html (15 min)
-5. **Test Full Flow:** Book a test session with Stripe test card
+1. https://developer.paypal.com → Apps & Credentials → Sandbox
+2. Business Account → menu → Manage Webhooks
+3. Click "Add Webhook"
+4. Paste PayPal URL from `WEBHOOK_URLS_TO_ADD.md`
+5. Event: `PAYMENT.SALE.COMPLETED`
+6. Click Add
 
 ---
 
-## Done! 🎉
+## STEP 11: Test UPI Payment (5 min)
 
-Total time to fully working platform: **30 minutes**
+1. https://megaverselive.netlify.app
+2. Fill booking form
+3. Select "UPI (Razorpay)"
+4. Book
+5. Use test card: `4111 1111 1111 1111`
+6. Verify payment success
+
+---
+
+## STEP 12: Test PayPal (5 min)
+
+1. Same site, new booking
+2. Select "PayPal"
+3. Book
+4. Log in with PayPal sandbox account
+5. Approve payment
+6. Verify success
+
+---
+
+## STEP 13: Go Live (2 min)
+
+Get **live credentials** from Razorpay and PayPal.
+
+Update Render environment variables with live keys.
+
+**Platform accepts real payments!**
+
+---
+
+## Timeline
+
+- Step 1: 2 min
+- Step 2: 1 min
+- Step 3: 2 min
+- Step 4: 3 min
+- Step 5: 3 min
+- Step 6: 3 min
+- Step 7: 1 min
+- Step 8: 1 min
+- Step 9: 5 min
+- Step 10: 5 min
+- Step 11: 5 min
+- Step 12: 5 min
+- Step 13: 2 min
+
+**TOTAL: 38 minutes to production!**
+
+---
+
+## START HERE
+
+```bash
+bash extract-azure-db.sh
+```
+
+Then follow steps 2-13 above.
+
+**Let's go!**
