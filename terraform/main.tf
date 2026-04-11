@@ -44,6 +44,7 @@ resource "azurerm_linux_web_app" "megaverse" {
   service_plan_id     = azurerm_service_plan.megaverse.id
 
   site_config {
+    always_on = false
     application_stack {
       node_version = "20-lts"
     }

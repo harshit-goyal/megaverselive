@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@azure/arm-appservice": "^18.0.0",
+    "@azure/arm-postgresql": "^6.1.0",
+    "@azure/arm-resources": "^7.0.0",
+    "@azure/identity": "^4.13.1",
+    "axios": "^1.15.0"
+  }
+}
