@@ -1,0 +1,51 @@
+CUSTOM DOMAIN SETUP - megaverselive.com on Render
+==================================================
+
+STATUS: Render app is live at megaverse-live.onrender.com
+GOAL: Make it accessible at megaverselive.com via custom domain
+
+WHAT TO DO IN NSONE:
+====================
+
+1. Log into NSOne: https://nsone.net
+2. Find domain: megaverselive.com
+3. Add CNAME record with these values:
+
+   Record Type: CNAME
+   Record Name: @ (or leave blank for root)
+   Record Value: megaverse-live.onrender.com
+   TTL: 3600 (default)
+
+4. For www subdomain (optional):
+   Record Name: www
+   Record Value: megaverse-live.onrender.com
+
+5. Click Save/Create
+
+WAIT FOR DNS TO PROPAGATE (10-15 minutes)
+
+VERIFY IT WORKS:
+================
+
+1. Open browser
+2. Visit: https://megaverselive.com/
+3. Should see your booking platform ✓
+
+If not working after 15 minutes:
+- Hard refresh: Cmd+Shift+R (Mac) or Ctrl+F5 (Windows)
+- Check DNS propagation: https://www.whatsmydns.net/?d=megaverselive.com
+
+CURRENT APP STATUS:
+===================
+✓ Live at: https://megaverse-live.onrender.com/
+✓ PayPal Sandbox: Working
+✓ Razorpay UPI: Working
+✓ Payment Modal: Both options show
+✓ Backend: Responsive
+
+AFTER CUSTOM DOMAIN WORKS:
+==========================
+Your site will be at: https://megaverselive.com/
+Same app, same payments, just on your custom domain!
+
+That's it! No more Netlify needed.
