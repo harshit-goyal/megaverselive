@@ -1,0 +1,41 @@
+services:
+  - type: web
+    name: megaverselive-backend
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node backend/index.js
+    envVars:
+      - key: DB_HOST
+        scope: PROJECT
+        value: YOUR_AZURE_DB_HOST
+      - key: DB_USER
+        scope: PROJECT
+        value: YOUR_AZURE_DB_USER
+      - key: DB_PASSWORD
+        scope: PROJECT
+        value: YOUR_AZURE_DB_PASSWORD
+      - key: DB_NAME
+        scope: PROJECT
+        value: bookings
+      - key: DB_PORT
+        scope: PROJECT
+        value: "5432"
+      - key: RAZORPAY_KEY_ID
+        scope: PROJECT
+        value: YOUR_RAZORPAY_KEY_ID
+      - key: RAZORPAY_KEY_SECRET
+        scope: PROJECT
+        value: YOUR_RAZORPAY_KEY_SECRET
+      - key: PAYPAL_CLIENT_ID
+        scope: PROJECT
+        value: YOUR_PAYPAL_CLIENT_ID
+      - key: PAYPAL_CLIENT_SECRET
+        scope: PROJECT
+        value: YOUR_PAYPAL_CLIENT_SECRET
+      - key: PAYPAL_API_URL
+        scope: PROJECT
+        value: https://api.sandbox.paypal.com
+      - key: FRONTEND_URL
+        scope: PROJECT
+        value: https://megaverselive.netlify.app
