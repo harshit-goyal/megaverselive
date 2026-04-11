@@ -24,6 +24,16 @@ const pool = new Pool({
 app.use(cors());
 app.use(express.json());
 
+// Add cache-busting headers for index.html
+app.use((req, res, next) => {
+  if (req.path === '/' || req.path === '/index.html') {
+    res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
+  }
+  next();
+});
+
 // Serve static files (index.html, CSS, JS)
 // Looking for files in 'public' folder, or root if not found
 const path = require('path');
