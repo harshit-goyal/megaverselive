@@ -389,6 +389,10 @@
       ::-webkit-scrollbar-track { background: #f8fafc; }
       ::-webkit-scrollbar-thumb { background: linear-gradient(#a855f7, #ec4899); border-radius: 10px; }
     </style>
+
+    <!-- Payment SDKs -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="https://www.paypal.com/sdk/js?client-id=AVhuMGkfL-xnk8FpJLbVVLjbmg5AKEYjVZXrMFiT7NyYNvgCQM1wWDGvNOQpZcLGHkc_yZ2TlCL0dxrX"></script>
   </head>
 
   <body class="bg-slate-50 text-slate-900 antialiased">
@@ -420,15 +424,13 @@
         </nav>
 
         <div class="flex items-center gap-3">
-          <a
-            href="https://cal.com/hgoyal925/1-1-connect"
-            data-cal-link="hgoyal925/1-1-connect"
-            data-cal-config='{"layout":"month_view"}'
-            class="hidden sm:inline-flex items-center gap-2 rounded-full btn-gradient px-5 py-2.5 text-sm font-semibold text-white"
+          <button
+            onclick="openPaymentModal()"
+            class="hidden sm:inline-flex items-center gap-2 rounded-full btn-gradient px-5 py-2.5 text-sm font-semibold text-white cursor-pointer"
           >
             Book a Session
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
-          </a>
+          </button>
 
           <!-- Mobile hamburger -->
           <button id="menuBtn" class="md:hidden rounded-xl p-2 hover:bg-brand-50 transition" aria-label="Menu">
@@ -450,14 +452,12 @@
           <a href="#mentor" class="text-lg font-semibold text-slate-700 hover:text-brand-600 transition mobile-link">Become a Mentor</a>
           <a href="#faq" class="text-lg font-semibold text-slate-700 hover:text-brand-600 transition mobile-link">FAQ</a>
           <hr class="border-brand-100" />
-          <a
-            href="https://cal.com/hgoyal925/1-1-connect"
-            data-cal-link="hgoyal925/1-1-connect"
-            data-cal-config='{"layout":"month_view"}'
-            class="inline-flex items-center justify-center rounded-full btn-gradient px-5 py-3 text-sm font-semibold text-white"
+          <button
+            onclick="openPaymentModal()"
+            class="inline-flex items-center justify-center rounded-full btn-gradient px-5 py-3 text-sm font-semibold text-white cursor-pointer w-full"
           >
             Book a Session
-          </a>
+          </button>
         </nav>
       </div>
       <div id="navOverlay" class="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm hidden md:hidden"></div>
@@ -492,16 +492,14 @@
             </p>
 
             <div class="mt-10 flex flex-col gap-4 sm:flex-row">
-              <a
+              <button
                 id="book"
-                href="https://cal.com/hgoyal925/1-1-connect"
-                data-cal-link="hgoyal925/1-1-connect"
-                data-cal-config='{"layout":"month_view"}'
-                class="inline-flex items-center justify-center gap-2 rounded-full btn-gradient px-8 py-4 text-sm font-bold text-white shadow-neon"
+                onclick="openPaymentModal()"
+                class="inline-flex items-center justify-center gap-2 rounded-full btn-gradient px-8 py-4 text-sm font-bold text-white shadow-neon cursor-pointer"
               >
                 Book a 1:1 Session
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
-              </a>
+              </button>
               <a
                 href="#how"
                 class="inline-flex items-center justify-center rounded-full border border-white/20 px-8 py-4 text-sm font-semibold text-white transition hover:bg-white/10 hover:border-white/40 backdrop-blur-sm"
@@ -679,15 +677,13 @@
             </p>
           </div>
 
-          <a
-            href="https://cal.com/hgoyal925/1-1-connect"
-            data-cal-link="hgoyal925/1-1-connect"
-            data-cal-config='{"layout":"month_view"}'
-            class="inline-flex items-center gap-2 rounded-full btn-gradient px-6 py-3 text-sm font-semibold text-white shrink-0"
+          <button
+            onclick="openPaymentModal()"
+            class="inline-flex items-center gap-2 rounded-full btn-gradient px-6 py-3 text-sm font-semibold text-white shrink-0 cursor-pointer"
           >
             Book English Session
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
-          </a>
+          </button>
         </div>
 
         <div class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -1581,6 +1577,170 @@
         styles: { branding: { brandColor: '#a855f7' } },
         hideEventTypeDetails: false,
         layout: 'month_view'
+      });
+    </script>
+
+    <!-- Payment Modal -->
+    <div id="paymentModal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+      <!-- Modal Backdrop -->
+      <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" onclick="closePaymentModal()"></div>
+      
+      <!-- Modal Content -->
+      <div class="relative flex min-h-screen items-center justify-center p-4">
+        <div class="relative w-full max-w-md rounded-2xl bg-white p-8 shadow-2xl">
+          <!-- Close Button -->
+          <button 
+            onclick="closePaymentModal()"
+            class="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+          >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+
+          <h2 class="text-2xl font-bold text-gray-900 mb-2">Book Your 1:1 Session</h2>
+          <p class="text-gray-600 mb-8">Choose your payment method</p>
+
+          <!-- Payment Options -->
+          <div class="space-y-4">
+            <!-- India UPI Option -->
+            <button 
+              onclick="processPayment('upi')"
+              id="upiBtn"
+              class="w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white py-4 px-6 rounded-xl font-bold text-lg transition transform hover:scale-105 flex items-center justify-center gap-2"
+            >
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/>
+              </svg>
+              <span>₹1200 - Pay with UPI</span>
+            </button>
+
+            <!-- International PayPal Option -->
+            <button 
+              onclick="processPayment('paypal')"
+              id="paypalBtn"
+              class="w-full bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white py-4 px-6 rounded-xl font-bold text-lg transition transform hover:scale-105 flex items-center justify-center gap-2"
+            >
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M9.012 5C7.546 5 6.348 6.199 6.348 7.665c0 1.466 1.198 2.665 2.664 2.665h3.676V5H9.012m.024 8.33h-3.7c-1.466 0-2.664 1.199-2.664 2.665 0 1.466 1.198 2.665 2.664 2.665h3.7v-5.33m0 8h-3.7c-1.466 0-2.664 1.199-2.664 2.665 0 1.466 1.198 2.665 2.664 2.665h3.7v-5.33m5.988-16.33h-4c-1.466 0-2.664 1.199-2.664 2.665v1.998h6.664V7.665c0-1.466-1.198-2.665-2.664-2.665"/>
+              </svg>
+              <span>$15 - Pay with PayPal</span>
+            </button>
+          </div>
+
+          <!-- Processing Message -->
+          <div id="processingMessage" class="hidden mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg text-center text-blue-700 font-medium">
+            Processing your payment...
+          </div>
+
+          <!-- Error Message -->
+          <div id="errorMessage" class="hidden mt-4 p-4 bg-red-50 border border-red-200 rounded-lg text-center text-red-700 font-medium"></div>
+
+          <!-- Info Text -->
+          <p class="text-xs text-gray-500 text-center mt-6">
+            After successful payment, you'll be redirected to schedule your session on our calendar
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payment Script -->
+    <script>
+      const CAL_URL = 'https://cal.com/hgoyal925/1-1-connect';
+
+      function openPaymentModal() {
+        document.getElementById('paymentModal').classList.remove('hidden');
+        document.getElementById('errorMessage').classList.add('hidden');
+        document.getElementById('processingMessage').classList.add('hidden');
+      }
+
+      function closePaymentModal() {
+        document.getElementById('paymentModal').classList.add('hidden');
+        document.getElementById('errorMessage').classList.add('hidden');
+        document.getElementById('processingMessage').classList.add('hidden');
+      }
+
+      async function processPayment(method) {
+        const processingMsg = document.getElementById('processingMessage');
+        const errorMsg = document.getElementById('errorMessage');
+        const upiBtn = document.getElementById('upiBtn');
+        const paypalBtn = document.getElementById('paypalBtn');
+        
+        upiBtn.disabled = true;
+        paypalBtn.disabled = true;
+        processingMsg.classList.remove('hidden');
+        errorMsg.classList.add('hidden');
+
+        try {
+          if (method === 'upi') {
+            await processRazorpayPayment();
+          } else if (method === 'paypal') {
+            await processPayPalPayment();
+          }
+        } catch (error) {
+          console.error('Payment error:', error);
+          errorMsg.textContent = error.message || 'Payment failed. Please try again.';
+          errorMsg.classList.remove('hidden');
+          processingMsg.classList.add('hidden');
+          upiBtn.disabled = false;
+          paypalBtn.disabled = false;
+        }
+      }
+
+      async function processRazorpayPayment() {
+        const response = await fetch('https://megaverse-live.onrender.com/api/razorpay/create-order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amount: 120000, currency: 'INR' })
+        });
+
+        if (!response.ok) throw new Error('Failed to create payment order');
+        const data = await response.json();
+
+        const options = {
+          key: data.razorpayKeyId,
+          amount: data.amount,
+          currency: data.currency,
+          order_id: data.orderId,
+          handler: function(response) {
+            redirectToCalendar();
+          },
+          theme: { color: '#3b82f6' }
+        };
+
+        const rzp = new Razorpay(options);
+        rzp.open();
+      }
+
+      async function processPayPalPayment() {
+        const response = await fetch('https://megaverse-live.onrender.com/api/paypal/create-order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amount: '15.00', currency: 'USD' })
+        });
+
+        if (!response.ok) throw new Error('Failed to create PayPal order');
+        const data = await response.json();
+
+        if (typeof paypal === 'undefined') {
+          throw new Error('PayPal SDK not loaded');
+        }
+
+        paypal.Buttons({
+          createOrder: () => data.id,
+          onApprove: () => redirectToCalendar(),
+          onError: (err) => { throw new Error('PayPal payment failed: ' + err); }
+        }).render('#paymentModal');
+      }
+
+      function redirectToCalendar() {
+        document.getElementById('processingMessage').textContent = 'Payment successful! Redirecting to calendar...';
+        setTimeout(() => { window.location.href = CAL_URL; }, 1500);
+      }
+
+      document.addEventListener('click', (e) => {
+        const modal = document.getElementById('paymentModal');
+        if (e.target === modal) closePaymentModal();
       });
     </script>
   </body>
