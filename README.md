@@ -2,7 +2,7 @@
 
 A production-ready 1:1 mentor booking platform with integrated **UPI payments (Razorpay)** for India and **PayPal** for international customers.
 
-**Status:** ✅ Ready for Deployment | **Estimated Go-Live Time:** 30-45 minutes
+**Status:** ✅ Ready for Deployment | **Estimated Go-Live Time:** 20-30 minutes (no email setup needed)
 
 ---
 
@@ -12,11 +12,10 @@ A production-ready 1:1 mentor booking platform with integrated **UPI payments (R
 
 **Follow this path:**
 
-1. **Read:** `START_HERE_PAYMENTS.md` (5 min overview)
-2. **Plan:** `DEPLOYMENT_ROADMAP.md` (understand the flow)
-3. **Deploy:** Follow the 8-step process in roadmap
+1. **Read:** `DEPLOY_STEP_BY_STEP.md` (7-step simple guide)
+2. **Deploy:** Follow each step in order
 
-**Total time to go live: 30-45 minutes**
+**Total time to go live: 20-30 minutes**
 
 ---
 
@@ -26,9 +25,10 @@ A production-ready 1:1 mentor booking platform with integrated **UPI payments (R
 
 | Document | Purpose | Read When |
 |----------|---------|-----------|
-| **START_HERE_PAYMENTS.md** | Quick start overview | First time deploying |
-| **DEPLOYMENT_ROADMAP.md** | Master deployment guide | Need full picture |
-| **DEPLOYMENT_CHECKLIST_PAYMENTS.md** | Step-by-step checklist | Following along |
+| **DEPLOY_STEP_BY_STEP.md** | Simple 7-step deployment guide | ⭐ START HERE - Fastest path to live |
+| **START_HERE_PAYMENTS.md** | Quick start overview | Optional: for more context |
+| **DEPLOYMENT_ROADMAP.md** | Master deployment guide | Optional: need full picture |
+| **DEPLOYMENT_CHECKLIST_PAYMENTS.md** | Step-by-step checklist | Optional: prefer checklist format |
 
 ### Detailed Guides
 
