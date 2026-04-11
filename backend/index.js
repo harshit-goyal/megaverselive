@@ -466,14 +466,6 @@ app.post('/api/paypal/create-order', express.json(), async (req, res) => {
   }
 });
 
-    request.write(JSON.stringify(orderData));
-    request.end();
-  } catch (error) {
-    console.error('Error creating PayPal order:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
 // Get booking details
 app.get('/api/booking/:id', async (req, res) => {
   try {
