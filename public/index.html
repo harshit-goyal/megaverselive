@@ -1676,8 +1676,16 @@
               })
               .then(response => response.json())
               .then(data => {
-                console.log('Order created:', data.order_id);
-                return data.order_id;
+                if (data.order_id) {
+                  console.log('Order created:', data.order_id);
+                  return data.order_id;
+                } else {
+                  throw new Error(data.error || 'Failed to create order');
+                }
+              })
+              .catch(error => {
+                console.error('Order creation error:', error);
+                throw error;
               });
             },
             onApprove: function(data, actions) {

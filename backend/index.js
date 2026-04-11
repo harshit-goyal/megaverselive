@@ -388,6 +388,15 @@ app.post('/api/webhook/paypal', express.json(), async (req, res) => {
 app.post('/api/paypal/create-order', express.json(), async (req, res) => {
   try {
     const { amount, currency } = req.body;
+    
+    // Check if credentials are configured
+    if (!process.env.PAYPAL_CLIENT_ID || process.env.PAYPAL_CLIENT_ID === 'YOUR_PAYPAL_CLIENT_ID' ||
+        !process.env.PAYPAL_CLIENT_SECRET || process.env.PAYPAL_CLIENT_SECRET === 'YOUR_PAYPAL_SECRET') {
+      console.error('PayPal credentials not configured properly');
+      return res.status(400).json({ 
+        error: 'PayPal credentials not configured. Please add PAYPAL_CLIENT_ID and PAYPAL_CLIENT_SECRET to environment variables.' 
+      });
+    }
 
     const createOrderUrl = 'https://api.sandbox.paypal.com/v2/checkout/orders';
     const auth = Buffer.from(`${process.env.PAYPAL_CLIENT_ID}:${process.env.PAYPAL_CLIENT_SECRET}`).toString('base64');
@@ -425,11 +434,17 @@ app.post('/api/paypal/create-order', express.json(), async (req, res) => {
       let data = '';
       paypalRes.on('data', chunk => data += chunk);
       paypalRes.on('end', () => {
-        const response = JSON.parse(data);
-        if (response.id) {
-          res.json({ order_id: response.id });
-        } else {
-          res.status(400).json({ error: 'Failed to create PayPal order' });
+        try {
+          const response = JSON.parse(data);
+          if (response.id) {
+            res.json({ order_id: response.id });
+          } else {
+            console.error('PayPal order creation failed:', response);
+            res.status(400).json({ error: 'Failed to create PayPal order' });
+          }
+        } catch (e) {
+          console.error('Error parsing PayPal response:', e);
+          res.status(500).json({ error: 'Invalid response from PayPal' });
         }
       });
     });
@@ -438,6 +453,14 @@ app.post('/api/paypal/create-order', express.json(), async (req, res) => {
       console.error('PayPal request error:', error);
       res.status(500).json({ error: 'PayPal service unavailable' });
     });
+
+    request.write(JSON.stringify(orderData));
+    request.end();
+  } catch (error) {
+    console.error('PayPal order creation error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
     request.write(JSON.stringify(orderData));
     request.end();
