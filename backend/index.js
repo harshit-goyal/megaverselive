@@ -398,8 +398,8 @@ app.post('/api/paypal/create-order', express.json(), async (req, res) => {
       });
     }
 
-    // Use live endpoint (api-m.paypal.com) or sandbox based on environment
-    const isLive = process.env.PAYPAL_MODE === 'live' || !process.env.PAYPAL_MODE;
+    // Use sandbox endpoint (api.sandbox.paypal.com) or live based on environment
+    const isLive = process.env.PAYPAL_MODE === 'live';
     const apiHost = isLive ? 'api-m.paypal.com' : 'api.sandbox.paypal.com';
     const createOrderUrl = `https://${apiHost}/v2/checkout/orders`;
     
