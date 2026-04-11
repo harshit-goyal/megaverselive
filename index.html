@@ -392,7 +392,7 @@
 
     <!-- Payment SDKs -->
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-    <script src="https://www.paypal.com/sdk/js?client-id=AVhuMGkfL-xnk8FpJLbVVLjbmg5AKEYjVZXrMFiT7NyYNvgCQM1wWDGvNOQpZcLGHkc_yZ2TlCL0dxrX" defer></script>
+    <script src="https://www.paypal.com/sdk/js?client-id=AVhuMGkfL-xnk8FpJLbVVLjbmg5AKEYjVZXrMFiT7NyYNvgCQM1wWDGvNOQpZcLGHkc_yZ2TlCL0dxrX&currency=USD" async></script>
   </head>
 
   <body class="bg-slate-50 text-slate-900 antialiased">
@@ -1814,6 +1814,22 @@
       }
       setInterval(keepAlive, 600000); // Ping every 10 minutes
       keepAlive(); // Initial ping on page load
+
+      // Diagnostic: Log PayPal SDK status
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+          console.log('=== PayPal SDK Status ===');
+          console.log('typeof paypal:', typeof paypal);
+          if (typeof paypal !== 'undefined') {
+            console.log('✅ PayPal SDK loaded successfully');
+            console.log('paypal.Buttons:', typeof paypal.Buttons);
+          } else {
+            console.error('❌ PayPal SDK failed to load');
+            console.error('Check: Network tab for script load status');
+            console.error('Check: Browser console for CORS errors');
+          }
+        }, 1000);
+      });
     </script>
   </body>
 </html>
