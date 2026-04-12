@@ -522,6 +522,156 @@ app.post('/api/booking/:id/cancel', async (req, res) => {
   }
 });
 
+// ============= PAYMENT WEBHOOKS =============
+
+// Razorpay Webhook Handler
+app.post('/api/razorpay/webhook', express.raw({type: 'application/json'}), async (req, res) => {
+  try {
+    const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
+    if (!secret) {
+      console.warn('Razorpay webhook secret not configured');
+      return res.status(400).json({ error: 'Webhook secret not configured' });
+    }
+
+    const shasum = crypto.createHmac('sha256', secret);
+    shasum.update(JSON.stringify(req.body));
+    const digest = shasum.digest('hex');
+
+    if (digest !== req.headers['x-razorpay-signature']) {
+      console.error('Razorpay webhook signature verification failed');
+      return res.status(403).json({ error: 'Invalid signature' });
+    }
+
+    const event = req.body;
+    console.log('Razorpay webhook event:', event.event);
+
+    // Handle payment success
+    if (event.event === 'payment.authorized' || event.event === 'payment.captured') {
+      const paymentData = event.payload.payment.entity;
+      console.log('Payment successful:', paymentData.id);
+      
+      // Store payment record
+      await pool.query(
+        `INSERT INTO payment_records (payment_id, provider, amount, currency, status, metadata) 
+         VALUES ($1, $2, $3, $4, $5, $6) 
+         ON CONFLICT (payment_id) DO UPDATE SET status = $5`,
+        [
+          paymentData.id,
+          'razorpay',
+          paymentData.amount / 100, // Convert paise to rupees
+          paymentData.currency,
+          'completed',
+          JSON.stringify(paymentData)
+        ]
+      );
+
+      res.json({ success: true });
+    }
+    // Handle payment failure
+    else if (event.event === 'payment.failed') {
+      const paymentData = event.payload.payment.entity;
+      console.log('Payment failed:', paymentData.id);
+      
+      await pool.query(
+        `INSERT INTO payment_records (payment_id, provider, amount, currency, status, metadata) 
+         VALUES ($1, $2, $3, $4, $5, $6) 
+         ON CONFLICT (payment_id) DO UPDATE SET status = $5`,
+        [
+          paymentData.id,
+          'razorpay',
+          paymentData.amount / 100,
+          paymentData.currency,
+          'failed',
+          JSON.stringify(paymentData)
+        ]
+      );
+
+      res.json({ success: true });
+    } else {
+      res.json({ success: true });
+    }
+  } catch (error) {
+    console.error('Razorpay webhook error:', error);
+    res.status(500).json({ error: 'Webhook processing failed' });
+  }
+});
+
+// PayPal Webhook Handler
+app.post('/api/paypal/webhook', express.json(), async (req, res) => {
+  try {
+    const event = req.body;
+    console.log('PayPal webhook event:', event.event_type);
+
+    // Handle payment success
+    if (event.event_type === 'CHECKOUT.ORDER.COMPLETED') {
+      const order = event.resource;
+      console.log('PayPal order completed:', order.id);
+      
+      // Store payment record
+      await pool.query(
+        `INSERT INTO payment_records (payment_id, provider, amount, currency, status, metadata) 
+         VALUES ($1, $2, $3, $4, $5, $6) 
+         ON CONFLICT (payment_id) DO UPDATE SET status = $5`,
+        [
+          order.id,
+          'paypal',
+          order.purchase_units[0].amount.value,
+          order.purchase_units[0].amount.currency_code,
+          'completed',
+          JSON.stringify(order)
+        ]
+      );
+
+      res.json({ success: true });
+    }
+    // Handle payment failure
+    else if (event.event_type === 'CHECKOUT.ORDER.DECLINED') {
+      const order = event.resource;
+      console.log('PayPal order declined:', order.id);
+      
+      await pool.query(
+        `INSERT INTO payment_records (payment_id, provider, amount, currency, status, metadata) 
+         VALUES ($1, $2, $3, $4, $5, $6) 
+         ON CONFLICT (payment_id) DO UPDATE SET status = $5`,
+        [
+          order.id,
+          'paypal',
+          order.purchase_units[0].amount.value,
+          order.purchase_units[0].amount.currency_code,
+          'failed',
+          JSON.stringify(order)
+        ]
+      );
+
+      res.json({ success: true });
+    } else {
+      res.json({ success: true });
+    }
+  } catch (error) {
+    console.error('PayPal webhook error:', error);
+    res.status(500).json({ error: 'Webhook processing failed' });
+  }
+});
+
+// Get payment status endpoint
+app.get('/api/payment/:paymentId', async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT * FROM payment_records WHERE payment_id = $1',
+      [req.params.paymentId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Payment not found' });
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Error fetching payment status:', error);
+    res.status(500).json({ error: 'Failed to fetch payment status' });
+  }
+});
+
 // ============= START SERVER =============
 
 app.listen(PORT, () => {

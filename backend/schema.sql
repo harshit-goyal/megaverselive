@@ -54,6 +54,19 @@ CREATE TABLE IF NOT EXISTS payments (
   FOREIGN KEY (booking_id) REFERENCES bookings(id)
 );
 
+-- Payment records from webhooks (for Razorpay and PayPal verification)
+CREATE TABLE IF NOT EXISTS payment_records (
+  id SERIAL PRIMARY KEY,
+  payment_id VARCHAR(255) UNIQUE NOT NULL,
+  provider VARCHAR(50) NOT NULL, -- razorpay, paypal
+  amount DECIMAL(10, 2) NOT NULL,
+  currency VARCHAR(3) NOT NULL,
+  status VARCHAR(50) NOT NULL, -- completed, failed, pending
+  metadata JSONB,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Emails sent (for tracking confirmations, reminders)
 CREATE TABLE IF NOT EXISTS emails_sent (
   id SERIAL PRIMARY KEY,
@@ -70,6 +83,9 @@ CREATE INDEX idx_time_slots_mentor_start ON time_slots(mentor_id, start_time);
 CREATE INDEX idx_bookings_mentor_start ON bookings(mentor_id, start_time);
 CREATE INDEX idx_bookings_email ON bookings(customer_email);
 CREATE INDEX idx_bookings_payment_id ON bookings(stripe_payment_id);
+CREATE INDEX idx_payment_records_payment_id ON payment_records(payment_id);
+CREATE INDEX idx_payment_records_provider ON payment_records(provider);
+CREATE INDEX idx_payment_records_status ON payment_records(status);
 
 -- Insert Harshit as the initial mentor
 INSERT INTO mentors (name, email, bio, specialties, hourly_rate)
