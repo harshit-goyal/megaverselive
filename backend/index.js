@@ -204,6 +204,43 @@ app.get('/api/debug/credentials', (req, res) => {
   });
 });
 
+// List available databases
+app.get('/api/debug/list-databases', async (req, res) => {
+  let adminPool;
+  try {
+    // Connect to default 'postgres' database to list all databases
+    adminPool = new Pool({
+      host: process.env.DB_HOST,
+      user: dbUser,
+      password: process.env.DB_PASSWORD,
+      database: 'postgres',  // Connect to default db
+      port: process.env.DB_PORT,
+      ssl: { rejectUnauthorized: false },
+    });
+    
+    const result = await adminPool.query(`
+      SELECT datname FROM pg_database 
+      WHERE datistemplate = false 
+      ORDER BY datname
+    `);
+    
+    adminPool.end();
+    
+    res.json({
+      status: 'ok',
+      databases: result.rows.map(r => r.datname),
+      currentDatabase: process.env.DB_NAME
+    });
+  } catch (error) {
+    if (adminPool) adminPool.end();
+    res.status(500).json({
+      error: error.message,
+      code: error.code,
+      hint: 'Could not list databases'
+    });
+  }
+});
+
 // Advanced database test endpoint
 app.get('/api/debug/test-connection', async (req, res) => {
   try {
