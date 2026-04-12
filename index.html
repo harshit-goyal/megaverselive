@@ -1777,6 +1777,12 @@
         if (e.target === modal) closePaymentModal();
       });
 
+      // Handle #payment hash to open payment modal when user comes from auth page
+      if (window.location.hash === '#payment') {
+        openPaymentModal();
+        window.location.hash = ''; // Clear the hash
+      }
+
       // Keep-alive: Ping backend every 10 minutes to prevent cold start on Render free tier
       function keepAlive() {
         fetch('https://megaverse-live.onrender.com/api/health', { method: 'GET' })
