@@ -198,6 +198,30 @@ app.get('/api/debug/credentials', (req, res) => {
   });
 });
 
+// Advanced database test endpoint
+app.get('/api/debug/test-connection', async (req, res) => {
+  try {
+    // Try a simple query
+    const result = await pool.query('SELECT NOW() as current_time');
+    res.json({
+      status: 'connected',
+      message: 'Database connection successful!',
+      serverTime: result.rows[0].current_time,
+      note: 'If you see this, your credentials are correct and mentee signup should work.'
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 'connection_failed',
+      error: error.message,
+      code: error.code,
+      errorHint: error.code === '28P01' 
+        ? 'Authentication failed. Check DB_USER and DB_PASSWORD in environment variables.'
+        : 'Database connection error. Check DB_HOST and DB_NAME.',
+      note: 'Fix the error and redeploy to try again.'
+    });
+  }
+});
+
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date(), message: 'Megaverse Live API is running' });

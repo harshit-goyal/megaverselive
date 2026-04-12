@@ -103,7 +103,34 @@ https://megaverselive.com/api/debug/credentials
 
 All should show "✓ Set".
 
-### Test 2: Check Database Connection
+### Test 2: Check Database Connection (MOST IMPORTANT)
+Visit this - it actually tests if the connection works:
+```
+https://megaverselive.com/api/debug/test-connection
+```
+
+Expected success response:
+```json
+{
+  "status": "connected",
+  "message": "Database connection successful!",
+  "serverTime": "2026-04-12T06:30:00.000Z"
+}
+```
+
+Expected error response (if credentials wrong):
+```json
+{
+  "status": "connection_failed",
+  "error": "password authentication failed for user dbadmin",
+  "code": "28P01",
+  "errorHint": "Authentication failed. Check DB_USER and DB_PASSWORD in environment variables."
+}
+```
+
+If you get the error response, your credentials are still wrong. Go back to Step 2 and double-check.
+
+### Test 3: Check Database Tables
 Visit:
 ```
 https://megaverselive.com/api/debug/db
@@ -117,15 +144,8 @@ Should return:
 }
 ```
 
-If you see an error, credentials are still wrong.
-
-### Test 3: Try Signup
+### Test 4: Try Signup
 Go to https://megaverselive.com/auth and create an account.
-
-Should either:
-- ✅ Success: "Account created! Redirecting..."
-- ✅ Email error: "Email already registered" (means DB connection works)
-- ❌ Still failing: Credentials still wrong
 
 ---
 
