@@ -181,6 +181,23 @@ app.get('/api/debug/db', async (req, res) => {
   }
 });
 
+// Credentials diagnostic endpoint
+app.get('/api/debug/credentials', (req, res) => {
+  res.json({
+    configured: {
+      DB_HOST: process.env.DB_HOST ? '✓ Set' : '✗ Missing',
+      DB_USER: process.env.DB_USER ? '✓ Set' : '✗ Missing',
+      DB_PASSWORD: process.env.DB_PASSWORD ? '✓ Set' : '✗ Missing',
+      DB_NAME: process.env.DB_NAME ? '✓ Set' : '✗ Missing',
+      DB_PORT: process.env.DB_PORT || 'Not set (default: 5432)'
+    },
+    connectionString: process.env.DB_HOST 
+      ? `postgres://${process.env.DB_USER}@${process.env.DB_HOST}:${process.env.DB_PORT || 5432}/${process.env.DB_NAME}`
+      : 'Not fully configured',
+    note: 'This shows what environment variables are set. If all show ✓, the credentials should be correct.'
+  });
+});
+
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date(), message: 'Megaverse Live API is running' });
