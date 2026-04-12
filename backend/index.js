@@ -13,9 +13,15 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 
 // Database connection
+// Fix DB_USER if it contains @domain (e.g., "dbadmin@megaverse-db" -> "dbadmin")
+let dbUser = process.env.DB_USER || '';
+if (dbUser.includes('@')) {
+  dbUser = dbUser.split('@')[0];
+}
+
 const pool = new Pool({
   host: process.env.DB_HOST,
-  user: process.env.DB_USER,
+  user: dbUser,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   port: process.env.DB_PORT,
