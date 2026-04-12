@@ -1480,29 +1480,8 @@ app.get('/api/mentors', async (req, res) => {
   }
 });
 
-// GET /api/mentor/:id - Get specific mentor profile
-app.get('/api/mentor/:id', async (req, res) => {
-  try {
-    const result = await pool.query(
-      `SELECT id, name, bio, COALESCE(avatar_url, '') as avatar_url, tracks, rating, session_count, created_at FROM mentors WHERE id = $1 AND is_active = TRUE`,
-      [req.params.id]
-    );
-    
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Mentor not found' });
-    }
-    
-    res.json({
-      success: true,
-      mentor: result.rows[0]
-    });
-  } catch (error) {
-    console.error('Error fetching mentor:', error);
-    res.status(500).json({ error: 'Failed to fetch mentor', details: error.message });
-  }
-});
-
 // GET /api/mentor/profile - Get current logged-in mentor profile (requires JWT)
+// IMPORTANT: Define this BEFORE /api/mentor/:id to avoid route matching conflict
 const verifyMentorToken = (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1];
   
@@ -1545,6 +1524,28 @@ app.get('/api/mentor/profile', verifyMentorToken, async (req, res) => {
   } catch (error) {
     console.error('Error fetching mentor profile:', error);
     res.status(500).json({ error: 'Failed to fetch profile', details: error.message });
+  }
+});
+
+// GET /api/mentor/:id - Get specific mentor profile (public)
+app.get('/api/mentor/:id', async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT id, name, bio, COALESCE(avatar_url, '') as avatar_url, tracks, rating, session_count, created_at FROM mentors WHERE id = $1 AND is_active = TRUE`,
+      [req.params.id]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Mentor not found' });
+    }
+    
+    res.json({
+      success: true,
+      mentor: result.rows[0]
+    });
+  } catch (error) {
+    console.error('Error fetching mentor:', error);
+    res.status(500).json({ error: 'Failed to fetch mentor', details: error.message });
   }
 });
 
