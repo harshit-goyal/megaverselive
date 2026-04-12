@@ -19,11 +19,17 @@ if (dbUser.includes('@')) {
   dbUser = dbUser.split('@')[0];
 }
 
+// Fix DB_NAME - use megaverse_db if bookings doesn't work
+let dbName = process.env.DB_NAME || 'megaverse_db';
+if (dbName === 'bookings') {
+  dbName = 'megaverse_db';  // Azure has megaverse_db, not bookings
+}
+
 const pool = new Pool({
   host: process.env.DB_HOST,
   user: dbUser,
   password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
+  database: dbName,
   port: process.env.DB_PORT,
   ssl: { rejectUnauthorized: false }, // Required for Azure
 });
