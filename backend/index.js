@@ -158,6 +158,24 @@ app.get('/profile', (req, res) => {
   res.sendFile(path.join(__dirname, '../auth.html'));
 });
 
+// Database debug endpoint
+app.get('/api/debug/db', async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT table_name 
+      FROM information_schema.tables 
+      WHERE table_schema = 'public'
+      ORDER BY table_name
+    `);
+    res.json({ 
+      tables: result.rows.map(r => r.table_name),
+      status: 'connected'
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date(), message: 'Megaverse Live API is running' });
@@ -812,7 +830,7 @@ app.post('/api/auth/signup', async (req, res) => {
       return res.status(400).json({ error: 'Email already registered' });
     }
     console.error('Signup error:', error);
-    res.status(500).json({ error: 'Signup failed' });
+    res.status(500).json({ error: 'Signup failed', details: error.message });
   }
 });
 
