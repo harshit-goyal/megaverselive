@@ -4,6 +4,8 @@ const cors = require('cors');
 const { Pool } = require('pg');
 const https = require('https');
 const crypto = require('crypto');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const emailService = require('./services/email');
 const { generateAvailableSlots, getAvailableSlots } = require('./services/slots');
 
@@ -41,6 +43,25 @@ app.use(express.static(path.join(__dirname, '../public')));
 
 // Fallback: serve index.html for root path if no API match
 // This allows frontend to be served from backend while keeping API routes intact
+
+// ============= JWT MIDDLEWARE =============
+
+// Verify JWT token from Authorization header
+const verifyToken = (req, res, next) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  
+  if (!token) {
+    return res.status(401).json({ error: 'No token provided' });
+  }
+  
+  try {
+    const decoded = jwt.verify(token, process.env.MENTEE_JWT_SECRET || 'your_secret_key_change_in_env');
+    req.user = decoded;
+    next();
+  } catch (error) {
+    return res.status(401).json({ error: 'Invalid or expired token' });
+  }
+};
 
 // ============= ROUTES =============
 
@@ -669,6 +690,212 @@ app.get('/api/payment/:paymentId', async (req, res) => {
   } catch (error) {
     console.error('Error fetching payment status:', error);
     res.status(500).json({ error: 'Failed to fetch payment status' });
+  }
+});
+
+// ============= AUTHENTICATION ENDPOINTS =============
+
+// POST /api/auth/signup - Create new mentee account
+app.post('/api/auth/signup', async (req, res) => {
+  try {
+    const { email, password, name, phone } = req.body;
+    
+    if (!email || !password || !name) {
+      return res.status(400).json({ error: 'Email, password, and name are required' });
+    }
+    
+    if (password.length < 8) {
+      return res.status(400).json({ error: 'Password must be at least 8 characters' });
+    }
+    
+    // Hash password
+    const passwordHash = await bcrypt.hash(password, 12);
+    
+    // Insert mentee account
+    const result = await pool.query(
+      'INSERT INTO mentee_accounts (email, password_hash, name, phone) VALUES ($1, $2, $3, $4) RETURNING id, email, name',
+      [email, passwordHash, name, phone || null]
+    );
+    
+    const mentee = result.rows[0];
+    
+    // Create mentee profile
+    await pool.query(
+      'INSERT INTO mentee_profiles (mentee_id, timezone) VALUES ($1, $2)',
+      [mentee.id, 'America/New_York']
+    );
+    
+    // Generate JWT token
+    const token = jwt.sign(
+      { id: mentee.id, email: mentee.email, name: mentee.name },
+      process.env.MENTEE_JWT_SECRET || 'your_secret_key_change_in_env',
+      { expiresIn: '24h' }
+    );
+    
+    res.status(201).json({
+      success: true,
+      user: mentee,
+      token: token,
+      expiresIn: 86400
+    });
+  } catch (error) {
+    if (error.code === '23505') {
+      return res.status(400).json({ error: 'Email already registered' });
+    }
+    console.error('Signup error:', error);
+    res.status(500).json({ error: 'Signup failed' });
+  }
+});
+
+// POST /api/auth/login - Login with email and password
+app.post('/api/auth/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required' });
+    }
+    
+    // Get mentee from database
+    const result = await pool.query(
+      'SELECT id, email, name, password_hash FROM mentee_accounts WHERE email = $1 AND is_active = true',
+      [email]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(401).json({ error: 'Invalid email or password' });
+    }
+    
+    const mentee = result.rows[0];
+    
+    // Verify password
+    const passwordMatch = await bcrypt.compare(password, mentee.password_hash);
+    if (!passwordMatch) {
+      return res.status(401).json({ error: 'Invalid email or password' });
+    }
+    
+    // Generate JWT token
+    const token = jwt.sign(
+      { id: mentee.id, email: mentee.email, name: mentee.name },
+      process.env.MENTEE_JWT_SECRET || 'your_secret_key_change_in_env',
+      { expiresIn: '24h' }
+    );
+    
+    res.json({
+      success: true,
+      user: { id: mentee.id, email: mentee.email, name: mentee.name },
+      token: token,
+      expiresIn: 86400
+    });
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({ error: 'Login failed' });
+  }
+});
+
+// GET /api/mentee/profile - Get current user profile (requires JWT)
+app.get('/api/mentee/profile', verifyToken, async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT ma.id, ma.email, ma.name, ma.phone, ma.bio, ma.avatar_url, ma.created_at,
+              mp.timezone
+       FROM mentee_accounts ma
+       LEFT JOIN mentee_profiles mp ON ma.id = mp.mentee_id
+       WHERE ma.id = $1 AND ma.is_active = true`,
+      [req.user.id]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    
+    res.json({ user: result.rows[0] });
+  } catch (error) {
+    console.error('Error fetching profile:', error);
+    res.status(500).json({ error: 'Failed to fetch profile' });
+  }
+});
+
+// PUT /api/mentee/profile - Update profile (requires JWT)
+app.put('/api/mentee/profile', verifyToken, async (req, res) => {
+  try {
+    const { name, phone, bio, timezone } = req.body;
+    
+    // Update mentee_accounts
+    const accountResult = await pool.query(
+      'UPDATE mentee_accounts SET name = COALESCE($1, name), phone = COALESCE($2, phone), bio = COALESCE($3, bio), updated_at = NOW() WHERE id = $4 RETURNING id, email, name, phone, bio, avatar_url',
+      [name || null, phone || null, bio || null, req.user.id]
+    );
+    
+    // Update mentee_profiles
+    if (timezone) {
+      await pool.query(
+        'UPDATE mentee_profiles SET timezone = $1, updated_at = NOW() WHERE mentee_id = $2',
+        [timezone, req.user.id]
+      );
+    }
+    
+    res.json({
+      success: true,
+      user: accountResult.rows[0]
+    });
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    res.status(500).json({ error: 'Failed to update profile' });
+  }
+});
+
+// GET /api/mentee/bookings - Get all mentee's bookings (requires JWT)
+app.get('/api/mentee/bookings', verifyToken, async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT b.id, b.mentor_id, b.customer_name, b.customer_email, b.session_topic,
+              b.start_time, b.end_time, b.payment_status, b.booking_status, b.notes, b.created_at,
+              pr.payment_id, pr.amount, pr.currency, pr.status as payment_verified
+       FROM bookings b
+       LEFT JOIN payment_records pr ON b.id = pr.id
+       WHERE b.mentee_id = $1 OR b.customer_email = $2
+       ORDER BY b.start_time DESC`,
+      [req.user.id, req.user.email]
+    );
+    
+    const upcoming = result.rows.filter(b => new Date(b.start_time) > new Date());
+    const past = result.rows.filter(b => new Date(b.start_time) <= new Date());
+    
+    res.json({
+      bookings: result.rows,
+      upcoming: upcoming.length,
+      past: past.length
+    });
+  } catch (error) {
+    console.error('Error fetching bookings:', error);
+    res.status(500).json({ error: 'Failed to fetch bookings' });
+  }
+});
+
+// GET /api/mentee/bookings/:id - Get booking details (requires JWT)
+app.get('/api/mentee/bookings/:id', verifyToken, async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT b.id, b.mentor_id, b.customer_name, b.customer_email, b.session_topic,
+              b.start_time, b.end_time, b.payment_status, b.booking_status, b.notes,
+              m.name as mentor_name, m.bio as mentor_bio,
+              pr.payment_id, pr.amount, pr.currency, pr.status as payment_verified
+       FROM bookings b
+       LEFT JOIN mentors m ON b.mentor_id = m.id
+       LEFT JOIN payment_records pr ON b.id = pr.id
+       WHERE b.id = $1 AND (b.mentee_id = $2 OR b.customer_email = $3)`,
+      [req.params.id, req.user.id, req.user.email]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Booking not found' });
+    }
+    
+    res.json({ booking: result.rows[0] });
+  } catch (error) {
+    console.error('Error fetching booking:', error);
+    res.status(500).json({ error: 'Failed to fetch booking' });
   }
 });
 

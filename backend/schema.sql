@@ -78,14 +78,51 @@ CREATE TABLE IF NOT EXISTS emails_sent (
   FOREIGN KEY (booking_id) REFERENCES bookings(id)
 );
 
+-- Mentee accounts (user authentication)
+CREATE TABLE IF NOT EXISTS mentee_accounts (
+  id SERIAL PRIMARY KEY,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  phone VARCHAR(20),
+  bio TEXT,
+  avatar_url VARCHAR(512),
+  is_active BOOLEAN DEFAULT TRUE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Mentee profiles (extensible preferences)
+CREATE TABLE IF NOT EXISTS mentee_profiles (
+  id SERIAL PRIMARY KEY,
+  mentee_id INT UNIQUE NOT NULL,
+  timezone VARCHAR(50) DEFAULT 'America/New_York',
+  preferences JSONB DEFAULT '{}',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (mentee_id) REFERENCES mentee_accounts(id) ON DELETE CASCADE
+);
+
+-- Update bookings to link to mentee accounts (optional, for backward compatibility)
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS mentee_id INT DEFAULT NULL;
+ALTER TABLE bookings ADD CONSTRAINT fk_bookings_mentee FOREIGN KEY (mentee_id) REFERENCES mentee_accounts(id) ON DELETE SET NULL;
+
+-- Update payment_records to link to mentee accounts
+ALTER TABLE payment_records ADD COLUMN IF NOT EXISTS mentee_id INT DEFAULT NULL;
+ALTER TABLE payment_records ADD CONSTRAINT fk_payment_records_mentee FOREIGN KEY (mentee_id) REFERENCES mentee_accounts(id) ON DELETE SET NULL;
+
 -- Indexes for performance
-CREATE INDEX idx_time_slots_mentor_start ON time_slots(mentor_id, start_time);
-CREATE INDEX idx_bookings_mentor_start ON bookings(mentor_id, start_time);
-CREATE INDEX idx_bookings_email ON bookings(customer_email);
-CREATE INDEX idx_bookings_payment_id ON bookings(stripe_payment_id);
-CREATE INDEX idx_payment_records_payment_id ON payment_records(payment_id);
-CREATE INDEX idx_payment_records_provider ON payment_records(provider);
-CREATE INDEX idx_payment_records_status ON payment_records(status);
+CREATE INDEX IF NOT EXISTS idx_time_slots_mentor_start ON time_slots(mentor_id, start_time);
+CREATE INDEX IF NOT EXISTS idx_bookings_mentor_start ON bookings(mentor_id, start_time);
+CREATE INDEX IF NOT EXISTS idx_bookings_email ON bookings(customer_email);
+CREATE INDEX IF NOT EXISTS idx_bookings_payment_id ON bookings(stripe_payment_id);
+CREATE INDEX IF NOT EXISTS idx_bookings_mentee ON bookings(mentee_id);
+CREATE INDEX IF NOT EXISTS idx_payment_records_payment_id ON payment_records(payment_id);
+CREATE INDEX IF NOT EXISTS idx_payment_records_provider ON payment_records(provider);
+CREATE INDEX IF NOT EXISTS idx_payment_records_status ON payment_records(status);
+CREATE INDEX IF NOT EXISTS idx_payment_records_mentee ON payment_records(mentee_id);
+CREATE INDEX IF NOT EXISTS idx_mentee_email ON mentee_accounts(email);
+CREATE INDEX IF NOT EXISTS idx_mentee_profiles_mentee ON mentee_profiles(mentee_id);
 
 -- Insert Harshit as the initial mentor
 INSERT INTO mentors (name, email, bio, specialties, hourly_rate)
