@@ -90,6 +90,22 @@ async function initializeDatabase() {
     } catch (e) {
       // Column might already exist
     }
+
+    // Migrate mentors table - add missing columns if they don't exist
+    try {
+      await pool.query(`ALTER TABLE mentors ADD COLUMN IF NOT EXISTS password_hash VARCHAR(255)`);
+      await pool.query(`ALTER TABLE mentors ADD COLUMN IF NOT EXISTS email VARCHAR(255) UNIQUE`);
+      await pool.query(`ALTER TABLE mentors ADD COLUMN IF NOT EXISTS bio TEXT`);
+      await pool.query(`ALTER TABLE mentors ADD COLUMN IF NOT EXISTS avatar_url VARCHAR(512)`);
+      await pool.query(`ALTER TABLE mentors ADD COLUMN IF NOT EXISTS tracks TEXT[] DEFAULT ARRAY[]::TEXT[]`);
+      await pool.query(`ALTER TABLE mentors ADD COLUMN IF NOT EXISTS rating DECIMAL(3, 2) DEFAULT 5.0`);
+      await pool.query(`ALTER TABLE mentors ADD COLUMN IF NOT EXISTS session_count INT DEFAULT 0`);
+      await pool.query(`ALTER TABLE mentors ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT TRUE`);
+      await pool.query(`ALTER TABLE mentors ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP`);
+      await pool.query(`ALTER TABLE mentors ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP`);
+    } catch (e) {
+      // Columns might already exist
+    }
     
     // Create indexes (non-fatal if constraint already exists)
     try {
