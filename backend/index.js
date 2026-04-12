@@ -1440,7 +1440,7 @@ app.get('/api/mentors', async (req, res) => {
   try {
     const { track } = req.query;
     
-    let query = 'SELECT id, name, bio, avatar_url, tracks, rating, session_count FROM mentors WHERE is_active = TRUE';
+    let query = `SELECT id, name, bio, COALESCE(avatar_url, '') as avatar_url, tracks, rating, session_count FROM mentors WHERE is_active = TRUE`;
     const params = [];
     
     // If track is specified, filter by track
@@ -1468,7 +1468,7 @@ app.get('/api/mentors', async (req, res) => {
 app.get('/api/mentor/:id', async (req, res) => {
   try {
     const result = await pool.query(
-      'SELECT id, name, bio, avatar_url, tracks, rating, session_count, created_at FROM mentors WHERE id = $1 AND is_active = TRUE',
+      `SELECT id, name, bio, COALESCE(avatar_url, '') as avatar_url, tracks, rating, session_count, created_at FROM mentors WHERE id = $1 AND is_active = TRUE`,
       [req.params.id]
     );
     
