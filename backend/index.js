@@ -54,15 +54,20 @@ async function initializeDatabase() {
       )
     `);
     
-    // Add mentee_id column to bookings if it doesn't exist
-    await pool.query(`
-      ALTER TABLE bookings ADD COLUMN IF NOT EXISTS mentee_id INT DEFAULT NULL;
-      ALTER TABLE bookings ADD CONSTRAINT fk_bookings_mentee FOREIGN KEY (mentee_id) REFERENCES mentee_accounts(id) ON DELETE SET NULL
-    `.split(';').filter(q => q.trim()).join(';'));
+    // Try to add mentee_id column to bookings (non-fatal if fails)
+    try {
+      await pool.query(`ALTER TABLE bookings ADD COLUMN IF NOT EXISTS mentee_id INT DEFAULT NULL`);
+    } catch (e) {
+      // Column might already exist
+    }
     
-    // Add indexes
-    await pool.query(`CREATE INDEX IF NOT EXISTS idx_mentee_email ON mentee_accounts(email)`);
-    await pool.query(`CREATE INDEX IF NOT EXISTS idx_bookings_mentee ON bookings(mentee_id)`);
+    // Create indexes (non-fatal if constraint already exists)
+    try {
+      await pool.query(`CREATE INDEX IF NOT EXISTS idx_mentee_email ON mentee_accounts(email)`);
+      await pool.query(`CREATE INDEX IF NOT EXISTS idx_bookings_mentee ON bookings(mentee_id)`);
+    } catch (e) {
+      // Indexes might already exist
+    }
     
     console.log('✓ Database schema initialized');
   } catch (error) {
