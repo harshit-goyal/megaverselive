@@ -424,12 +424,17 @@
         </nav>
 
         <div class="flex items-center gap-3">
-          <a
-            href="/auth"
-            class="hidden sm:inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-slate-600 hover:text-brand-600 transition"
-          >
-            👤 Sign Up / Login
-          </a>
+          <div class="relative group">
+            <button
+              class="hidden sm:inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-slate-600 hover:text-brand-600 transition"
+            >
+              👤 Sign Up / Login
+            </button>
+            <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-slate-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+              <a href="/auth?role=mentee" class="block px-4 py-3 hover:bg-slate-50 text-slate-700 font-medium first:rounded-t-lg">👤 Mentee</a>
+              <a href="/auth?role=mentor" class="block px-4 py-3 hover:bg-slate-50 text-slate-700 font-medium last:rounded-b-lg">👨‍🏫 Mentor</a>
+            </div>
+          </div>
           <button
             onclick="openPaymentModal()"
             class="hidden sm:inline-flex items-center gap-2 rounded-full btn-gradient px-5 py-2.5 text-sm font-semibold text-white cursor-pointer"
