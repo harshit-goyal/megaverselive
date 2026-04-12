@@ -1194,10 +1194,8 @@ app.get('/api/mentee/bookings', verifyToken, async (req, res) => {
     
     const result = await pool.query(
       `SELECT b.id, b.mentor_id, b.customer_name, b.customer_email, b.session_topic,
-              b.start_time, b.end_time, b.payment_status, b.booking_status, b.notes, b.created_at,
-              p.payment_id, p.amount, p.currency, p.status as payment_verified
+              b.start_time, b.end_time, b.payment_status, b.booking_status, b.notes, b.created_at
        FROM bookings b
-       LEFT JOIN payments p ON b.id = p.booking_id
        WHERE b.mentee_id = $1 OR b.customer_email = $2
        ORDER BY b.start_time DESC`,
       [req.user.id, req.user.email]
