@@ -637,6 +637,8 @@
     }
 
     function goToBooking() {
+      // Store flag in session storage and redirect
+      sessionStorage.setItem('openPaymentOnLoad', 'true');
       window.location.href = '/';
     }
 
