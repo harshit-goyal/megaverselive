@@ -194,36 +194,57 @@
         grid-template-columns: 1fr;
       }
     }
+
+    .role-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 30px;
+      margin-top: -10px;
+      margin-left: -40px;
+      margin-right: -40px;
+      padding: 0;
+      background: #f7fafc;
+      border-radius: 0 0 12px 12px;
+    }
+    .role-tab {
+      padding: 12px 20px;
+      border: none;
+      background: transparent;
+      color: #718096;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .role-tab.active {
+      color: #667eea;
+      border-bottom-color: #667eea;
+      background: white;
+    }
+    .role-tab:hover {
+      color: #667eea;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- Role Selection Page -->
-    <div id="rolePage" class="page active">
-      <div class="header">
-        <div class="logo">🚀</div>
-        <h1>Welcome to Megaverse Live</h1>
-        <p class="subtitle">Choose your role</p>
-      </div>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 40px;">
-        <button onclick="switchPage('loginPage')" style="height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; font-size: 16px; cursor: pointer;">
-          <div style="font-size: 48px;">👤</div>
-          <div style="font-weight: 600;">Mentee</div>
-          <div style="font-size: 12px; color: #718096; font-weight: 400;">Book sessions</div>
-        </button>
-        <button onclick="switchPage('mentorLoginPage')" style="height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; font-size: 16px; cursor: pointer;">
-          <div style="font-size: 48px;">👨‍🏫</div>
-          <div style="font-weight: 600;">Mentor</div>
-          <div style="font-size: 12px; color: #718096; font-weight: 400;">Teach & create profile</div>
-        </button>
-      </div>
+    <!-- Role Tabs (Top Navigation) -->
+    <div class="role-tabs">
+      <button class="role-tab active" onclick="setRole('mentee')">👤 Mentee</button>
+      <button class="role-tab" onclick="setRole('mentor')">👨‍🏫 Mentor</button>
     </div>
 
-    <!-- Login Page -->
-    <div id="loginPage" class="page">
-      <div class="header">
-        <div class="badge">👤 Mentee Login</div>
-        <div class="logo">🚀</div>
+    <!-- MENTEE SECTION -->
+    <div id="menteeSection">
+      <!-- Login Page -->
+      <div id="loginPage" class="page active">
+        <div class="header">
+          <div class="badge">👤 Mentee Login</div>
+          <div class="logo">🚀</div>
         <h1>Login</h1>
         <p class="subtitle">Sign in to your mentee account</p>
       </div>
@@ -280,15 +301,18 @@
         Already have an account? <a onclick="switchPage('loginPage')">Sign in</a>
       </div>
     </div>
+    </div> <!-- End menteeSection -->
 
-    <!-- Mentor Login Page -->
-    <div id="mentorLoginPage" class="page">
-      <div class="header">
-        <div class="badge">👨‍🏫 Mentor Login</div>
-        <div class="logo">🚀</div>
-        <h1>Mentor Login</h1>
-        <p class="subtitle">Sign in to your mentor account</p>
-      </div>
+    <!-- MENTOR SECTION (Hidden by default) -->
+    <div id="mentorSection" style="display: none;">
+      <!-- Mentor Login Page -->
+      <div id="mentorLoginPage" class="page active">
+        <div class="header">
+          <div class="badge">👨‍🏫 Mentor Login</div>
+          <div class="logo">🚀</div>
+          <h1>Mentor Login</h1>
+          <p class="subtitle">Sign in to your mentor account</p>
+        </div>
       <div id="mentorLoginError" class="error" style="display: none;"></div>
       <form id="mentorLoginForm">
         <div class="form-group">
@@ -353,8 +377,9 @@
         Already have a mentor account? <a onclick="switchPage('mentorLoginPage')">Sign in</a>
       </div>
     </div>
+    </div> <!-- End mentorSection -->
 
-    <!-- Dashboard Page -->
+    <!-- Dashboard Page (Mentee) -->
     <div id="dashboardPage" class="page">
       <div class="header">
         <div class="logo">📊</div>
@@ -448,16 +473,27 @@
       <button onclick="switchPage('dashboardPage')" style="background: #718096; margin-top: 12px;">Back to Dashboard</button>
       <button onclick="logout()" style="background: #f56565; margin-top: 8px;">Logout</button>
     </div>
+    </div> <!-- End menteeSection -->
   </div>
 
   <script>
     const API_URL = window.location.origin;
     let currentUser = null;
+    let currentRole = 'mentee'; // 'mentee' or 'mentor'
     let allBookings = [];
     let filteredBookings = [];
 
     // Initialize
     document.addEventListener('DOMContentLoaded', () => {
+      // Check URL parameter for role
+      const params = new URLSearchParams(window.location.search);
+      const roleParam = params.get('role');
+      if (roleParam === 'mentor') {
+        setRole('mentor');
+      } else {
+        setRole('mentee');
+      }
+      
       checkAuth();
       
       // Form handlers
@@ -468,11 +504,39 @@
       document.getElementById('mentorSignupForm').onsubmit = handleMentorSignup;
     });
 
+    function setRole(role) {
+      currentRole = role;
+      
+      // Update tab styling
+      document.querySelectorAll('.role-tab').forEach(tab => tab.classList.remove('active'));
+      if (role === 'mentee') {
+        document.querySelectorAll('.role-tab')[0].classList.add('active');
+        document.getElementById('menteeSection').style.display = 'block';
+        document.getElementById('mentorSection').style.display = 'none';
+        switchPage('loginPage');
+      } else {
+        document.querySelectorAll('.role-tab')[1].classList.add('active');
+        document.getElementById('menteeSection').style.display = 'none';
+        document.getElementById('mentorSection').style.display = 'block';
+        switchPage('mentorLoginPage');
+      }
+    }
+
     function checkAuth() {
-      const token = localStorage.getItem('menteeToken');
-      if (token) {
+      const menteeToken = localStorage.getItem('menteeToken');
+      const mentorToken = localStorage.getItem('mentorToken');
+      
+      if (menteeToken) {
         currentUser = JSON.parse(localStorage.getItem('menteeUser') || '{}');
+        currentRole = 'mentee';
+        setRole('mentee');
         loadDashboard();
+      } else if (mentorToken) {
+        currentUser = JSON.parse(localStorage.getItem('mentorUser') || '{}');
+        currentRole = 'mentor';
+        setRole('mentor');
+        // For mentors, show profile page or dashboard
+        // (You can create a mentor dashboard later)
       }
     }
 
