@@ -22,6 +22,58 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false }, // Required for Azure
 });
 
+// Initialize database schema
+async function initializeDatabase() {
+  try {
+    // Create mentee_accounts table
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS mentee_accounts (
+        id SERIAL PRIMARY KEY,
+        email VARCHAR(255) UNIQUE NOT NULL,
+        password_hash VARCHAR(255) NOT NULL,
+        name VARCHAR(255) NOT NULL,
+        phone VARCHAR(20),
+        bio TEXT,
+        avatar_url VARCHAR(512),
+        is_active BOOLEAN DEFAULT TRUE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    
+    // Create mentee_profiles table
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS mentee_profiles (
+        id SERIAL PRIMARY KEY,
+        mentee_id INT UNIQUE NOT NULL,
+        timezone VARCHAR(50) DEFAULT 'America/New_York',
+        preferences JSONB DEFAULT '{}',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (mentee_id) REFERENCES mentee_accounts(id) ON DELETE CASCADE
+      )
+    `);
+    
+    // Add mentee_id column to bookings if it doesn't exist
+    await pool.query(`
+      ALTER TABLE bookings ADD COLUMN IF NOT EXISTS mentee_id INT DEFAULT NULL;
+      ALTER TABLE bookings ADD CONSTRAINT fk_bookings_mentee FOREIGN KEY (mentee_id) REFERENCES mentee_accounts(id) ON DELETE SET NULL
+    `.split(';').filter(q => q.trim()).join(';'));
+    
+    // Add indexes
+    await pool.query(`CREATE INDEX IF NOT EXISTS idx_mentee_email ON mentee_accounts(email)`);
+    await pool.query(`CREATE INDEX IF NOT EXISTS idx_bookings_mentee ON bookings(mentee_id)`);
+    
+    console.log('✓ Database schema initialized');
+  } catch (error) {
+    console.error('Database initialization error:', error.message);
+    // Non-fatal error, continue startup
+  }
+}
+
+// Call on startup
+initializeDatabase();
+
 // Middleware
 app.use(cors());
 app.use(express.json());
