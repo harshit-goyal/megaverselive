@@ -1,0 +1,278 @@
+MENTEE ACCOUNT SYSTEM - FEATURE SUMMARY
+=======================================
+
+USER REQUEST: 
+"Should we add mentee and mentor signin where both can upload profiles, 
+book a mentor, see past and upcoming sessions?"
+
+ANALYSIS & RECOMMENDATION:
+==========================
+
+We decided: Build Mentee Accounts First ✅
+(Mentor accounts come later when you want to scale to multiple mentors)
+
+WHY THIS ORDER?
+- Mentee accounts are simpler and higher-value immediately
+- Foundation for mentee retention and engagement
+- Scales to multi-mentor model without rework
+- 80% of benefit for 40% of effort right now
+
+
+WHAT GETS BUILT:
+================
+
+1. MENTEE SIGNUP & LOGIN
+   ✓ Email/password account creation
+   ✓ Secure password storage (bcrypt)
+   ✓ Auto-login on page reload (JWT tokens)
+   ✓ Logout functionality
+
+2. MENTEE PROFILES
+   ✓ Store profile data: name, email, phone, bio, timezone
+   ✓ Upload profile picture (optional)
+   ✓ Edit profile anytime
+   ✓ All data linked to their account
+
+3. BOOKING HISTORY DASHBOARD
+   ✓ See ALL past bookings (complete history)
+   ✓ See upcoming sessions (what's coming next)
+   ✓ View session details: date, time, topic, payment status
+   ✓ Link to reschedule on cal.com
+
+4. ACCOUNT MANAGEMENT
+   ✓ View profile
+   ✓ Edit profile details
+   ✓ Change timezone
+   ✓ Logout
+
+
+PAGES BEING ADDED:
+==================
+
+/login          - Email/password login
+/signup         - Create account
+/dashboard      - Welcome page, quick stats, upcoming sessions
+/bookings       - Full history of past/upcoming sessions
+/profile        - View and edit profile
+
+
+API ENDPOINTS BEING ADDED:
+===========================
+
+Authentication:
+  POST /api/auth/signup          - Create account
+  POST /api/auth/login           - Login (get JWT token)
+  POST /api/auth/logout          - Logout
+
+Profile Management:
+  GET /api/mentee/profile        - Get current user profile
+  PUT /api/mentee/profile        - Update profile
+  POST /api/mentee/avatar        - Upload picture (optional)
+
+Bookings:
+  GET /api/mentee/bookings       - List all bookings
+  GET /api/mentee/bookings/:id   - Get booking details
+
+
+DATABASE UPDATES:
+=================
+
+New tables:
+  ✓ mentee_accounts (email, password_hash, name, phone, bio)
+  ✓ mentee_profiles (timezone, preferences)
+
+Updated tables:
+  ✓ bookings - Add mentee_id to link bookings to users
+  ✓ payment_records - Add mentee_id to track who paid
+
+
+BENEFITS:
+=========
+
+For Mentees:
+  ✓ See all bookings in one place
+  ✓ Track session history
+  ✓ See payment information
+  ✓ Easy profile management
+  ✓ No need to fill same info again
+
+For You (Harshit):
+  ✓ Know who booked (not anonymous)
+  ✓ Better metrics on repeat customers
+  ✓ Foundation for reminders/emails
+  ✓ Data for analytics
+  ✓ Ready to scale to multiple mentors
+
+
+USER FLOW (After Implementation):
+==================================
+
+1. New visitor lands on site
+   → Sees "Book a Session" button
+   → Clicks → Redirected to login/signup
+
+2. First-time user:
+   → Signs up (email, password, name)
+   → Completes profile (phone, bio, timezone)
+   → Shown bookings page (empty initially)
+   → Can book a session
+
+3. After booking:
+   → Makes payment (Razorpay/PayPal)
+   → Redirected to cal.com
+   → Payment stored with their account
+
+4. Returning user:
+   → Logs in
+   → Dashboard shows: "2 upcoming sessions, 5 past bookings"
+   → Can view all sessions and payment history
+
+5. Before session:
+   → User checks dashboard
+   → Sees upcoming session with time, topic
+   → Can click link to reschedule if needed
+
+
+IMPLEMENTATION EFFORT:
+======================
+
+Time breakdown:
+  Database schema:       1 hour
+  Authentication API:    2 hours
+  Frontend (login/signup): 2 hours
+  Dashboard & bookings:  2 hours
+  Integration & testing: 1-2 hours
+  
+TOTAL: 8-10 hours (can be done in 1-2 sessions)
+
+
+SECURITY FEATURES INCLUDED:
+===========================
+
+✓ Passwords: Bcrypt hashing (not plaintext)
+✓ Tokens: JWT with 24-hour expiry
+✓ Authorization: Users only see their own data
+✓ HTTPS: All communication encrypted
+✓ Input validation: Prevent SQL injection, XSS attacks
+
+
+FUTURE ADDITIONS (Phase 2):
+===========================
+
+After mentee accounts are working:
+
+Priority 1: Email Confirmations
+  - Send booking confirmation
+  - Reminder 1 day before
+  - Reminder 1 hour before
+
+Priority 2: Multiple Mentors
+  - Other mentors signup
+  - Each with profile, rate, availability
+  - Mentees choose which mentor to book
+
+Priority 3: Admin Dashboard
+  - See all bookings
+  - Revenue tracking
+  - User management
+
+Priority 4: Reviews/Ratings
+  - Mentees rate sessions
+  - Public mentor profiles
+
+
+WHAT DOESN'T CHANGE:
+====================
+
+✓ Payment system stays as-is (Razorpay + PayPal)
+✓ Payment amounts stay same (₹1200 / $15)
+✓ cal.com integration stays same
+✓ Custom domain (megaverselive.com) stays live
+✓ Mentor selection (only Harshit for now)
+
+
+COMPARISON: BEFORE vs AFTER
+===========================
+
+BEFORE:
+- Customers book anonymously
+- No way to see booking history
+- No user profile data stored
+- Don't know if same person books twice
+- No dashboard
+
+AFTER:
+- Users have accounts
+- Can see all past bookings
+- Profile data stored (name, email, phone)
+- Can identify repeat customers
+- Beautiful dashboard with stats
+
+
+READY TO START?
+================
+
+All planning done! We have:
+  ✓ Detailed specification (MENTEE_ACCOUNT_SYSTEM_SPEC.md)
+  ✓ Database schema designed
+  ✓ All API endpoints planned
+  ✓ Frontend pages designed
+  ✓ Security approach locked down
+  ✓ 7 todo items in SQL tracking
+
+Next steps:
+1. Implement database schema
+2. Build auth endpoints
+3. Create frontend pages
+4. Test everything
+5. Deploy to Render
+
+Want to start building? Just say "go" or "start implementing"!
+
+
+TECHNICAL NOTES:
+================
+
+- Frontend: Keep using HTML/CSS/JS (no React)
+- Backend: Node.js/Express (existing)
+- Auth: JWT tokens in localStorage
+- Password: bcrypt hashing (12 rounds)
+- Database: PostgreSQL (existing)
+- Deployment: Render auto-deploys on git push
+
+All compatible with current stack!
+
+
+QUESTIONS ANSWERED:
+===================
+
+Q: Why not build mentor signup too?
+A: Mentor signup is more complex (verification, approval process).
+   Better to start with mentee-only, then add mentors when scaling.
+
+Q: Can mentees upload profiles?
+A: Yes! Name, bio, phone, timezone, profile picture.
+
+Q: Can they see past and upcoming sessions?
+A: Yes! Both upcoming and past, with full details.
+
+Q: What about mentor profiles?
+A: For now, it's just you (Harshit). Mentor profiles come in v2
+   when you want to add other mentors.
+
+Q: Will this affect payments?
+A: No. Payments stay exactly the same. We just link them to user accounts.
+
+Q: How long to build?
+A: 8-10 hours. Can be done in 1-2 working sessions.
+
+
+CURRENT STATUS:
+===============
+
+Payment system: ✅ LIVE
+Custom domain: ✅ LIVE  
+Webhook verification: ✅ READY (awaiting secrets)
+Mentee account system: 🔄 PLANNED (ready to build)
+
+Next phase: Build mentee authentication and dashboard!
