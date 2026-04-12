@@ -222,6 +222,86 @@ app.get('/api/debug/test-connection', async (req, res) => {
   }
 });
 
+// Manual database initialization endpoint (for fixing credential issues)
+app.post('/api/admin/init-mentee-schema', async (req, res) => {
+  try {
+    // Check if tables already exist
+    const checkResult = await pool.query(`
+      SELECT table_name FROM information_schema.tables 
+      WHERE table_schema = 'public' AND table_name = 'mentee_accounts'
+    `);
+    
+    if (checkResult.rows.length > 0) {
+      return res.json({ 
+        success: true, 
+        message: 'Mentee schema already exists',
+        status: 'already_initialized'
+      });
+    }
+    
+    // Create mentee_accounts table
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS mentee_accounts (
+        id SERIAL PRIMARY KEY,
+        email VARCHAR(255) UNIQUE NOT NULL,
+        password_hash VARCHAR(255) NOT NULL,
+        name VARCHAR(255) NOT NULL,
+        phone VARCHAR(20),
+        bio TEXT,
+        avatar_url VARCHAR(512),
+        is_active BOOLEAN DEFAULT TRUE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    
+    // Create mentee_profiles table
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS mentee_profiles (
+        id SERIAL PRIMARY KEY,
+        mentee_id INT UNIQUE NOT NULL,
+        timezone VARCHAR(50) DEFAULT 'America/New_York',
+        preferences JSONB DEFAULT '{}',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (mentee_id) REFERENCES mentee_accounts(id) ON DELETE CASCADE
+      )
+    `);
+    
+    // Add mentee_id column to bookings if not exists
+    try {
+      await pool.query(`ALTER TABLE bookings ADD COLUMN IF NOT EXISTS mentee_id INT DEFAULT NULL`);
+    } catch (e) {
+      // Column might already exist, that's fine
+    }
+    
+    // Create indexes
+    try {
+      await pool.query(`CREATE INDEX IF NOT EXISTS idx_mentee_email ON mentee_accounts(email)`);
+      await pool.query(`CREATE INDEX IF NOT EXISTS idx_bookings_mentee ON bookings(mentee_id)`);
+    } catch (e) {
+      // Indexes might already exist, that's fine
+    }
+    
+    res.json({
+      success: true,
+      message: 'Mentee schema initialized successfully',
+      tables_created: ['mentee_accounts', 'mentee_profiles'],
+      note: 'You can now use signup at /api/auth/signup'
+    });
+  } catch (error) {
+    console.error('Schema initialization error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+      code: error.code,
+      hint: error.code === '28P01'
+        ? 'Database credentials are incorrect. Update DB_USER and DB_PASSWORD environment variables and redeploy.'
+        : 'Database error. Check connection settings.'
+    });
+  }
+});
+
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date(), message: 'Megaverse Live API is running' });
@@ -874,6 +954,15 @@ app.post('/api/auth/signup', async (req, res) => {
   } catch (error) {
     if (error.code === '23505') {
       return res.status(400).json({ error: 'Email already registered' });
+    }
+    // If table doesn't exist, provide helpful error with initialization endpoint
+    if (error.code === '42P01' || error.message?.includes('mentee_accounts')) {
+      return res.status(503).json({ 
+        error: 'Database schema not initialized',
+        message: 'The mentee tables need to be created. Run POST /api/admin/init-mentee-schema to initialize.',
+        setupUrl: '/api/admin/init-mentee-schema',
+        code: 'SCHEMA_NOT_READY'
+      });
     }
     console.error('Signup error:', error);
     res.status(500).json({ error: 'Signup failed', details: error.message });

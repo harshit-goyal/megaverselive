@@ -439,6 +439,16 @@
         
         const data = await res.json();
         
+        // Check if schema needs to be initialized
+        if (data.code === 'SCHEMA_NOT_READY') {
+          showError('signupError', 'System is initializing. Please wait 30 seconds and try again.');
+          // Try to auto-initialize
+          try {
+            await fetch(`${API_URL}/api/admin/init-mentee-schema`, { method: 'POST' });
+          } catch (e) {}
+          return;
+        }
+        
         if (!res.ok) {
           showError('signupError', data.error || 'Signup failed');
           return;
