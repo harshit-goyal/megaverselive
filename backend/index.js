@@ -1594,6 +1594,184 @@ app.put('/api/mentor/profile', verifyMentorToken, async (req, res) => {
   }
 });
 
+// ============= ADMIN ROUTES =============
+
+const ADMIN_EMAIL = 'admin@megaverselive.com';
+const ADMIN_PASSWORD = 'Admin@123456';
+const ADMIN_JWT_SECRET = process.env.ADMIN_JWT_SECRET || 'admin-secret-key-change-in-production';
+
+// Admin login
+app.post('/api/admin/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    
+    if (email !== ADMIN_EMAIL || password !== ADMIN_PASSWORD) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+    
+    const token = jwt.sign({ role: 'admin', email }, ADMIN_JWT_SECRET, { expiresIn: '24h' });
+    res.json({ token, admin: { email } });
+  } catch (error) {
+    res.status(500).json({ error: 'Login failed', details: error.message });
+  }
+});
+
+// Verify admin token middleware
+const verifyAdminToken = (req, res, next) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) return res.status(401).json({ error: 'No token provided' });
+  
+  try {
+    const decoded = jwt.verify(token, ADMIN_JWT_SECRET);
+    if (decoded.role !== 'admin') return res.status(403).json({ error: 'Forbidden' });
+    req.admin = decoded;
+    next();
+  } catch (error) {
+    res.status(401).json({ error: 'Invalid token' });
+  }
+};
+
+// Get all mentors (admin)
+app.get('/api/admin/mentors', verifyAdminToken, async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM mentors ORDER BY name');
+    res.json({ mentors: result.rows });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch mentors', details: error.message });
+  }
+});
+
+// Get all mentees (admin)
+app.get('/api/admin/mentees', verifyAdminToken, async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM mentee_accounts ORDER BY name');
+    res.json({ mentees: result.rows });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch mentees', details: error.message });
+  }
+});
+
+// Create mentor (admin)
+app.post('/api/admin/mentor', verifyAdminToken, async (req, res) => {
+  try {
+    const { email, name, password, bio, tracks } = req.body;
+    
+    if (!email || !name || !password) {
+      return res.status(400).json({ error: 'Email, name, and password required' });
+    }
+    
+    const passwordHash = await bcrypt.hash(password, 10);
+    const tracksArray = Array.isArray(tracks) ? tracks : [];
+    
+    const result = await pool.query(
+      'INSERT INTO mentors (email, name, password_hash, bio, tracks) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      [email, name, passwordHash, bio || '', tracksArray]
+    );
+    
+    res.status(201).json({ mentor: result.rows[0] });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to create mentor', details: error.message });
+  }
+});
+
+// Edit mentor (admin)
+app.put('/api/admin/mentor/:id', verifyAdminToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, email, bio, tracks, rating } = req.body;
+    
+    const result = await pool.query(
+      'UPDATE mentors SET name=$1, email=$2, bio=$3, tracks=$4, rating=$5 WHERE id=$6 RETURNING *',
+      [name, email, bio, Array.isArray(tracks) ? tracks : [], rating, id]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Mentor not found' });
+    }
+    
+    res.json({ mentor: result.rows[0] });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to update mentor', details: error.message });
+  }
+});
+
+// Delete mentor (admin)
+app.delete('/api/admin/mentor/:id', verifyAdminToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const result = await pool.query('DELETE FROM mentors WHERE id=$1 RETURNING id', [id]);
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Mentor not found' });
+    }
+    
+    res.json({ message: 'Mentor deleted', id });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete mentor', details: error.message });
+  }
+});
+
+// Create mentee (admin)
+app.post('/api/admin/mentee', verifyAdminToken, async (req, res) => {
+  try {
+    const { email, name, password, phone } = req.body;
+    
+    if (!email || !name || !password) {
+      return res.status(400).json({ error: 'Email, name, and password required' });
+    }
+    
+    const passwordHash = await bcrypt.hash(password, 10);
+    
+    const result = await pool.query(
+      'INSERT INTO mentee_accounts (email, name, password_hash, phone) VALUES ($1, $2, $3, $4) RETURNING *',
+      [email, name, passwordHash, phone || '']
+    );
+    
+    res.status(201).json({ mentee: result.rows[0] });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to create mentee', details: error.message });
+  }
+});
+
+// Edit mentee (admin)
+app.put('/api/admin/mentee/:id', verifyAdminToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, email, phone, bio } = req.body;
+    
+    const result = await pool.query(
+      'UPDATE mentee_accounts SET name=$1, email=$2, phone=$3, bio=$4 WHERE id=$5 RETURNING *',
+      [name, email, phone, bio, id]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Mentee not found' });
+    }
+    
+    res.json({ mentee: result.rows[0] });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to update mentee', details: error.message });
+  }
+});
+
+// Delete mentee (admin)
+app.delete('/api/admin/mentee/:id', verifyAdminToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const result = await pool.query('DELETE FROM mentee_accounts WHERE id=$1 RETURNING id', [id]);
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Mentee not found' });
+    }
+    
+    res.json({ message: 'Mentee deleted', id });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete mentee', details: error.message });
+  }
+});
+
 // ============= START SERVER =============
 
 app.listen(PORT, () => {

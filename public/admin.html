@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Megaverse Live - Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f5f7fa;
+      color: #2d3748;
+    }
+
+    .login-container {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .login-box {
+      background: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      max-width: 400px;
+      width: 100%;
+    }
+
+    .logo { font-size: 40px; text-align: center; margin-bottom: 15px; }
+    h1 { text-align: center; font-size: 28px; margin-bottom: 30px; color: #1a202c; }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #2d3748;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    button:hover { transform: translateY(-2px); }
+
+    .error {
+      background: #fed7d7;
+      color: #c53030;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    /* Dashboard Styles */
+    .dashboard {
+      display: none;
+      min-height: 100vh;
+      background: #f5f7fa;
+    }
+
+    .dashboard-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .dashboard-header h1 { color: white; margin: 0; }
+    .dashboard-header button { width: auto; padding: 8px 16px; margin: 0; }
+
+    .dashboard-content {
+      padding: 30px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 30px;
+      border-bottom: 2px solid #e2e8f0;
+    }
+
+    .tab-btn {
+      padding: 12px 20px;
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      cursor: pointer;
+      font-weight: 600;
+      color: #718096;
+      transition: all 0.3s;
+      width: auto;
+    }
+
+    .tab-btn.active {
+      color: #667eea;
+      border-bottom-color: #667eea;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .add-btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      margin-bottom: 20px;
+      width: auto;
+    }
+
+    table {
+      width: 100%;
+      background: white;
+      border-collapse: collapse;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    thead {
+      background: #f7fafc;
+      font-weight: 600;
+    }
+
+    th, td {
+      padding: 16px;
+      text-align: left;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .action-btn {
+      padding: 6px 12px;
+      margin-right: 8px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .edit-btn {
+      background: #bee3f8;
+      color: #2c5282;
+    }
+
+    .delete-btn {
+      background: #fed7d7;
+      color: #c53030;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .modal-actions button {
+      flex: 1;
+      padding: 10px;
+    }
+
+    .cancel-btn {
+      background: #cbd5e0;
+    }
+
+    .tracks-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .tracks-group label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 400;
+      margin: 0;
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-header { flex-direction: column; gap: 10px; }
+      table { font-size: 12px; }
+      th, td { padding: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Login Section -->
+  <div id="loginSection" class="login-container">
+    <div class="login-box">
+      <div class="logo">👨‍💼</div>
+      <h1>Admin Login</h1>
+      <div id="loginError" class="error"></div>
+      <form id="loginForm">
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="adminEmail" required placeholder="admin@megaverselive.com">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="adminPassword" required placeholder="••••••••">
+        </div>
+        <button type="submit">Login</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Dashboard Section -->
+  <div id="dashboardSection" class="dashboard">
+    <div class="dashboard-header">
+      <h1>👨‍💼 Admin Dashboard</h1>
+      <button onclick="adminLogout()">Logout</button>
+    </div>
+
+    <div class="dashboard-content">
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('mentors')">👨‍🏫 Mentors</button>
+        <button class="tab-btn" onclick="switchTab('mentees')">👤 Mentees</button>
+      </div>
+
+      <!-- Mentors Tab -->
+      <div id="mentorsTab" class="tab-content active">
+        <button class="add-btn" onclick="openMentorModal('add')">+ Add Mentor</button>
+        <table id="mentorsTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Tracks</th>
+              <th>Rating</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="mentorsBody">
+            <tr><td colspan="6" style="text-align: center; color: #718096;">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Mentees Tab -->
+      <div id="menteesTab" class="tab-content">
+        <button class="add-btn" onclick="openMenteeModal('add')">+ Add Mentee</button>
+        <table id="menteesTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="menteesBody">
+            <tr><td colspan="5" style="text-align: center; color: #718096;">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mentor Modal -->
+  <div id="mentorModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header" id="mentorModalTitle">Add Mentor</div>
+      <form id="mentorForm">
+        <div class="form-group">
+          <label>Name</label>
+          <input type="text" id="mentorName" required>
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="mentorEmail" required>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="mentorPassword" placeholder="Leave empty to keep current password">
+        </div>
+        <div class="form-group">
+          <label>Bio</label>
+          <textarea id="mentorBio" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-family: 'Inter', sans-serif; min-height: 80px;"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Tracks</label>
+          <div class="tracks-group">
+            <label><input type="checkbox" name="track" value="english"> English</label>
+            <label><input type="checkbox" name="track" value="backend"> Backend</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Rating</label>
+          <input type="number" id="mentorRating" min="0" max="5" step="0.1" value="0">
+        </div>
+        <div class="modal-actions">
+          <button type="submit" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">Save</button>
+          <button type="button" class="cancel-btn" onclick="closeMentorModal()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Mentee Modal -->
+  <div id="menteeModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header" id="menteeModalTitle">Add Mentee</div>
+      <form id="menteeForm">
+        <div class="form-group">
+          <label>Name</label>
+          <input type="text" id="menteeName" required>
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="menteeEmail" required>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="menteePassword" placeholder="Leave empty to keep current password">
+        </div>
+        <div class="form-group">
+          <label>Phone</label>
+          <input type="tel" id="menteePhone">
+        </div>
+        <div class="modal-actions">
+          <button type="submit" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">Save</button>
+          <button type="button" class="cancel-btn" onclick="closeMenteeModal()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = window.location.origin;
+    let adminToken = null;
+    let currentMentorId = null;
+    let currentMenteeId = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const token = localStorage.getItem('adminToken');
+      if (token) {
+        adminToken = token;
+        showDashboard();
+        loadMentors();
+        loadMentees();
+      }
+
+      document.getElementById('loginForm').onsubmit = handleLogin;
+      document.getElementById('mentorForm').onsubmit = handleMentorSubmit;
+      document.getElementById('menteeForm').onsubmit = handleMenteeSubmit;
+    });
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('adminEmail').value;
+      const password = document.getElementById('adminPassword').value;
+
+      try {
+        const res = await fetch(`${API_URL}/api/admin/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          document.getElementById('loginError').textContent = data.error || 'Login failed';
+          document.getElementById('loginError').style.display = 'block';
+          return;
+        }
+
+        adminToken = data.token;
+        localStorage.setItem('adminToken', adminToken);
+        showDashboard();
+        loadMentors();
+        loadMentees();
+      } catch (error) {
+        document.getElementById('loginError').textContent = 'Network error';
+        document.getElementById('loginError').style.display = 'block';
+      }
+    }
+
+    function showDashboard() {
+      document.getElementById('loginSection').style.display = 'none';
+      document.getElementById('dashboardSection').style.display = 'block';
+    }
+
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(tab + 'Tab').classList.add('active');
+      event.target.classList.add('active');
+    }
+
+    async function loadMentors() {
+      try {
+        const res = await fetch(`${API_URL}/api/admin/mentors`, {
+          headers: { 'Authorization': `Bearer ${adminToken}` }
+        });
+        const data = await res.json();
+        const tbody = document.getElementById('mentorsBody');
+        tbody.innerHTML = data.mentors.map(m => `
+          <tr>
+            <td>${m.id}</td>
+            <td>${m.name}</td>
+            <td>${m.email}</td>
+            <td>${m.tracks ? m.tracks.join(', ') : '-'}</td>
+            <td>${m.rating || 0}</td>
+            <td>
+              <button class="action-btn edit-btn" onclick="editMentor(${m.id})">Edit</button>
+              <button class="action-btn delete-btn" onclick="deleteMentor(${m.id})">Delete</button>
+            </td>
+          </tr>
+        `).join('');
+      } catch (error) {
+        console.error('Load mentors error:', error);
+      }
+    }
+
+    async function loadMentees() {
+      try {
+        const res = await fetch(`${API_URL}/api/admin/mentees`, {
+          headers: { 'Authorization': `Bearer ${adminToken}` }
+        });
+        const data = await res.json();
+        const tbody = document.getElementById('menteesBody');
+        tbody.innerHTML = data.mentees.map(m => `
+          <tr>
+            <td>${m.id}</td>
+            <td>${m.name}</td>
+            <td>${m.email}</td>
+            <td>${m.phone || '-'}</td>
+            <td>
+              <button class="action-btn edit-btn" onclick="editMentee(${m.id})">Edit</button>
+              <button class="action-btn delete-btn" onclick="deleteMentee(${m.id})">Delete</button>
+            </td>
+          </tr>
+        `).join('');
+      } catch (error) {
+        console.error('Load mentees error:', error);
+      }
+    }
+
+    function openMentorModal(action) {
+      currentMentorId = null;
+      document.getElementById('mentorForm').reset();
+      document.getElementById('mentorModalTitle').textContent = 'Add Mentor';
+      document.getElementById('mentorPassword').required = true;
+      document.getElementById('mentorModal').classList.add('active');
+    }
+
+    async function editMentor(id) {
+      const res = await fetch(`${API_URL}/api/admin/mentors`, {
+        headers: { 'Authorization': `Bearer ${adminToken}` }
+      });
+      const data = await res.json();
+      const mentor = data.mentors.find(m => m.id === id);
+
+      if (mentor) {
+        currentMentorId = id;
+        document.getElementById('mentorName').value = mentor.name;
+        document.getElementById('mentorEmail').value = mentor.email;
+        document.getElementById('mentorPassword').value = '';
+        document.getElementById('mentorPassword').required = false;
+        document.getElementById('mentorBio').value = mentor.bio || '';
+        document.getElementById('mentorRating').value = mentor.rating || 0;
+        document.querySelectorAll('input[name="track"]').forEach(cb => {
+          cb.checked = mentor.tracks && mentor.tracks.includes(cb.value);
+        });
+        document.getElementById('mentorModalTitle').textContent = 'Edit Mentor';
+        document.getElementById('mentorModal').classList.add('active');
+      }
+    }
+
+    async function handleMentorSubmit(e) {
+      e.preventDefault();
+      const tracks = Array.from(document.querySelectorAll('input[name="track"]:checked')).map(cb => cb.value);
+      const payload = {
+        name: document.getElementById('mentorName').value,
+        email: document.getElementById('mentorEmail').value,
+        bio: document.getElementById('mentorBio').value,
+        tracks,
+        rating: parseFloat(document.getElementById('mentorRating').value)
+      };
+
+      const method = currentMentorId ? 'PUT' : 'POST';
+      const url = currentMentorId ? `${API_URL}/api/admin/mentor/${currentMentorId}` : `${API_URL}/api/admin/mentor`;
+
+      if (!currentMentorId) {
+        payload.password = document.getElementById('mentorPassword').value;
+      } else if (document.getElementById('mentorPassword').value) {
+        payload.password = document.getElementById('mentorPassword').value;
+      }
+
+      try {
+        const res = await fetch(url, {
+          method,
+          headers: {
+            'Authorization': `Bearer ${adminToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          closeMentorModal();
+          loadMentors();
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    async function deleteMentor(id) {
+      if (!confirm('Delete this mentor?')) return;
+
+      try {
+        await fetch(`${API_URL}/api/admin/mentor/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${adminToken}` }
+        });
+        loadMentors();
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    function closeMentorModal() {
+      document.getElementById('mentorModal').classList.remove('active');
+    }
+
+    function openMenteeModal(action) {
+      currentMenteeId = null;
+      document.getElementById('menteeForm').reset();
+      document.getElementById('menteeModalTitle').textContent = 'Add Mentee';
+      document.getElementById('menteePassword').required = true;
+      document.getElementById('menteeModal').classList.add('active');
+    }
+
+    async function editMentee(id) {
+      const res = await fetch(`${API_URL}/api/admin/mentees`, {
+        headers: { 'Authorization': `Bearer ${adminToken}` }
+      });
+      const data = await res.json();
+      const mentee = data.mentees.find(m => m.id === id);
+
+      if (mentee) {
+        currentMenteeId = id;
+        document.getElementById('menteeName').value = mentee.name;
+        document.getElementById('menteeEmail').value = mentee.email;
+        document.getElementById('menteePassword').value = '';
+        document.getElementById('menteePassword').required = false;
+        document.getElementById('menteePhone').value = mentee.phone || '';
+        document.getElementById('menteeModalTitle').textContent = 'Edit Mentee';
+        document.getElementById('menteeModal').classList.add('active');
+      }
+    }
+
+    async function handleMenteeSubmit(e) {
+      e.preventDefault();
+      const payload = {
+        name: document.getElementById('menteeName').value,
+        email: document.getElementById('menteeEmail').value,
+        phone: document.getElementById('menteePhone').value
+      };
+
+      const method = currentMenteeId ? 'PUT' : 'POST';
+      const url = currentMenteeId ? `${API_URL}/api/admin/mentee/${currentMenteeId}` : `${API_URL}/api/admin/mentee`;
+
+      if (!currentMenteeId) {
+        payload.password = document.getElementById('menteePassword').value;
+      } else if (document.getElementById('menteePassword').value) {
+        payload.password = document.getElementById('menteePassword').value;
+      }
+
+      try {
+        const res = await fetch(url, {
+          method,
+          headers: {
+            'Authorization': `Bearer ${adminToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          closeMenteeModal();
+          loadMentees();
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    async function deleteMentee(id) {
+      if (!confirm('Delete this mentee?')) return;
+
+      try {
+        await fetch(`${API_URL}/api/admin/mentee/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${adminToken}` }
+        });
+        loadMentees();
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    function closeMenteeModal() {
+      document.getElementById('menteeModal').classList.remove('active');
+    }
+
+    function adminLogout() {
+      localStorage.removeItem('adminToken');
+      adminToken = null;
+      document.getElementById('dashboardSection').style.display = 'none';
+      document.getElementById('loginSection').style.display = 'flex';
+      document.getElementById('loginForm').reset();
+    }
+  </script>
+</body>
+</html>
