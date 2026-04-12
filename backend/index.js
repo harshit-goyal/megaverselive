@@ -66,6 +66,24 @@ async function initializeDatabase() {
       )
     `);
     
+    // Create mentors table
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS mentors (
+        id SERIAL PRIMARY KEY,
+        email VARCHAR(255) UNIQUE NOT NULL,
+        password_hash VARCHAR(255) NOT NULL,
+        name VARCHAR(255) NOT NULL,
+        bio TEXT,
+        avatar_url VARCHAR(512),
+        tracks TEXT[] DEFAULT ARRAY[]::TEXT[],
+        rating DECIMAL(3, 2) DEFAULT 5.0,
+        session_count INT DEFAULT 0,
+        is_active BOOLEAN DEFAULT TRUE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    
     // Try to add mentee_id column to bookings (non-fatal if fails)
     try {
       await pool.query(`ALTER TABLE bookings ADD COLUMN IF NOT EXISTS mentee_id INT DEFAULT NULL`);
@@ -76,6 +94,8 @@ async function initializeDatabase() {
     // Create indexes (non-fatal if constraint already exists)
     try {
       await pool.query(`CREATE INDEX IF NOT EXISTS idx_mentee_email ON mentee_accounts(email)`);
+      await pool.query(`CREATE INDEX IF NOT EXISTS idx_mentor_email ON mentors(email)`);
+      await pool.query(`CREATE INDEX IF NOT EXISTS idx_mentor_tracks ON mentors USING GIN(tracks)`);
       await pool.query(`CREATE INDEX IF NOT EXISTS idx_bookings_mentee ON bookings(mentee_id)`);
     } catch (e) {
       // Indexes might already exist
@@ -1238,6 +1258,322 @@ app.get('/api/mentee/bookings/:id', verifyToken, async (req, res) => {
   } catch (error) {
     console.error('Error fetching booking:', error);
     res.status(500).json({ error: 'Failed to fetch booking' });
+  }
+});
+
+// ============= MENTOR AUTH ENDPOINTS =============
+
+// POST /api/mentor/signup - Create new mentor account
+app.post('/api/mentor/signup', async (req, res) => {
+  try {
+    const { email, password, name, bio, tracks } = req.body;
+    
+    if (!email || !password || !name) {
+      return res.status(400).json({ error: 'Email, password, and name are required' });
+    }
+    
+    if (password.length < 8) {
+      return res.status(400).json({ error: 'Password must be at least 8 characters' });
+    }
+    
+    if (!tracks || !Array.isArray(tracks) || tracks.length === 0) {
+      return res.status(400).json({ error: 'At least one track must be selected (english, backend)' });
+    }
+    
+    // Validate tracks
+    const validTracks = ['english', 'backend'];
+    const normalizedTracks = tracks.map(t => t.toLowerCase());
+    if (!normalizedTracks.every(t => validTracks.includes(t))) {
+      return res.status(400).json({ error: 'Invalid tracks. Valid options: english, backend' });
+    }
+    
+    // Hash password
+    const passwordHash = await bcrypt.hash(password, 12);
+    
+    try {
+      // Insert mentor account
+      const result = await pool.query(
+        `INSERT INTO mentors (email, password_hash, name, bio, tracks) 
+         VALUES ($1, $2, $3, $4, $5::TEXT[]) 
+         RETURNING id, email, name, bio, tracks`,
+        [email, passwordHash, name, bio || null, normalizedTracks]
+      );
+      
+      const mentor = result.rows[0];
+      
+      // Generate JWT token
+      const token = jwt.sign(
+        { id: mentor.id, email: mentor.email, name: mentor.name, type: 'mentor' },
+        process.env.MENTOR_JWT_SECRET || 'mentor_secret_key_change_in_env',
+        { expiresIn: '24h' }
+      );
+      
+      return res.status(201).json({
+        success: true,
+        user: mentor,
+        token: token,
+        expiresIn: 86400
+      });
+    } catch (dbError) {
+      // If table doesn't exist, try to initialize schema
+      if (dbError.code === '42P01' || dbError.message?.includes('mentors')) {
+        console.log('Mentors table not found, attempting to initialize schema...');
+        
+        try {
+          await pool.query(`
+            CREATE TABLE IF NOT EXISTS mentors (
+              id SERIAL PRIMARY KEY,
+              email VARCHAR(255) UNIQUE NOT NULL,
+              password_hash VARCHAR(255) NOT NULL,
+              name VARCHAR(255) NOT NULL,
+              bio TEXT,
+              avatar_url VARCHAR(512),
+              tracks TEXT[] DEFAULT ARRAY[]::TEXT[],
+              rating DECIMAL(3, 2) DEFAULT 5.0,
+              session_count INT DEFAULT 0,
+              is_active BOOLEAN DEFAULT TRUE,
+              created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+              updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+          `);
+          
+          try {
+            await pool.query(`CREATE INDEX IF NOT EXISTS idx_mentor_email ON mentors(email)`);
+            await pool.query(`CREATE INDEX IF NOT EXISTS idx_mentor_tracks ON mentors USING GIN(tracks)`);
+          } catch (e) {}
+          
+          console.log('Mentors schema initialized, retrying signup...');
+          
+          // Retry the signup
+          const result = await pool.query(
+            `INSERT INTO mentors (email, password_hash, name, bio, tracks) 
+             VALUES ($1, $2, $3, $4, $5::TEXT[]) 
+             RETURNING id, email, name, bio, tracks`,
+            [email, passwordHash, name, bio || null, normalizedTracks]
+          );
+          
+          const mentor = result.rows[0];
+          
+          const token = jwt.sign(
+            { id: mentor.id, email: mentor.email, name: mentor.name, type: 'mentor' },
+            process.env.MENTOR_JWT_SECRET || 'mentor_secret_key_change_in_env',
+            { expiresIn: '24h' }
+          );
+          
+          return res.status(201).json({
+            success: true,
+            user: mentor,
+            token: token,
+            expiresIn: 86400
+          });
+        } catch (initError) {
+          console.error('Failed to initialize mentors schema:', initError);
+          throw dbError;
+        }
+      }
+      
+      throw dbError;
+    }
+  } catch (error) {
+    if (error.code === '23505') {
+      return res.status(400).json({ error: 'Email already registered' });
+    }
+    console.error('Mentor signup error:', error);
+    res.status(500).json({ error: 'Mentor signup failed', details: error.message });
+  }
+});
+
+// POST /api/mentor/login - Login mentor with email and password
+app.post('/api/mentor/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required' });
+    }
+    
+    // Find mentor
+    const result = await pool.query(
+      'SELECT id, email, password_hash, name, bio, tracks FROM mentors WHERE email = $1',
+      [email]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(401).json({ error: 'Invalid email or password' });
+    }
+    
+    const mentor = result.rows[0];
+    
+    // Check password
+    const isValidPassword = await bcrypt.compare(password, mentor.password_hash);
+    if (!isValidPassword) {
+      return res.status(401).json({ error: 'Invalid email or password' });
+    }
+    
+    // Generate JWT token
+    const token = jwt.sign(
+      { id: mentor.id, email: mentor.email, name: mentor.name, type: 'mentor' },
+      process.env.MENTOR_JWT_SECRET || 'mentor_secret_key_change_in_env',
+      { expiresIn: '24h' }
+    );
+    
+    res.json({
+      success: true,
+      user: {
+        id: mentor.id,
+        email: mentor.email,
+        name: mentor.name,
+        bio: mentor.bio,
+        tracks: mentor.tracks
+      },
+      token: token,
+      expiresIn: 86400
+    });
+  } catch (error) {
+    console.error('Mentor login error:', error);
+    res.status(500).json({ error: 'Login failed', details: error.message });
+  }
+});
+
+// GET /api/mentors - Get all mentors (public)
+app.get('/api/mentors', async (req, res) => {
+  try {
+    const { track } = req.query;
+    
+    let query = 'SELECT id, name, bio, avatar_url, tracks, rating, session_count FROM mentors WHERE is_active = TRUE';
+    const params = [];
+    
+    // If track is specified, filter by track
+    if (track) {
+      query += ' AND $1 = ANY(tracks)';
+      params.push(track.toLowerCase());
+    }
+    
+    query += ' ORDER BY session_count DESC, rating DESC';
+    
+    const result = await pool.query(query, params);
+    
+    res.json({
+      success: true,
+      mentors: result.rows,
+      total: result.rows.length
+    });
+  } catch (error) {
+    console.error('Error fetching mentors:', error);
+    res.status(500).json({ error: 'Failed to fetch mentors', details: error.message });
+  }
+});
+
+// GET /api/mentor/:id - Get specific mentor profile
+app.get('/api/mentor/:id', async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT id, name, bio, avatar_url, tracks, rating, session_count, created_at FROM mentors WHERE id = $1 AND is_active = TRUE',
+      [req.params.id]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Mentor not found' });
+    }
+    
+    res.json({
+      success: true,
+      mentor: result.rows[0]
+    });
+  } catch (error) {
+    console.error('Error fetching mentor:', error);
+    res.status(500).json({ error: 'Failed to fetch mentor', details: error.message });
+  }
+});
+
+// GET /api/mentor/profile - Get current logged-in mentor profile (requires JWT)
+const verifyMentorToken = (req, res, next) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  
+  if (!token) {
+    return res.status(401).json({ error: 'No token provided' });
+  }
+  
+  try {
+    const decoded = jwt.verify(
+      token,
+      process.env.MENTOR_JWT_SECRET || 'mentor_secret_key_change_in_env'
+    );
+    
+    if (decoded.type !== 'mentor') {
+      return res.status(403).json({ error: 'Invalid token type' });
+    }
+    
+    req.mentor = decoded;
+    next();
+  } catch (error) {
+    res.status(401).json({ error: 'Invalid or expired token' });
+  }
+};
+
+app.get('/api/mentor/profile', verifyMentorToken, async (req, res) => {
+  try {
+    const result = await pool.query(
+      'SELECT id, email, name, bio, avatar_url, tracks, rating, session_count FROM mentors WHERE id = $1',
+      [req.mentor.id]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Mentor not found' });
+    }
+    
+    res.json({
+      success: true,
+      mentor: result.rows[0]
+    });
+  } catch (error) {
+    console.error('Error fetching mentor profile:', error);
+    res.status(500).json({ error: 'Failed to fetch profile', details: error.message });
+  }
+});
+
+// PUT /api/mentor/profile - Update mentor profile (requires JWT)
+app.put('/api/mentor/profile', verifyMentorToken, async (req, res) => {
+  try {
+    const { name, bio, avatar_url, tracks } = req.body;
+    
+    if (tracks && Array.isArray(tracks)) {
+      const validTracks = ['english', 'backend'];
+      const normalizedTracks = tracks.map(t => t.toLowerCase());
+      if (!normalizedTracks.every(t => validTracks.includes(t))) {
+        return res.status(400).json({ error: 'Invalid tracks. Valid options: english, backend' });
+      }
+    }
+    
+    const result = await pool.query(
+      `UPDATE mentors 
+       SET name = COALESCE($1, name),
+           bio = COALESCE($2, bio),
+           avatar_url = COALESCE($3, avatar_url),
+           tracks = COALESCE($4::TEXT[], tracks),
+           updated_at = CURRENT_TIMESTAMP
+       WHERE id = $5
+       RETURNING id, email, name, bio, avatar_url, tracks, rating, session_count`,
+      [
+        name || null,
+        bio || null,
+        avatar_url || null,
+        tracks ? tracks.map(t => t.toLowerCase()) : null,
+        req.mentor.id
+      ]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Mentor not found' });
+    }
+    
+    res.json({
+      success: true,
+      mentor: result.rows[0]
+    });
+  } catch (error) {
+    console.error('Error updating mentor profile:', error);
+    res.status(500).json({ error: 'Failed to update profile', details: error.message });
   }
 });
 

@@ -198,8 +198,29 @@
 </head>
 <body>
   <div class="container">
+    <!-- Role Selection Page -->
+    <div id="rolePage" class="page active">
+      <div class="header">
+        <div class="logo">🚀</div>
+        <h1>Welcome to Megaverse Live</h1>
+        <p class="subtitle">Choose your role</p>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 40px;">
+        <button onclick="switchPage('loginPage')" style="height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; font-size: 16px; cursor: pointer;">
+          <div style="font-size: 48px;">👤</div>
+          <div style="font-weight: 600;">Mentee</div>
+          <div style="font-size: 12px; color: #718096; font-weight: 400;">Book sessions</div>
+        </button>
+        <button onclick="switchPage('mentorLoginPage')" style="height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; font-size: 16px; cursor: pointer;">
+          <div style="font-size: 48px;">👨‍🏫</div>
+          <div style="font-weight: 600;">Mentor</div>
+          <div style="font-size: 12px; color: #718096; font-weight: 400;">Teach & create profile</div>
+        </button>
+      </div>
+    </div>
+
     <!-- Login Page -->
-    <div id="loginPage" class="page active">
+    <div id="loginPage" class="page">
       <div class="header">
         <div class="badge">👤 Mentee Login</div>
         <div class="logo">🚀</div>
@@ -220,6 +241,9 @@
       </form>
       <div class="link-section">
         Don't have an account? <a onclick="switchPage('signupPage')">Sign up</a>
+      </div>
+      <div class="link-section" style="margin-top: 20px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+        <a onclick="switchPage('rolePage')" style="color: #718096;">← Back to role selection</a>
       </div>
     </div>
 
@@ -254,6 +278,79 @@
       </form>
       <div class="link-section">
         Already have an account? <a onclick="switchPage('loginPage')">Sign in</a>
+      </div>
+    </div>
+
+    <!-- Mentor Login Page -->
+    <div id="mentorLoginPage" class="page">
+      <div class="header">
+        <div class="badge">👨‍🏫 Mentor Login</div>
+        <div class="logo">🚀</div>
+        <h1>Mentor Login</h1>
+        <p class="subtitle">Sign in to your mentor account</p>
+      </div>
+      <div id="mentorLoginError" class="error" style="display: none;"></div>
+      <form id="mentorLoginForm">
+        <div class="form-group">
+          <label for="mentorLoginEmail">Email Address</label>
+          <input type="email" id="mentorLoginEmail" name="email" required placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+          <label for="mentorLoginPassword">Password</label>
+          <input type="password" id="mentorLoginPassword" name="password" required placeholder="••••••••">
+        </div>
+        <button type="submit">Sign In</button>
+      </form>
+      <div class="link-section">
+        Don't have an account? <a onclick="switchPage('mentorSignupPage')">Sign up as mentor</a>
+      </div>
+      <div class="link-section" style="margin-top: 20px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+        <a onclick="switchPage('rolePage')" style="color: #718096;">← Back to role selection</a>
+      </div>
+    </div>
+
+    <!-- Mentor Signup Page -->
+    <div id="mentorSignupPage" class="page">
+      <div class="header">
+        <div class="badge">👨‍🏫 Mentor Account</div>
+        <div class="logo">🚀</div>
+        <h1>Become a Mentor</h1>
+        <p class="subtitle">Create your mentor profile</p>
+      </div>
+      <div id="mentorSignupError" class="error" style="display: none;"></div>
+      <form id="mentorSignupForm">
+        <div class="form-group">
+          <label for="mentorName">Full Name</label>
+          <input type="text" id="mentorName" name="name" required placeholder="Harshit Goyal">
+        </div>
+        <div class="form-group">
+          <label for="mentorEmail">Email Address</label>
+          <input type="email" id="mentorEmail" name="email" required placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+          <label for="mentorPassword">Password</label>
+          <input type="password" id="mentorPassword" name="password" required placeholder="Min 8 characters" onkeyup="checkPasswordStrength('mentorPassword')">
+          <div id="mentorPasswordStrength"></div>
+        </div>
+        <div class="form-group">
+          <label for="mentorBio">Bio / About You</label>
+          <textarea id="mentorBio" name="bio" placeholder="Tell mentees about yourself, your experience, and what you teach..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Tracks (Select at least one)</label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <label style="display: flex; align-items: center; gap: 8px; font-weight: 400;">
+              <input type="checkbox" name="tracks" value="english" id="trackEnglish"> English Coaching
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; font-weight: 400;">
+              <input type="checkbox" name="tracks" value="backend" id="trackBackend"> Backend Interview Prep
+            </label>
+          </div>
+        </div>
+        <button type="submit">Create Mentor Account</button>
+      </form>
+      <div class="link-section">
+        Already have a mentor account? <a onclick="switchPage('mentorLoginPage')">Sign in</a>
       </div>
     </div>
 
@@ -367,6 +464,8 @@
       document.getElementById('loginForm').onsubmit = handleLogin;
       document.getElementById('signupForm').onsubmit = handleSignup;
       document.getElementById('profileForm').onsubmit = handleProfileUpdate;
+      document.getElementById('mentorLoginForm').onsubmit = handleMentorLogin;
+      document.getElementById('mentorSignupForm').onsubmit = handleMentorSignup;
     });
 
     function checkAuth() {
@@ -623,9 +722,7 @@
         strength = 'medium';
         message = 'Medium strength';
       }
-      
-      strengthDiv.className = `password-strength strength-${strength}`;
-      strengthDiv.textContent = message;
+      }
     }
 
     function logout() {
@@ -655,6 +752,104 @@
       setTimeout(() => {
         el.style.display = 'none';
       }, 3000);
+    }
+
+    // ============= MENTOR FUNCTIONS =============
+
+    async function handleMentorLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('mentorLoginEmail').value;
+      const password = document.getElementById('mentorLoginPassword').value;
+      
+      try {
+        const res = await fetch(`${API_URL}/api/mentor/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        
+        const data = await res.json();
+        
+        if (!res.ok) {
+          showError('mentorLoginError', data.error || 'Login failed');
+          return;
+        }
+        
+        localStorage.setItem('mentorToken', data.token);
+        localStorage.setItem('mentorUser', JSON.stringify(data.user));
+        currentUser = data.user;
+        
+        // Redirect to mentor dashboard
+        window.location.href = '/mentor-dashboard.html';
+      } catch (error) {
+        showError('mentorLoginError', 'Network error. Please try again.');
+      }
+    }
+
+    async function handleMentorSignup(e) {
+      e.preventDefault();
+      const name = document.getElementById('mentorName').value;
+      const email = document.getElementById('mentorEmail').value;
+      const password = document.getElementById('mentorPassword').value;
+      const bio = document.getElementById('mentorBio').value;
+      
+      // Get selected tracks
+      const trackCheckboxes = document.querySelectorAll('input[name="tracks"]:checked');
+      if (trackCheckboxes.length === 0) {
+        showError('mentorSignupError', 'Please select at least one track');
+        return;
+      }
+      
+      const tracks = Array.from(trackCheckboxes).map(cb => cb.value);
+      
+      try {
+        const res = await fetch(`${API_URL}/api/mentor/signup`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password, name, bio, tracks })
+        });
+        
+        const data = await res.json();
+        
+        if (!res.ok) {
+          showError('mentorSignupError', data.error || 'Signup failed');
+          return;
+        }
+        
+        localStorage.setItem('mentorToken', data.token);
+        localStorage.setItem('mentorUser', JSON.stringify(data.user));
+        currentUser = data.user;
+        
+        // Redirect to mentor dashboard
+        window.location.href = '/mentor-dashboard.html';
+      } catch (error) {
+        showError('mentorSignupError', 'Network error. Please try again.');
+      }
+    }
+
+    function checkPasswordStrength(inputId = 'signupPassword') {
+      const password = document.getElementById(inputId).value;
+      const strengthId = inputId === 'mentorPassword' ? 'mentorPasswordStrength' : 'passwordStrength';
+      const strengthDiv = document.getElementById(strengthId);
+      
+      if (!password) {
+        strengthDiv.textContent = '';
+        return;
+      }
+      
+      let strength = 'weak';
+      let message = 'Weak password';
+      
+      if (password.length >= 8 && /[a-z]/.test(password) && /[A-Z]/.test(password) && /[0-9]/.test(password)) {
+        strength = 'strong';
+        message = 'Strong password';
+      } else if (password.length >= 8 && (/[A-Z]/.test(password) || /[0-9]/.test(password))) {
+        strength = 'medium';
+        message = 'Medium strength';
+      }
+      
+      strengthDiv.className = `password-strength strength-${strength}`;
+      strengthDiv.textContent = message;
     }
   </script>
 </body>
