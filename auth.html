@@ -637,8 +637,9 @@
     }
 
     function goToBooking() {
-      // Redirect to homepage with payment flag in URL
-      window.location.href = '/?book=1';
+      // Store flag in session storage and redirect
+      sessionStorage.setItem('openPaymentOnLoad', 'true');
+      window.location.href = '/';
     }
 
     function showError(elementId, message) {
