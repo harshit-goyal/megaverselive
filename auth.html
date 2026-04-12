@@ -28,6 +28,62 @@
       padding: 40px;
       margin: 20px;
     }
+    
+    .top-nav {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+    }
+    
+    .auth-menu-btn {
+      background: white;
+      border: 2px solid #667eea;
+      color: #667eea;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .auth-menu-btn:hover {
+      background: #667eea;
+      color: white;
+    }
+    
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      top: 45px;
+      right: 0;
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      min-width: 200px;
+      overflow: hidden;
+    }
+    .dropdown-menu.show {
+      display: block;
+    }
+    
+    .dropdown-item {
+      padding: 12px 16px;
+      color: #2d3748;
+      font-weight: 500;
+      cursor: pointer;
+      border-bottom: 1px solid #e2e8f0;
+      transition: all 0.2s;
+    }
+    .dropdown-item:last-child {
+      border-bottom: none;
+    }
+    .dropdown-item:hover {
+      background: #f7fafc;
+      color: #667eea;
+    }
+    
     .page { display: none; }
     .page.active { display: block; }
     
@@ -42,6 +98,10 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
       margin-bottom: 15px;
+    }
+    .badge.mentor {
+      background: #fef3c7;
+      color: #92400e;
     }
     
     .header {
@@ -99,35 +159,28 @@
       color: white;
       border: none;
       border-radius: 8px;
+      font-family: 'Inter', sans-serif;
       font-weight: 600;
       font-size: 14px;
       cursor: pointer;
       transition: transform 0.2s, box-shadow 0.2s;
-      font-family: 'Inter', sans-serif;
     }
     button:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
-    }
-    button:active {
-      transform: translateY(0);
-    }
-    button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
     }
     
     .link-section {
       text-align: center;
       margin-top: 20px;
-      color: #718096;
       font-size: 14px;
+      color: #718096;
     }
     .link-section a {
       color: #667eea;
-      text-decoration: none;
       font-weight: 600;
       cursor: pointer;
+      text-decoration: none;
     }
     .link-section a:hover {
       text-decoration: underline;
@@ -148,13 +201,6 @@
       border-radius: 8px;
       margin-bottom: 20px;
       font-size: 14px;
-    }
-    
-    .loading {
-      display: none;
-    }
-    .loading.show {
-      display: inline-block;
     }
     
     .password-strength {
@@ -193,200 +239,93 @@
       .form-row {
         grid-template-columns: 1fr;
       }
-    }
-
-    .role-tabs {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 30px;
-      margin-top: -10px;
-      margin-left: -40px;
-      margin-right: -40px;
-      padding: 0;
-      background: #f7fafc;
-      border-radius: 0 0 12px 12px;
-    }
-    .role-tab {
-      padding: 12px 20px;
-      border: none;
-      background: transparent;
-      color: #718096;
-      font-weight: 600;
-      font-size: 14px;
-      cursor: pointer;
-      border-bottom: 3px solid transparent;
-      transition: all 0.2s;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    .role-tab.active {
-      color: #667eea;
-      border-bottom-color: #667eea;
-      background: white;
-    }
-    .role-tab:hover {
-      color: #667eea;
+      .top-nav {
+        top: 10px;
+        right: 10px;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <!-- Role Tabs (Top Navigation) -->
-    <div class="role-tabs">
-      <button class="role-tab active" onclick="setRole('mentee')">👤 Mentee</button>
-      <button class="role-tab" onclick="setRole('mentor')">👨‍🏫 Mentor</button>
+  <!-- Top Navigation with Dropdown -->
+  <div class="top-nav">
+    <button class="auth-menu-btn" onclick="toggleMenu()">Sign Up / Login</button>
+    <div class="dropdown-menu" id="dropdownMenu">
+      <div class="dropdown-item" onclick="initMentee()">👤 Mentee Sign Up / Login</div>
+      <div class="dropdown-item" onclick="initMentor()">👨‍🏫 Mentor Sign Up / Login</div>
     </div>
+  </div>
 
-    <!-- MENTEE SECTION -->
-    <div id="menteeSection">
-      <!-- Login Page -->
-      <div id="loginPage" class="page active">
-        <div class="header">
-          <div class="badge">👤 Mentee Login</div>
-          <div class="logo">🚀</div>
+  <div class="container">
+    <!-- ========== MENTEE PAGES ========== -->
+    
+    <!-- Mentee Login -->
+    <div id="menteeLogin" class="page">
+      <div class="header">
+        <div class="badge">👤 Mentee</div>
+        <div class="logo">🚀</div>
         <h1>Login</h1>
         <p class="subtitle">Sign in to your mentee account</p>
       </div>
-      <div id="loginError" class="error" style="display: none;"></div>
-      <form id="loginForm">
+      <div id="menteeLoginError" class="error" style="display: none;"></div>
+      <form id="menteeLoginForm">
         <div class="form-group">
-          <label for="loginEmail">Email Address</label>
-          <input type="email" id="loginEmail" name="email" required placeholder="you@example.com">
+          <label for="menteeLoginEmail">Email Address</label>
+          <input type="email" id="menteeLoginEmail" required placeholder="you@example.com">
         </div>
         <div class="form-group">
-          <label for="loginPassword">Password</label>
-          <input type="password" id="loginPassword" name="password" required placeholder="••••••••">
+          <label for="menteeLoginPassword">Password</label>
+          <input type="password" id="menteeLoginPassword" required placeholder="••••••••">
         </div>
         <button type="submit">Sign In</button>
       </form>
       <div class="link-section">
-        Don't have an account? <a onclick="switchPage('signupPage')">Sign up</a>
-      </div>
-      <div class="link-section" style="margin-top: 20px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
-        <a onclick="switchPage('rolePage')" style="color: #718096;">← Back to role selection</a>
+        Don't have an account? <a onclick="switchPage('menteeSignup')">Sign up</a>
       </div>
     </div>
 
-    <!-- Signup Page -->
-    <div id="signupPage" class="page">
+    <!-- Mentee Signup -->
+    <div id="menteeSignup" class="page">
       <div class="header">
-        <div class="badge">👤 Mentee Account</div>
+        <div class="badge">👤 Mentee</div>
         <div class="logo">🚀</div>
         <h1>Create Account</h1>
         <p class="subtitle">Sign up as a mentee</p>
       </div>
-      <div id="signupError" class="error" style="display: none;"></div>
-      <form id="signupForm">
+      <div id="menteeSignupError" class="error" style="display: none;"></div>
+      <form id="menteeSignupForm">
         <div class="form-group">
-          <label for="signupName">Full Name</label>
-          <input type="text" id="signupName" name="name" required placeholder="John Doe">
+          <label for="menteeSignupName">Full Name</label>
+          <input type="text" id="menteeSignupName" required placeholder="John Doe">
         </div>
         <div class="form-group">
-          <label for="signupEmail">Email Address</label>
-          <input type="email" id="signupEmail" name="email" required placeholder="you@example.com">
+          <label for="menteeSignupEmail">Email Address</label>
+          <input type="email" id="menteeSignupEmail" required placeholder="you@example.com">
         </div>
         <div class="form-group">
-          <label for="signupPassword">Password</label>
-          <input type="password" id="signupPassword" name="password" required placeholder="Min 8 characters" onkeyup="checkPasswordStrength()">
-          <div id="passwordStrength"></div>
+          <label for="menteeSignupPassword">Password</label>
+          <input type="password" id="menteeSignupPassword" required placeholder="Min 8 characters" onkeyup="checkPasswordStrength('menteeSignupPassword', 'menteePasswordStrength')">
+          <div id="menteePasswordStrength"></div>
         </div>
         <div class="form-group">
-          <label for="signupPhone">Phone (Optional)</label>
-          <input type="tel" id="signupPhone" name="phone" placeholder="+1 (555) 123-4567">
+          <label for="menteeSignupPhone">Phone (Optional)</label>
+          <input type="tel" id="menteeSignupPhone" placeholder="+1 (555) 123-4567">
         </div>
         <button type="submit">Create Account</button>
       </form>
       <div class="link-section">
-        Already have an account? <a onclick="switchPage('loginPage')">Sign in</a>
-      </div>
-    </div>
-    </div> <!-- End menteeSection -->
-
-    <!-- MENTOR SECTION (Hidden by default) -->
-    <div id="mentorSection" style="display: none;">
-      <!-- Mentor Login Page -->
-      <div id="mentorLoginPage" class="page active">
-        <div class="header">
-          <div class="badge">👨‍🏫 Mentor Login</div>
-          <div class="logo">🚀</div>
-          <h1>Mentor Login</h1>
-          <p class="subtitle">Sign in to your mentor account</p>
-        </div>
-      <div id="mentorLoginError" class="error" style="display: none;"></div>
-      <form id="mentorLoginForm">
-        <div class="form-group">
-          <label for="mentorLoginEmail">Email Address</label>
-          <input type="email" id="mentorLoginEmail" name="email" required placeholder="you@example.com">
-        </div>
-        <div class="form-group">
-          <label for="mentorLoginPassword">Password</label>
-          <input type="password" id="mentorLoginPassword" name="password" required placeholder="••••••••">
-        </div>
-        <button type="submit">Sign In</button>
-      </form>
-      <div class="link-section">
-        Don't have an account? <a onclick="switchPage('mentorSignupPage')">Sign up as mentor</a>
-      </div>
-      <div class="link-section" style="margin-top: 20px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
-        <a onclick="switchPage('rolePage')" style="color: #718096;">← Back to role selection</a>
+        Already have an account? <a onclick="switchPage('menteeLogin')">Sign in</a>
       </div>
     </div>
 
-    <!-- Mentor Signup Page -->
-    <div id="mentorSignupPage" class="page">
-      <div class="header">
-        <div class="badge">👨‍🏫 Mentor Account</div>
-        <div class="logo">🚀</div>
-        <h1>Become a Mentor</h1>
-        <p class="subtitle">Create your mentor profile</p>
-      </div>
-      <div id="mentorSignupError" class="error" style="display: none;"></div>
-      <form id="mentorSignupForm">
-        <div class="form-group">
-          <label for="mentorName">Full Name</label>
-          <input type="text" id="mentorName" name="name" required placeholder="Harshit Goyal">
-        </div>
-        <div class="form-group">
-          <label for="mentorEmail">Email Address</label>
-          <input type="email" id="mentorEmail" name="email" required placeholder="you@example.com">
-        </div>
-        <div class="form-group">
-          <label for="mentorPassword">Password</label>
-          <input type="password" id="mentorPassword" name="password" required placeholder="Min 8 characters" onkeyup="checkPasswordStrength('mentorPassword')">
-          <div id="mentorPasswordStrength"></div>
-        </div>
-        <div class="form-group">
-          <label for="mentorBio">Bio / About You</label>
-          <textarea id="mentorBio" name="bio" placeholder="Tell mentees about yourself, your experience, and what you teach..."></textarea>
-        </div>
-        <div class="form-group">
-          <label>Tracks (Select at least one)</label>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-            <label style="display: flex; align-items: center; gap: 8px; font-weight: 400;">
-              <input type="checkbox" name="tracks" value="english" id="trackEnglish"> English Coaching
-            </label>
-            <label style="display: flex; align-items: center; gap: 8px; font-weight: 400;">
-              <input type="checkbox" name="tracks" value="backend" id="trackBackend"> Backend Interview Prep
-            </label>
-          </div>
-        </div>
-        <button type="submit">Create Mentor Account</button>
-      </form>
-      <div class="link-section">
-        Already have a mentor account? <a onclick="switchPage('mentorLoginPage')">Sign in</a>
-      </div>
-    </div>
-    </div> <!-- End mentorSection -->
-
-    <!-- Dashboard Page (Mentee) -->
-    <div id="dashboardPage" class="page">
+    <!-- Mentee Dashboard -->
+    <div id="menteeDashboard" class="page">
       <div class="header">
         <div class="logo">📊</div>
-        <h1 id="dashboardWelcome">Welcome</h1>
+        <h1 id="menteeWelcome">Welcome</h1>
         <p class="subtitle">Your booking dashboard</p>
       </div>
-      <div id="dashboardContent" style="display: none;">
+      <div id="menteeContent" style="display: none;">
         <div class="form-group" style="background: #f7fafc; padding: 16px; border-radius: 8px; margin-bottom: 20px; border: none;">
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
             <div>
@@ -399,164 +338,225 @@
             </div>
           </div>
         </div>
-        <button onclick="switchPage('bookingsPage')" style="background: #4a5568; margin-bottom: 12px;">View All Bookings</button>
-        <button onclick="switchPage('profilePage')" style="background: #718096; margin-bottom: 12px;">Edit Profile</button>
+        <button onclick="switchPage('menteeBookings')" style="background: #4a5568; margin-bottom: 12px;">View All Bookings</button>
+        <button onclick="switchPage('menteeProfile')" style="background: #718096; margin-bottom: 12px;">Edit Profile</button>
         <button onclick="goToBooking()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">Book a Session</button>
       </div>
-      <div id="dashboardLoading" style="text-align: center; color: #718096;">Loading...</div>
-      <button onclick="logout()" style="background: #f56565; margin-top: 20px;">Logout</button>
+      <div id="menteeLoading" style="text-align: center; color: #718096;">Loading dashboard...</div>
+      <button onclick="menteeLogout()" style="background: #f56565; margin-top: 20px;">Logout</button>
     </div>
 
-    <!-- Bookings Page -->
-    <div id="bookingsPage" class="page">
+    <!-- Mentee Bookings -->
+    <div id="menteeBookings" class="page">
       <div class="header">
         <div class="logo">📅</div>
-        <h1>Your Sessions</h1>
-        <p class="subtitle">View your booking history</p>
+        <h1>Your Bookings</h1>
+        <p class="subtitle">Past and upcoming sessions</p>
       </div>
-      <div id="bookingsContent" style="display: none;">
-        <div style="margin-bottom: 20px;">
-          <button onclick="filterBookings('upcoming')" id="filterUpcoming" style="background: #667eea; width: 48%; margin-right: 2%;">Upcoming</button>
-          <button onclick="filterBookings('past')" id="filterPast" style="background: #cbd5e0; color: #2d3748; width: 48%;">Past</button>
-        </div>
-        <div id="bookingsList" style="max-height: 500px; overflow-y: auto;"></div>
-      </div>
+      <div id="bookingsList" style="max-height: 500px; overflow-y: auto;"></div>
       <div id="bookingsLoading" style="text-align: center; color: #718096;">Loading bookings...</div>
-      <button onclick="switchPage('dashboardPage')" style="background: #718096; margin-top: 20px;">Back to Dashboard</button>
+      <button onclick="switchPage('menteeDashboard')" style="background: #718096; margin-top: 20px;">Back to Dashboard</button>
     </div>
 
-    <!-- Profile Page -->
-    <div id="profilePage" class="page">
+    <!-- Mentee Profile -->
+    <div id="menteeProfile" class="page">
       <div class="header">
         <div class="logo">👤</div>
         <h1>Your Profile</h1>
         <p class="subtitle">Update your information</p>
       </div>
-      <div id="profileError" class="error" style="display: none;"></div>
-      <div id="profileSuccess" class="success" style="display: none;"></div>
-      <form id="profileForm">
+      <div id="menteeProfileError" class="error" style="display: none;"></div>
+      <div id="menteeProfileSuccess" class="success" style="display: none;"></div>
+      <form id="menteeProfileForm">
         <div class="form-group">
-          <label for="profileName">Full Name</label>
-          <input type="text" id="profileName" name="name" required>
+          <label for="menteeProfileName">Full Name</label>
+          <input type="text" id="menteeProfileName" required>
         </div>
         <div class="form-group">
-          <label for="profileEmail">Email Address (Read-only)</label>
-          <input type="email" id="profileEmail" readonly style="background: #f7fafc;">
+          <label for="menteeProfileEmail">Email Address (Read-only)</label>
+          <input type="email" id="menteeProfileEmail" readonly style="background: #f7fafc;">
         </div>
         <div class="form-group">
-          <label for="profilePhone">Phone</label>
-          <input type="tel" id="profilePhone" name="phone" placeholder="+1 (555) 123-4567">
+          <label for="menteeProfilePhone">Phone</label>
+          <input type="tel" id="menteeProfilePhone" placeholder="+1 (555) 123-4567">
         </div>
         <div class="form-group">
-          <label for="profileBio">Bio</label>
-          <textarea id="profileBio" name="bio" placeholder="Tell us about yourself..."></textarea>
-        </div>
-        <div class="form-group">
-          <label for="profileTimezone">Timezone</label>
-          <select id="profileTimezone" name="timezone">
-            <option value="America/New_York">Eastern Time</option>
-            <option value="America/Chicago">Central Time</option>
-            <option value="America/Denver">Mountain Time</option>
-            <option value="America/Los_Angeles">Pacific Time</option>
-            <option value="Europe/London">London</option>
-            <option value="Europe/Paris">Paris</option>
-            <option value="Asia/Dubai">Dubai</option>
-            <option value="Asia/Kolkata">India (IST)</option>
-            <option value="Asia/Bangkok">Bangkok</option>
-            <option value="Asia/Singapore">Singapore</option>
-            <option value="Asia/Tokyo">Tokyo</option>
-            <option value="Australia/Sydney">Sydney</option>
-          </select>
+          <label for="menteeProfileBio">Bio</label>
+          <textarea id="menteeProfileBio" placeholder="Tell us about yourself..."></textarea>
         </div>
         <button type="submit">Save Changes</button>
       </form>
-      <button onclick="switchPage('dashboardPage')" style="background: #718096; margin-top: 12px;">Back to Dashboard</button>
-      <button onclick="logout()" style="background: #f56565; margin-top: 8px;">Logout</button>
+      <button onclick="switchPage('menteeDashboard')" style="background: #718096; margin-top: 12px;">Back to Dashboard</button>
+      <button onclick="menteeLogout()" style="background: #f56565; margin-top: 8px;">Logout</button>
     </div>
-    </div> <!-- End menteeSection -->
+
+    <!-- ========== MENTOR PAGES ========== -->
+    
+    <!-- Mentor Login -->
+    <div id="mentorLogin" class="page">
+      <div class="header">
+        <div class="badge mentor">👨‍🏫 Mentor</div>
+        <div class="logo">🚀</div>
+        <h1>Mentor Login</h1>
+        <p class="subtitle">Sign in to your mentor account</p>
+      </div>
+      <div id="mentorLoginError" class="error" style="display: none;"></div>
+      <form id="mentorLoginForm">
+        <div class="form-group">
+          <label for="mentorLoginEmail">Email Address</label>
+          <input type="email" id="mentorLoginEmail" required placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+          <label for="mentorLoginPassword">Password</label>
+          <input type="password" id="mentorLoginPassword" required placeholder="••••••••">
+        </div>
+        <button type="submit">Sign In</button>
+      </form>
+      <div class="link-section">
+        New mentor? <a onclick="switchPage('mentorSignup')">Sign up here</a>
+      </div>
+    </div>
+
+    <!-- Mentor Signup -->
+    <div id="mentorSignup" class="page">
+      <div class="header">
+        <div class="badge mentor">👨‍🏫 Mentor</div>
+        <div class="logo">🚀</div>
+        <h1>Become a Mentor</h1>
+        <p class="subtitle">Create your mentor profile</p>
+      </div>
+      <div id="mentorSignupError" class="error" style="display: none;"></div>
+      <form id="mentorSignupForm">
+        <div class="form-group">
+          <label for="mentorSignupName">Full Name</label>
+          <input type="text" id="mentorSignupName" required placeholder="Harshit Goyal">
+        </div>
+        <div class="form-group">
+          <label for="mentorSignupEmail">Email Address</label>
+          <input type="email" id="mentorSignupEmail" required placeholder="you@example.com">
+        </div>
+        <div class="form-group">
+          <label for="mentorSignupPassword">Password</label>
+          <input type="password" id="mentorSignupPassword" required placeholder="Min 8 characters" onkeyup="checkPasswordStrength('mentorSignupPassword', 'mentorPasswordStrength')">
+          <div id="mentorPasswordStrength"></div>
+        </div>
+        <div class="form-group">
+          <label for="mentorSignupBio">Bio / About You</label>
+          <textarea id="mentorSignupBio" placeholder="Tell mentees about yourself, your experience, and what you teach..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>What do you teach? (Select at least one)</label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <label style="display: flex; align-items: center; gap: 8px; font-weight: 400;">
+              <input type="checkbox" name="mentorTracks" value="english" id="mentorTrackEnglish"> English Coaching
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; font-weight: 400;">
+              <input type="checkbox" name="mentorTracks" value="backend" id="mentorTrackBackend"> Backend Interview Prep
+            </label>
+          </div>
+        </div>
+        <button type="submit">Create Mentor Account</button>
+      </form>
+      <div class="link-section">
+        Already have an account? <a onclick="switchPage('mentorLogin')">Sign in</a>
+      </div>
+    </div>
+
+    <!-- Mentor Dashboard (Placeholder) -->
+    <div id="mentorDashboard" class="page">
+      <div class="header">
+        <div class="badge mentor">👨‍🏫 Mentor</div>
+        <div class="logo">📊</div>
+        <h1 id="mentorWelcome">Welcome Back</h1>
+        <p class="subtitle">Your mentor dashboard</p>
+      </div>
+      <div style="text-align: center; padding: 40px 20px;">
+        <p style="color: #718096; margin-bottom: 20px;">Mentor dashboard coming soon!</p>
+      </div>
+      <button onclick="mentorLogout()" style="background: #f56565;">Logout</button>
+    </div>
   </div>
 
   <script>
     const API_URL = window.location.origin;
     let currentUser = null;
-    let currentRole = 'mentee'; // 'mentee' or 'mentor'
-    let allBookings = [];
-    let filteredBookings = [];
+    let currentRole = null;
 
-    // Initialize
     document.addEventListener('DOMContentLoaded', () => {
-      // Check URL parameter for role
+      // Check URL parameter
       const params = new URLSearchParams(window.location.search);
       const roleParam = params.get('role');
-      if (roleParam === 'mentor') {
-        setRole('mentor');
-      } else {
-        setRole('mentee');
-      }
       
       checkAuth();
       
+      if (roleParam === 'mentor') {
+        initMentor();
+      } else {
+        initMentee();
+      }
+
       // Form handlers
-      document.getElementById('loginForm').onsubmit = handleLogin;
-      document.getElementById('signupForm').onsubmit = handleSignup;
-      document.getElementById('profileForm').onsubmit = handleProfileUpdate;
+      document.getElementById('menteeLoginForm').onsubmit = handleMenteeLogin;
+      document.getElementById('menteeSignupForm').onsubmit = handleMenteeSignup;
+      document.getElementById('menteeProfileForm').onsubmit = handleMenteeProfileUpdate;
       document.getElementById('mentorLoginForm').onsubmit = handleMentorLogin;
       document.getElementById('mentorSignupForm').onsubmit = handleMentorSignup;
     });
 
-    function setRole(role) {
-      currentRole = role;
-      
-      // Update tab styling
-      document.querySelectorAll('.role-tab').forEach(tab => tab.classList.remove('active'));
-      if (role === 'mentee') {
-        document.querySelectorAll('.role-tab')[0].classList.add('active');
-        document.getElementById('menteeSection').style.display = 'block';
-        document.getElementById('mentorSection').style.display = 'none';
-        switchPage('loginPage');
+    function toggleMenu() {
+      const menu = document.getElementById('dropdownMenu');
+      menu.classList.toggle('show');
+    }
+
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+      const menu = document.getElementById('dropdownMenu');
+      if (!e.target.closest('.top-nav')) {
+        menu.classList.remove('show');
+      }
+    });
+
+    function initMentee() {
+      currentRole = 'mentee';
+      document.getElementById('dropdownMenu').classList.remove('show');
+      const token = localStorage.getItem('menteeToken');
+      if (token) {
+        switchPage('menteeDashboard');
+        loadMenteeDashboard();
       } else {
-        document.querySelectorAll('.role-tab')[1].classList.add('active');
-        document.getElementById('menteeSection').style.display = 'none';
-        document.getElementById('mentorSection').style.display = 'block';
-        switchPage('mentorLoginPage');
+        switchPage('menteeLogin');
       }
     }
 
-    function checkAuth() {
-      const menteeToken = localStorage.getItem('menteeToken');
-      const mentorToken = localStorage.getItem('mentorToken');
-      
-      if (menteeToken) {
-        currentUser = JSON.parse(localStorage.getItem('menteeUser') || '{}');
-        currentRole = 'mentee';
-        setRole('mentee');
-        loadDashboard();
-      } else if (mentorToken) {
-        currentUser = JSON.parse(localStorage.getItem('mentorUser') || '{}');
-        currentRole = 'mentor';
-        setRole('mentor');
-        // For mentors, show profile page or dashboard
-        // (You can create a mentor dashboard later)
+    function initMentor() {
+      currentRole = 'mentor';
+      document.getElementById('dropdownMenu').classList.remove('show');
+      const token = localStorage.getItem('mentorToken');
+      if (token) {
+        switchPage('mentorDashboard');
+      } else {
+        switchPage('mentorLogin');
       }
     }
 
     function switchPage(pageName) {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById(pageName).classList.add('active');
-      
-      if (pageName === 'dashboardPage') {
-        loadDashboard();
-      } else if (pageName === 'bookingsPage') {
-        loadBookings();
-      } else if (pageName === 'profilePage') {
-        loadProfile();
+    }
+
+    function checkAuth() {
+      const menteeToken = localStorage.getItem('menteeToken');
+      if (menteeToken) {
+        currentUser = JSON.parse(localStorage.getItem('menteeUser') || '{}');
       }
     }
 
-    async function handleLogin(e) {
+    // ========== MENTEE FUNCTIONS ==========
+
+    async function handleMenteeLogin(e) {
       e.preventDefault();
-      const email = document.getElementById('loginEmail').value;
-      const password = document.getElementById('loginPassword').value;
+      const email = document.getElementById('menteeLoginEmail').value;
+      const password = document.getElementById('menteeLoginPassword').value;
       
       try {
         const res = await fetch(`${API_URL}/api/auth/login`, {
@@ -568,181 +568,82 @@
         const data = await res.json();
         
         if (!res.ok) {
-          showError('loginError', data.error || 'Login failed');
+          document.getElementById('menteeLoginError').textContent = data.error || 'Login failed';
+          document.getElementById('menteeLoginError').style.display = 'block';
           return;
         }
         
         localStorage.setItem('menteeToken', data.token);
         localStorage.setItem('menteeUser', JSON.stringify(data.user));
         currentUser = data.user;
-        switchPage('dashboardPage');
+        switchPage('menteeDashboard');
+        loadMenteeDashboard();
       } catch (error) {
-        showError('loginError', 'Network error. Please try again.');
+        document.getElementById('menteeLoginError').textContent = 'Network error';
+        document.getElementById('menteeLoginError').style.display = 'block';
       }
     }
 
-    async function handleSignup(e) {
+    async function handleMenteeSignup(e) {
       e.preventDefault();
-      const name = document.getElementById('signupName').value;
-      const email = document.getElementById('signupEmail').value;
-      const password = document.getElementById('signupPassword').value;
-      const phone = document.getElementById('signupPhone').value;
-      
-      if (password.length < 8) {
-        showError('signupError', 'Password must be at least 8 characters');
-        return;
-      }
+      const name = document.getElementById('menteeSignupName').value;
+      const email = document.getElementById('menteeSignupEmail').value;
+      const password = document.getElementById('menteeSignupPassword').value;
+      const phone = document.getElementById('menteeSignupPhone').value;
       
       try {
         const res = await fetch(`${API_URL}/api/auth/signup`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, email, password, phone: phone || null })
+          body: JSON.stringify({ email, password, name, phone })
         });
         
         const data = await res.json();
         
-        // Check if schema needs to be initialized
-        if (data.code === 'SCHEMA_NOT_READY') {
-          showError('signupError', 'System is initializing. Please wait 30 seconds and try again.');
-          // Try to auto-initialize
-          try {
-            await fetch(`${API_URL}/api/admin/init-mentee-schema`, { method: 'POST' });
-          } catch (e) {}
-          return;
-        }
-        
         if (!res.ok) {
-          showError('signupError', data.error || 'Signup failed');
+          document.getElementById('menteeSignupError').textContent = data.error || 'Signup failed';
+          document.getElementById('menteeSignupError').style.display = 'block';
           return;
         }
         
         localStorage.setItem('menteeToken', data.token);
         localStorage.setItem('menteeUser', JSON.stringify(data.user));
         currentUser = data.user;
-        switchPage('dashboardPage');
+        switchPage('menteeDashboard');
+        loadMenteeDashboard();
       } catch (error) {
-        showError('signupError', 'Network error. Please try again.');
+        document.getElementById('menteeSignupError').textContent = 'Network error';
+        document.getElementById('menteeSignupError').style.display = 'block';
       }
     }
 
-    async function loadDashboard() {
-      const token = localStorage.getItem('menteeToken');
-      if (!token) {
-        switchPage('loginPage');
-        return;
-      }
-      
-      document.getElementById('dashboardWelcome').textContent = `Welcome, ${currentUser.name}!`;
+    async function loadMenteeDashboard() {
+      document.getElementById('menteeLoading').style.display = 'block';
+      document.getElementById('menteeContent').style.display = 'none';
       
       try {
-        const res = await fetch(`${API_URL}/api/mentee/bookings`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        
-        if (res.status === 401) {
-          logout();
-          return;
-        }
-        
-        const data = await res.json();
-        document.getElementById('upcomingCount').textContent = data.upcoming || 0;
-        document.getElementById('totalBookings').textContent = data.bookings ? data.bookings.length : 0;
-        
-        document.getElementById('dashboardLoading').style.display = 'none';
-        document.getElementById('dashboardContent').style.display = 'block';
-      } catch (error) {
-        console.error('Error loading dashboard:', error);
-      }
-    }
-
-    async function loadBookings() {
-      const token = localStorage.getItem('menteeToken');
-      if (!token) return;
-      
-      try {
+        const token = localStorage.getItem('menteeToken');
         const res = await fetch(`${API_URL}/api/mentee/bookings`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         
         const data = await res.json();
-        allBookings = data.bookings || [];
-        filterBookings('upcoming');
-        
-        document.getElementById('bookingsLoading').style.display = 'none';
-        document.getElementById('bookingsContent').style.display = 'block';
+        currentUser = JSON.parse(localStorage.getItem('menteeUser') || '{}');
+        document.getElementById('menteeWelcome').textContent = `Welcome, ${currentUser.name}!`;
+        document.getElementById('totalBookings').textContent = data.bookings?.length || 0;
+        document.getElementById('menteeLoading').style.display = 'none';
+        document.getElementById('menteeContent').style.display = 'block';
       } catch (error) {
-        console.error('Error loading bookings:', error);
+        document.getElementById('menteeLoading').textContent = 'Error loading dashboard';
       }
     }
 
-    function filterBookings(type) {
-      document.getElementById('filterUpcoming').style.background = type === 'upcoming' ? '#667eea' : '#cbd5e0';
-      document.getElementById('filterUpcoming').style.color = type === 'upcoming' ? 'white' : '#2d3748';
-      document.getElementById('filterPast').style.background = type === 'past' ? '#667eea' : '#cbd5e0';
-      document.getElementById('filterPast').style.color = type === 'past' ? 'white' : '#2d3748';
-      
-      const now = new Date();
-      if (type === 'upcoming') {
-        filteredBookings = allBookings.filter(b => new Date(b.start_time) > now).sort((a, b) => new Date(a.start_time) - new Date(b.start_time));
-      } else {
-        filteredBookings = allBookings.filter(b => new Date(b.start_time) <= now).sort((a, b) => new Date(b.start_time) - new Date(a.start_time));
-      }
-      
-      displayBookings();
-    }
-
-    function displayBookings() {
-      const list = document.getElementById('bookingsList');
-      if (filteredBookings.length === 0) {
-        list.innerHTML = '<div style="text-align: center; color: #718096; padding: 20px;">No bookings yet</div>';
-        return;
-      }
-      
-      list.innerHTML = filteredBookings.map(booking => `
-        <div style="background: #f7fafc; padding: 14px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid #667eea;">
-          <div style="font-weight: 600; color: #2d3748;">${booking.session_topic || 'Session'}</div>
-          <div style="font-size: 12px; color: #718096; margin-top: 4px;">
-            ${new Date(booking.start_time).toLocaleString()}
-          </div>
-          <div style="font-size: 12px; color: #718096; margin-top: 2px;">
-            Status: <span style="color: #667eea; font-weight: 500;">${booking.booking_status}</span>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    async function loadProfile() {
-      const token = localStorage.getItem('menteeToken');
-      if (!token) return;
-      
-      try {
-        const res = await fetch(`${API_URL}/api/mentee/profile`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        
-        const data = await res.json();
-        const user = data.user;
-        
-        document.getElementById('profileName').value = user.name || '';
-        document.getElementById('profileEmail').value = user.email || '';
-        document.getElementById('profilePhone').value = user.phone || '';
-        document.getElementById('profileBio').value = user.bio || '';
-        document.getElementById('profileTimezone').value = user.timezone || 'America/New_York';
-      } catch (error) {
-        console.error('Error loading profile:', error);
-      }
-    }
-
-    async function handleProfileUpdate(e) {
+    async function handleMenteeProfileUpdate(e) {
       e.preventDefault();
       const token = localStorage.getItem('menteeToken');
-      if (!token) return;
-      
-      const name = document.getElementById('profileName').value;
-      const phone = document.getElementById('profilePhone').value;
-      const bio = document.getElementById('profileBio').value;
-      const timezone = document.getElementById('profileTimezone').value;
+      const name = document.getElementById('menteeProfileName').value;
+      const phone = document.getElementById('menteeProfilePhone').value;
+      const bio = document.getElementById('menteeProfileBio').value;
       
       try {
         const res = await fetch(`${API_URL}/api/mentee/profile`, {
@@ -751,74 +652,29 @@
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ name, phone, bio, timezone })
+          body: JSON.stringify({ name, phone, bio })
         });
         
-        const data = await res.json();
-        
-        if (!res.ok) {
-          showError('profileError', data.error || 'Update failed');
-          return;
+        if (res.ok) {
+          document.getElementById('menteeProfileSuccess').textContent = 'Profile updated!';
+          document.getElementById('menteeProfileSuccess').style.display = 'block';
+          setTimeout(() => document.getElementById('menteeProfileSuccess').style.display = 'none', 3000);
         }
-        
-        showSuccess('profileSuccess', 'Profile updated successfully!');
       } catch (error) {
-        showError('profileError', 'Network error. Please try again.');
+        document.getElementById('menteeProfileError').textContent = 'Error updating profile';
+        document.getElementById('menteeProfileError').style.display = 'block';
       }
     }
 
-    function checkPasswordStrength() {
-      const password = document.getElementById('signupPassword').value;
-      const strengthDiv = document.getElementById('passwordStrength');
-      
-      if (!password) {
-        strengthDiv.textContent = '';
-        return;
-      }
-      
-      let strength = 'weak';
-      let message = 'Weak password';
-      
-      if (password.length >= 8 && /[a-z]/.test(password) && /[A-Z]/.test(password) && /[0-9]/.test(password)) {
-        strength = 'strong';
-        message = 'Strong password';
-      } else if (password.length >= 8 && (/[A-Z]/.test(password) || /[0-9]/.test(password))) {
-        strength = 'medium';
-        message = 'Medium strength';
-      }
-      }
-    }
-
-    function logout() {
+    function menteeLogout() {
       localStorage.removeItem('menteeToken');
       localStorage.removeItem('menteeUser');
       currentUser = null;
-      switchPage('loginPage');
-      document.getElementById('loginForm').reset();
+      switchPage('menteeLogin');
+      document.getElementById('menteeLoginForm').reset();
     }
 
-    function goToBooking() {
-      // Store flag in session storage and redirect
-      sessionStorage.setItem('openPaymentOnLoad', 'true');
-      window.location.href = '/';
-    }
-
-    function showError(elementId, message) {
-      const el = document.getElementById(elementId);
-      el.textContent = message;
-      el.style.display = 'block';
-    }
-
-    function showSuccess(elementId, message) {
-      const el = document.getElementById(elementId);
-      el.textContent = message;
-      el.style.display = 'block';
-      setTimeout(() => {
-        el.style.display = 'none';
-      }, 3000);
-    }
-
-    // ============= MENTOR FUNCTIONS =============
+    // ========== MENTOR FUNCTIONS ==========
 
     async function handleMentorLogin(e) {
       e.preventDefault();
@@ -835,32 +691,33 @@
         const data = await res.json();
         
         if (!res.ok) {
-          showError('mentorLoginError', data.error || 'Login failed');
+          document.getElementById('mentorLoginError').textContent = data.error || 'Login failed';
+          document.getElementById('mentorLoginError').style.display = 'block';
           return;
         }
         
         localStorage.setItem('mentorToken', data.token);
         localStorage.setItem('mentorUser', JSON.stringify(data.user));
         currentUser = data.user;
-        
-        // Redirect to mentor dashboard
-        window.location.href = '/mentor-dashboard.html';
+        switchPage('mentorDashboard');
+        document.getElementById('mentorWelcome').textContent = `Welcome back, ${data.user.name}!`;
       } catch (error) {
-        showError('mentorLoginError', 'Network error. Please try again.');
+        document.getElementById('mentorLoginError').textContent = 'Network error';
+        document.getElementById('mentorLoginError').style.display = 'block';
       }
     }
 
     async function handleMentorSignup(e) {
       e.preventDefault();
-      const name = document.getElementById('mentorName').value;
-      const email = document.getElementById('mentorEmail').value;
-      const password = document.getElementById('mentorPassword').value;
-      const bio = document.getElementById('mentorBio').value;
+      const name = document.getElementById('mentorSignupName').value;
+      const email = document.getElementById('mentorSignupEmail').value;
+      const password = document.getElementById('mentorSignupPassword').value;
+      const bio = document.getElementById('mentorSignupBio').value;
       
-      // Get selected tracks
-      const trackCheckboxes = document.querySelectorAll('input[name="tracks"]:checked');
+      const trackCheckboxes = document.querySelectorAll('input[name="mentorTracks"]:checked');
       if (trackCheckboxes.length === 0) {
-        showError('mentorSignupError', 'Please select at least one track');
+        document.getElementById('mentorSignupError').textContent = 'Please select at least one track';
+        document.getElementById('mentorSignupError').style.display = 'block';
         return;
       }
       
@@ -876,24 +733,34 @@
         const data = await res.json();
         
         if (!res.ok) {
-          showError('mentorSignupError', data.error || 'Signup failed');
+          document.getElementById('mentorSignupError').textContent = data.error || 'Signup failed';
+          document.getElementById('mentorSignupError').style.display = 'block';
           return;
         }
         
         localStorage.setItem('mentorToken', data.token);
         localStorage.setItem('mentorUser', JSON.stringify(data.user));
         currentUser = data.user;
-        
-        // Redirect to mentor dashboard
-        window.location.href = '/mentor-dashboard.html';
+        switchPage('mentorDashboard');
+        document.getElementById('mentorWelcome').textContent = `Welcome, ${data.user.name}!`;
       } catch (error) {
-        showError('mentorSignupError', 'Network error. Please try again.');
+        document.getElementById('mentorSignupError').textContent = 'Network error';
+        document.getElementById('mentorSignupError').style.display = 'block';
       }
     }
 
-    function checkPasswordStrength(inputId = 'signupPassword') {
+    function mentorLogout() {
+      localStorage.removeItem('mentorToken');
+      localStorage.removeItem('mentorUser');
+      currentUser = null;
+      switchPage('mentorLogin');
+      document.getElementById('mentorLoginForm').reset();
+    }
+
+    // ========== UTILITY FUNCTIONS ==========
+
+    function checkPasswordStrength(inputId, strengthId) {
       const password = document.getElementById(inputId).value;
-      const strengthId = inputId === 'mentorPassword' ? 'mentorPasswordStrength' : 'passwordStrength';
       const strengthDiv = document.getElementById(strengthId);
       
       if (!password) {
@@ -914,6 +781,11 @@
       
       strengthDiv.className = `password-strength strength-${strength}`;
       strengthDiv.textContent = message;
+    }
+
+    function goToBooking() {
+      sessionStorage.setItem('openPaymentOnLoad', 'true');
+      window.location.href = '/';
     }
   </script>
 </body>
