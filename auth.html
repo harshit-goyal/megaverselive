@@ -637,8 +637,9 @@
     }
 
     function goToBooking() {
-      // Redirect to homepage and open payment modal
-      window.location.href = '/#payment';
+      // Set flag to open payment modal when homepage loads
+      localStorage.setItem('openPayment', 'true');
+      window.location.href = '/';
     }
 
     function showError(elementId, message) {
