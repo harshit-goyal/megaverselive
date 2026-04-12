@@ -89,6 +89,23 @@ app.get('/', (req, res) => {
   }
 });
 
+// Auth pages
+app.get('/auth', (req, res) => {
+  res.sendFile(path.join(__dirname, '../auth.html'));
+});
+app.get('/login', (req, res) => {
+  res.sendFile(path.join(__dirname, '../auth.html'));
+});
+app.get('/signup', (req, res) => {
+  res.sendFile(path.join(__dirname, '../auth.html'));
+});
+app.get('/dashboard', (req, res) => {
+  res.sendFile(path.join(__dirname, '../auth.html'));
+});
+app.get('/profile', (req, res) => {
+  res.sendFile(path.join(__dirname, '../auth.html'));
+});
+
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date(), message: 'Megaverse Live API is running' });
