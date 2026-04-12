@@ -1185,6 +1185,13 @@ app.put('/api/mentee/profile', verifyToken, async (req, res) => {
 // GET /api/mentee/bookings - Get all mentee's bookings (requires JWT)
 app.get('/api/mentee/bookings', verifyToken, async (req, res) => {
   try {
+    // First ensure mentee_id column exists on bookings table
+    try {
+      await pool.query(`ALTER TABLE bookings ADD COLUMN IF NOT EXISTS mentee_id INT DEFAULT NULL`);
+    } catch (e) {
+      // Column might already exist
+    }
+    
     const result = await pool.query(
       `SELECT b.id, b.mentor_id, b.customer_name, b.customer_email, b.session_topic,
               b.start_time, b.end_time, b.payment_status, b.booking_status, b.notes, b.created_at,
@@ -1206,7 +1213,7 @@ app.get('/api/mentee/bookings', verifyToken, async (req, res) => {
     });
   } catch (error) {
     console.error('Error fetching bookings:', error);
-    res.status(500).json({ error: 'Failed to fetch bookings' });
+    res.status(500).json({ error: 'Failed to fetch bookings', details: error.message });
   }
 });
 
