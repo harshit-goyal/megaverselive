@@ -112,6 +112,21 @@ async function initializeDatabase() {
       )
     `);
 
+    // Create booking_reminders table
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS booking_reminders (
+        id SERIAL PRIMARY KEY,
+        booking_id INT NOT NULL,
+        reminder_type VARCHAR(20) NOT NULL,
+        sent_at TIMESTAMP,
+        status VARCHAR(20) DEFAULT 'pending',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (booking_id) REFERENCES bookings(id) ON DELETE CASCADE,
+        UNIQUE(booking_id, reminder_type)
+      )
+    `);
+
+
     // Migrate mentors table - add missing columns if they don't exist
     try {
       await pool.query(`ALTER TABLE mentors ADD COLUMN IF NOT EXISTS password_hash VARCHAR(255)`);
@@ -1796,6 +1811,111 @@ app.get('/api/bookings/:id/cancellation-policy', async (req, res) => {
   }
 });
 
+
+// POST /api/bookings/send-reminders - Send pending booking reminders
+app.post('/api/bookings/send-reminders', async (req, res) => {
+  try {
+    console.log('🔔 Checking for bookings that need reminders...');
+    
+    // Get bookings within next 24 hours that haven't gotten a 24h reminder
+    const bookings24h = await pool.query(`
+      SELECT b.id, b.customer_email, b.start_time, m.name as mentor_name,
+             (SELECT status FROM booking_reminders WHERE booking_id = b.id AND reminder_type = '24h') as reminder_24h_sent
+      FROM bookings b
+      JOIN mentors m ON b.mentor_id = m.id
+      WHERE b.is_cancelled = FALSE
+        AND b.payment_status = 'completed'
+        AND b.start_time > CURRENT_TIMESTAMP
+        AND b.start_time <= CURRENT_TIMESTAMP + INTERVAL '25 hours'
+        AND (SELECT status FROM booking_reminders WHERE booking_id = b.id AND reminder_type = '24h') IS NULL
+    `);
+    
+    // Get bookings within next 1 hour that haven't gotten a 1h reminder
+    const bookings1h = await pool.query(`
+      SELECT b.id, b.customer_email, b.start_time, m.name as mentor_name,
+             (SELECT status FROM booking_reminders WHERE booking_id = b.id AND reminder_type = '1h') as reminder_1h_sent
+      FROM bookings b
+      JOIN mentors m ON b.mentor_id = m.id
+      WHERE b.is_cancelled = FALSE
+        AND b.payment_status = 'completed'
+        AND b.start_time > CURRENT_TIMESTAMP
+        AND b.start_time <= CURRENT_TIMESTAMP + INTERVAL '1 hour 5 minutes'
+        AND (SELECT status FROM booking_reminders WHERE booking_id = b.id AND reminder_type = '1h') IS NULL
+    `);
+
+    let sent24h = 0, sent1h = 0;
+
+    // Send 24-hour reminders
+    for (const booking of bookings24h.rows) {
+      try {
+        const mentorInfo = { name: booking.mentor_name };
+        await emailService.sendReminder(booking, mentorInfo);
+        
+        // Log reminder as sent
+        await pool.query(
+          `INSERT INTO booking_reminders (booking_id, reminder_type, status, sent_at)
+           VALUES ($1, '24h', 'sent', CURRENT_TIMESTAMP)
+           ON CONFLICT (booking_id, reminder_type) DO UPDATE SET status = 'sent', sent_at = CURRENT_TIMESTAMP`,
+          [booking.id]
+        );
+        sent24h++;
+        console.log(`✅ 24h reminder sent for booking ${booking.id}`);
+      } catch (err) {
+        console.error(`Failed to send 24h reminder for booking ${booking.id}:`, err.message);
+      }
+    }
+
+    // Send 1-hour reminders
+    for (const booking of bookings1h.rows) {
+      try {
+        const mentorInfo = { name: booking.mentor_name };
+        const html = `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2 style="color: #f59e0b;">🚀 Your Session Starts in 1 Hour!</h2>
+            <p>Hi ${booking.customer_email.split('@')[0]},</p>
+            <p>Your session with <strong>${booking.mentor_name}</strong> starts in <strong>1 hour</strong>!</p>
+            <p style="color: #ef4444; font-weight: bold;">
+              ⏰ Join link will be sent 5 minutes before the session.
+            </p>
+            <p>Get ready and we'll see you soon!</p>
+          </div>
+        `;
+        
+        await emailService.transporter.sendMail({
+          from: process.env.EMAIL_FROM || 'hello@megaverselive.com',
+          to: booking.customer_email,
+          subject: '⏰ Your session starts in 1 hour!',
+          html
+        });
+        
+        // Log reminder as sent
+        await pool.query(
+          `INSERT INTO booking_reminders (booking_id, reminder_type, status, sent_at)
+           VALUES ($1, '1h', 'sent', CURRENT_TIMESTAMP)
+           ON CONFLICT (booking_id, reminder_type) DO UPDATE SET status = 'sent', sent_at = CURRENT_TIMESTAMP`,
+          [booking.id]
+        );
+        sent1h++;
+        console.log(`✅ 1h reminder sent for booking ${booking.id}`);
+      } catch (err) {
+        console.error(`Failed to send 1h reminder for booking ${booking.id}:`, err.message);
+      }
+    }
+
+    res.json({
+      success: true,
+      reminders_sent_24h: sent24h,
+      reminders_sent_1h: sent1h,
+      total_bookings_checked: bookings24h.rows.length + bookings1h.rows.length
+    });
+    
+    console.log(`✅ Reminder check complete: ${sent24h} 24h reminders, ${sent1h} 1h reminders sent`);
+  } catch (error) {
+    console.error('Error sending reminders:', error);
+    res.status(500).json({ error: 'Failed to send reminders', details: error.message });
+  }
+});
+
 // POST /api/ratings - Submit a rating for a booking (requires JWT)
 app.post('/api/ratings', verifyToken, async (req, res) => {
   try {
@@ -2152,9 +2272,26 @@ app.delete('/api/admin/mentee/:id', verifyAdminToken, async (req, res) => {
 
 // ============= START SERVER =============
 
+// Schedule reminder check every 15 minutes
+const reminderScheduleInterval = setInterval(async () => {
+  try {
+    const response = await fetch(`http://localhost:${PORT}/api/bookings/send-reminders`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    const data = await response.json();
+    if (data.reminders_sent_24h > 0 || data.reminders_sent_1h > 0) {
+      console.log(`✅ Reminders sent: 24h=${data.reminders_sent_24h}, 1h=${data.reminders_sent_1h}`);
+    }
+  } catch (error) {
+    console.error('Error in reminder scheduler:', error.message);
+  }
+}, 15 * 60 * 1000); // Run every 15 minutes
+
 app.listen(PORT, () => {
   console.log(`Megaverse Live API running on port ${PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV}`);
+  console.log(`✅ Booking reminder scheduler started (checks every 15 minutes)`);
 });
 
 module.exports = app;
