@@ -229,6 +229,57 @@
       gap: 12px;
     }
     
+    /* Notification Styles */
+    #notificationContainer {
+      position: fixed;
+      top: 80px;
+      right: 20px;
+      z-index: 9999;
+      max-width: 400px;
+    }
+    .notification {
+      background: white;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      border-left: 4px solid #667eea;
+      animation: slideIn 0.3s ease;
+    }
+    .notification.success {
+      border-left-color: #48bb78;
+      background: #f0fdf4;
+    }
+    .notification.error {
+      border-left-color: #f56565;
+      background: #fef2f2;
+    }
+    .notification.info {
+      border-left-color: #667eea;
+      background: #f0f4ff;
+    }
+    .notification.warning {
+      border-left-color: #ed8936;
+      background: #fffaf0;
+    }
+    .notification-title {
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: #2d3748;
+    }
+    .notification-message {
+      font-size: 13px;
+      color: #4a5568;
+    }
+    @keyframes slideIn {
+      from { transform: translateX(400px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideOut {
+      from { transform: translateX(0); opacity: 1; }
+      to { transform: translateX(400px); opacity: 0; }
+    }
+    
     @media (max-width: 600px) {
       .container {
         padding: 16px;
@@ -306,6 +357,9 @@
   </style>
 </head>
 <body>
+  <!-- Notification Container -->
+  <div id="notificationContainer"></div>
+  
   <!-- Top Navigation with Dropdown -->
   <div class="top-nav">
     <button class="auth-menu-btn" onclick="toggleMenu()">Sign Up / Login</button>
@@ -476,6 +530,33 @@
         <div style="display: flex; gap: 12px;">
           <button onclick="submitRating()" style="flex: 1; background: #667eea; color: white; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; font-weight: 500;">Submit Rating</button>
           <button onclick="closeRatingModal()" style="flex: 1; background: #e2e8f0; color: #2d3748; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; font-weight: 500;">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cancellation Modal -->
+    <div id="cancelModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; padding: 20px;">
+      <div style="background: white; max-width: 500px; margin: 50px auto; border-radius: 12px; padding: 24px;">
+        <h2 style="margin: 0 0 16px 0;">Cancel Booking</h2>
+        <div id="cancelError" class="error" style="display: none;"></div>
+        <div id="cancelSuccess" class="success" style="display: none;"></div>
+        
+        <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px; margin-bottom: 16px; border-radius: 6px;">
+          <p style="margin: 0; font-size: 14px; color: #92400e;">
+            ⚠️ <strong>Cancellation Policy:</strong> You can only cancel bookings more than 24 hours before the session. You will receive a full refund.
+          </p>
+        </div>
+        
+        <div id="cancellationInfo" style="background: #f3f4f6; padding: 12px; margin-bottom: 16px; border-radius: 6px; font-size: 13px; color: #4b5563;"></div>
+        
+        <div style="margin-bottom: 16px;">
+          <label for="cancelReason" style="display: block; margin-bottom: 8px; font-weight: 500;">Reason for Cancellation (Optional)</label>
+          <textarea id="cancelReason" placeholder="Help us improve..." style="width: 100%; padding: 8px; border: 1px solid #e2e8f0; border-radius: 6px; font-family: inherit; resize: vertical; height: 80px;"></textarea>
+        </div>
+        
+        <div style="display: flex; gap: 12px;">
+          <button onclick="confirmCancellation()" style="flex: 1; background: #f56565; color: white; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; font-weight: 500;">Confirm Cancellation</button>
+          <button onclick="closeCancelModal()" style="flex: 1; background: #e2e8f0; color: #2d3748; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; font-weight: 500;">Keep Booking</button>
         </div>
       </div>
     </div>
@@ -752,6 +833,7 @@
         const data = await res.json();
         
         if (!res.ok) {
+          notifyError('Login Failed', data.error || 'Invalid credentials');
           document.getElementById('menteeLoginError').textContent = data.error || 'Login failed';
           document.getElementById('menteeLoginError').style.display = 'block';
           return;
@@ -760,9 +842,11 @@
         localStorage.setItem('menteeToken', data.token);
         localStorage.setItem('menteeUser', JSON.stringify(data.user));
         currentUser = data.user;
+        notifySuccess('Welcome Back!', `Logged in as ${data.user.name}`);
         switchPage('menteeDashboard');
         loadMenteeDashboard();
       } catch (error) {
+        notifyError('Connection Error', 'Unable to connect to server');
         document.getElementById('menteeLoginError').textContent = 'Network error';
         document.getElementById('menteeLoginError').style.display = 'block';
       }
@@ -785,6 +869,7 @@
         const data = await res.json();
         
         if (!res.ok) {
+          notifyError('Signup Failed', data.error || 'Unable to create account');
           document.getElementById('menteeSignupError').textContent = data.error || 'Signup failed';
           document.getElementById('menteeSignupError').style.display = 'block';
           return;
@@ -793,9 +878,11 @@
         localStorage.setItem('menteeToken', data.token);
         localStorage.setItem('menteeUser', JSON.stringify(data.user));
         currentUser = data.user;
+        notifySuccess('Account Created!', `Welcome ${data.user.name}!`);
         switchPage('menteeDashboard');
         loadMenteeDashboard();
       } catch (error) {
+        notifyError('Connection Error', 'Unable to connect to server');
         document.getElementById('menteeSignupError').textContent = 'Network error';
         document.getElementById('menteeSignupError').style.display = 'block';
       }
@@ -848,27 +935,33 @@
         const html = bookings.map(b => {
           const startTime = new Date(b.start_time);
           const endTime = new Date(b.end_time);
-          const isUpcoming = startTime > now;
-          const status = isUpcoming ? '🟢 Upcoming' : '✅ Completed';
+          const isUpcoming = startTime > now && !b.is_cancelled;
+          const isCancelled = b.is_cancelled;
+          let status = '✅ Completed';
+          if (isCancelled) status = '❌ Cancelled';
+          else if (isUpcoming) status = '🟢 Upcoming';
+          
           const timeStr = startTime.toLocaleString();
           const mentorName = b.mentor_name || 'Harshit Goyal';
           const paymentStatus = b.payment_status === 'completed' ? '✅ Paid' : '⏳ Pending';
           
-          const rateButton = !isUpcoming ? `<button onclick="openRatingModal(${b.id})" style="background: #667eea; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; margin-top: 8px;">Rate Session</button>` : '';
+          const rateButton = !isUpcoming && !isCancelled ? `<button onclick="openRatingModal(${b.id})" style="background: #667eea; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; margin-top: 8px;">Rate Session</button>` : '';
+          const cancelButton = isUpcoming && !isCancelled ? `<button onclick="openCancelModal(${b.id})" style="background: #f56565; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; margin-top: 4px;">Cancel</button>` : '';
           
           return `
-            <div style="background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 12px;">
+            <div style="background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 12px; opacity: ${isCancelled ? '0.6' : '1'};">
               <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px;">
                 <div>
-                  <h3 style="margin: 0 0 8px 0; color: #2d3748;">${mentorName}</h3>
+                  <h3 style="margin: 0 0 8px 0; color: #2d3748; text-decoration: ${isCancelled ? 'line-through' : 'none'};">${mentorName}</h3>
                   <p style="margin: 0 0 4px 0; color: #4a5568; font-size: 14px;">📚 ${b.session_topic}</p>
                   <p style="margin: 0 0 4px 0; color: #718096; font-size: 13px;">📅 ${timeStr}</p>
                   <p style="margin: 0; color: #718096; font-size: 13px;">⏰ ${startTime.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})} - ${endTime.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}</p>
+                  ${isCancelled && b.cancellation_reason ? `<p style="margin: 4px 0 0 0; color: #f56565; font-size: 12px;">Reason: ${b.cancellation_reason}</p>` : ''}
                 </div>
                 <div style="text-align: right;">
-                  <div style="font-weight: 600; color: ${isUpcoming ? '#48bb78' : '#718096'}; margin-bottom: 8px;">${status}</div>
+                  <div style="font-weight: 600; color: ${isUpcoming ? '#48bb78' : (isCancelled ? '#f56565' : '#718096')}; margin-bottom: 8px;">${status}</div>
                   <div style="font-size: 13px; color: #718096; margin-bottom: 8px;">${paymentStatus}</div>
-                  ${rateButton}
+                  ${rateButton}${cancelButton}
                 </div>
               </div>
             </div>
@@ -967,11 +1060,13 @@
 
         if (!res.ok) {
           const data = await res.json();
+          notifyError('Rating Failed', data.error || 'Failed to submit rating');
           document.getElementById('ratingError').textContent = data.error || 'Failed to submit rating';
           document.getElementById('ratingError').style.display = 'block';
           return;
         }
 
+        notifySuccess('Rating Submitted!', 'Thank you for your feedback!');
         document.getElementById('ratingSuccess').textContent = 'Rating submitted successfully!';
         document.getElementById('ratingSuccess').style.display = 'block';
         setTimeout(() => {
@@ -981,6 +1076,80 @@
       } catch (error) {
         document.getElementById('ratingError').textContent = 'Error submitting rating';
         document.getElementById('ratingError').style.display = 'block';
+      }
+    }
+
+    async function openCancelModal(bookingId) {
+      currentBookingId = bookingId;
+      document.getElementById('cancelError').style.display = 'none';
+      document.getElementById('cancelSuccess').style.display = 'none';
+      document.getElementById('cancelReason').value = '';
+      
+      try {
+        const res = await fetch(`${API_URL}/api/bookings/${bookingId}/cancellation-policy`);
+        const data = await res.json();
+        
+        if (!data.can_cancel) {
+          document.getElementById('cancelError').textContent = `Cannot cancel: Only ${data.hours_remaining} hours remaining. Bookings must be cancelled 24+ hours before.`;
+          document.getElementById('cancelError').style.display = 'block';
+          document.querySelector('button[onclick="confirmCancellation()"]').disabled = true;
+          document.querySelector('button[onclick="confirmCancellation()"]').style.opacity = '0.5';
+        } else {
+          document.querySelector('button[onclick="confirmCancellation()"]').disabled = false;
+          document.querySelector('button[onclick="confirmCancellation()"]').style.opacity = '1';
+        }
+        
+        const deadline = new Date(data.cancellation_deadline);
+        document.getElementById('cancellationInfo').innerHTML = `
+          <strong>Cancellation Deadline:</strong> ${deadline.toLocaleString()}<br>
+          <strong>Refund:</strong> ${data.refund_eligible === 'full' ? '✅ Full refund' : '❌ No refund'}
+        `;
+      } catch (error) {
+        console.error('Error checking cancellation policy:', error);
+      }
+      
+      document.getElementById('cancelModal').style.display = 'block';
+    }
+
+    function closeCancelModal() {
+      document.getElementById('cancelModal').style.display = 'none';
+      currentBookingId = null;
+    }
+
+    async function confirmCancellation() {
+      const reason = document.getElementById('cancelReason').value;
+      const token = localStorage.getItem('menteeToken');
+
+      try {
+        const res = await fetch(`${API_URL}/api/bookings/${currentBookingId}/cancel`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ reason: reason || 'Cancelled by user' })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          notifyError('Cancellation Failed', data.error || 'Failed to cancel booking');
+          document.getElementById('cancelError').textContent = data.error || 'Failed to cancel booking';
+          document.getElementById('cancelError').style.display = 'block';
+          return;
+        }
+
+        notifySuccess('Booking Cancelled', 'Refund will be processed within 3-5 business days.');
+        document.getElementById('cancelSuccess').textContent = '✅ Booking cancelled! Refund will be processed within 3-5 business days.';
+        document.getElementById('cancelSuccess').style.display = 'block';
+        setTimeout(() => {
+          closeCancelModal();
+          loadMenteeBookings();
+        }, 2000);
+      } catch (error) {
+        notifyError('Error', 'Error cancelling booking');
+        document.getElementById('cancelError').textContent = 'Error cancelling booking';
+        document.getElementById('cancelError').style.display = 'block';
       }
     }
 
@@ -1249,6 +1418,44 @@
         sessionStorage.setItem('menteeToken', token);
       }
       window.location.href = '/';
+    }
+
+    // ========== NOTIFICATION SYSTEM ==========
+
+    function showNotification(title, message, type = 'info', duration = 4000) {
+      const container = document.getElementById('notificationContainer');
+      const notif = document.createElement('div');
+      notif.className = `notification ${type}`;
+      notif.innerHTML = `
+        <div class="notification-title">${title}</div>
+        <div class="notification-message">${message}</div>
+      `;
+      container.appendChild(notif);
+      
+      if (duration > 0) {
+        setTimeout(() => {
+          notif.style.animation = 'slideOut 0.3s ease';
+          setTimeout(() => notif.remove(), 300);
+        }, duration);
+      }
+      
+      return notif;
+    }
+
+    function notifySuccess(title, message) {
+      showNotification(title, message, 'success');
+    }
+
+    function notifyError(title, message) {
+      showNotification(title, message, 'error', 5000);
+    }
+
+    function notifyInfo(title, message) {
+      showNotification(title, message, 'info');
+    }
+
+    function notifyWarning(title, message) {
+      showNotification(title, message, 'warning');
     }
   </script>
 </body>

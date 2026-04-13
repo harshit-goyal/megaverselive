@@ -87,8 +87,12 @@ async function initializeDatabase() {
     // Try to add mentee_id column to bookings (non-fatal if fails)
     try {
       await pool.query(`ALTER TABLE bookings ADD COLUMN IF NOT EXISTS mentee_id INT DEFAULT NULL`);
+      await pool.query(`ALTER TABLE bookings ADD COLUMN IF NOT EXISTS is_cancelled BOOLEAN DEFAULT FALSE`);
+      await pool.query(`ALTER TABLE bookings ADD COLUMN IF NOT EXISTS cancellation_reason TEXT`);
+      await pool.query(`ALTER TABLE bookings ADD COLUMN IF NOT EXISTS cancelled_at TIMESTAMP`);
+      await pool.query(`ALTER TABLE bookings ADD COLUMN IF NOT EXISTS cancelled_by VARCHAR(50)`);
     } catch (e) {
-      // Column might already exist
+      // Columns might already exist
     }
 
     // Create ratings table
@@ -1694,6 +1698,101 @@ app.get('/api/mentor/stats', verifyMentorToken, async (req, res) => {
   } catch (error) {
     console.error('Error fetching mentor stats:', error);
     res.status(500).json({ error: 'Failed to fetch stats', details: error.message });
+  }
+});
+
+// POST /api/bookings/:id/cancel - Cancel a booking (requires JWT)
+app.post('/api/bookings/:id/cancel', verifyToken, async (req, res) => {
+  try {
+    const { booking_id } = req.params;
+    const { reason } = req.body;
+    
+    // Get booking details
+    const bookingRes = await pool.query(
+      `SELECT b.*, pa.amount, pa.status as payment_status 
+       FROM bookings b
+       LEFT JOIN payment_records pa ON b.id = pa.id
+       WHERE b.id = $1 AND (b.mentee_id = $2 OR b.customer_email = $3)`,
+      [booking_id, req.user.id, req.user.email]
+    );
+    
+    if (bookingRes.rows.length === 0) {
+      return res.status(404).json({ error: 'Booking not found or unauthorized' });
+    }
+    
+    const booking = bookingRes.rows[0];
+    
+    // Check if already cancelled
+    if (booking.is_cancelled) {
+      return res.status(400).json({ error: 'This booking has already been cancelled' });
+    }
+    
+    // Check if session is within 24 hours (can't cancel)
+    const hoursUntilSession = (new Date(booking.start_time) - new Date()) / (1000 * 60 * 60);
+    if (hoursUntilSession < 24) {
+      return res.status(400).json({ 
+        error: 'Bookings can only be cancelled more than 24 hours before the session',
+        hoursRemaining: hoursUntilSession.toFixed(1)
+      });
+    }
+    
+    // Mark as cancelled
+    const cancelRes = await pool.query(
+      `UPDATE bookings 
+       SET is_cancelled = TRUE, 
+           cancellation_reason = $1, 
+           cancelled_at = NOW(), 
+           cancelled_by = 'mentee',
+           booking_status = 'cancelled'
+       WHERE id = $2
+       RETURNING *`,
+      [reason || 'User cancelled', booking_id]
+    );
+    
+    // TODO: Process refund via payment gateway
+    // For now, mark payment as refunded
+    if (booking.payment_status === 'completed') {
+      await pool.query(
+        `UPDATE payment_records SET status = 'refunded' WHERE id = $1`,
+        [booking_id]
+      );
+    }
+    
+    res.json({
+      success: true,
+      message: 'Booking cancelled successfully. Refund will be processed.',
+      booking: cancelRes.rows[0]
+    });
+  } catch (error) {
+    console.error('Error cancelling booking:', error);
+    res.status(500).json({ error: 'Failed to cancel booking', details: error.message });
+  }
+});
+
+// GET /api/bookings/:id/cancellation-policy - Get cancellation policy
+app.get('/api/bookings/:id/cancellation-policy', async (req, res) => {
+  try {
+    const bookingRes = await pool.query(
+      'SELECT start_time FROM bookings WHERE id = $1',
+      [req.params.id]
+    );
+    
+    if (bookingRes.rows.length === 0) {
+      return res.status(404).json({ error: 'Booking not found' });
+    }
+    
+    const hoursUntilSession = (new Date(bookingRes.rows[0].start_time) - new Date()) / (1000 * 60 * 60);
+    const canCancel = hoursUntilSession >= 24;
+    
+    res.json({
+      can_cancel: canCancel,
+      hours_remaining: hoursUntilSession.toFixed(1),
+      refund_eligible: canCancel ? 'full' : 'none',
+      cancellation_deadline: new Date(new Date(bookingRes.rows[0].start_time).getTime() - 24 * 60 * 60 * 1000).toISOString()
+    });
+  } catch (error) {
+    console.error('Error checking cancellation policy:', error);
+    res.status(500).json({ error: 'Failed to check policy', details: error.message });
   }
 });
 
