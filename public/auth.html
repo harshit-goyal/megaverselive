@@ -785,6 +785,10 @@
 
     function goToBooking() {
       sessionStorage.setItem('openPaymentOnLoad', 'true');
+      const token = localStorage.getItem('menteeToken');
+      if (token) {
+        sessionStorage.setItem('menteeToken', token);
+      }
       window.location.href = '/';
     }
   </script>

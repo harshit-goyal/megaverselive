@@ -429,6 +429,18 @@ app.post('/api/book', async (req, res) => {
       session_topic 
     } = req.body;
 
+    // Get mentee_id from auth token if available
+    let mentee_id = null;
+    const token = req.headers.authorization?.split(' ')[1];
+    if (token) {
+      try {
+        const decoded = jwt.verify(token, process.env.MENTEE_JWT_SECRET || 'mentee-secret-key');
+        mentee_id = decoded.mentee_id;
+      } catch (e) {
+        // Token verification failed, continue without mentee_id
+      }
+    }
+
     // Validate required fields
     if (!customer_name || !customer_email || !start_time) {
       return res.status(400).json({ error: 'Missing required fields' });
@@ -455,13 +467,13 @@ app.post('/api/book', async (req, res) => {
 
     const amount = Math.round(mentorResult.rows[0].hourly_rate * 100) / 100; // Amount in INR
 
-    // Create booking record with pending status
+    // Create booking record with pending status and mentee_id if available
     const bookingResult = await client.query(
       `INSERT INTO bookings 
-       (mentor_id, customer_name, customer_email, customer_phone, session_topic, start_time, end_time, payment_status)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+       (mentor_id, customer_name, customer_email, customer_phone, session_topic, start_time, end_time, payment_status, mentee_id)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
        RETURNING id`,
-      [mentor_id, customer_name, customer_email, customer_phone, session_topic, start_time, end_time, 'pending']
+      [mentor_id, customer_name, customer_email, customer_phone, session_topic, start_time, end_time, 'pending', mentee_id]
     );
 
     const booking_id = bookingResult.rows[0].id;
