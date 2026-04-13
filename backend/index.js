@@ -91,6 +91,23 @@ async function initializeDatabase() {
       // Column might already exist
     }
 
+    // Create ratings table
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS ratings (
+        id SERIAL PRIMARY KEY,
+        booking_id INT NOT NULL,
+        mentor_id INT NOT NULL,
+        mentee_id INT NOT NULL,
+        rating INT NOT NULL CHECK (rating >= 1 AND rating <= 5),
+        review TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (booking_id) REFERENCES bookings(id) ON DELETE CASCADE,
+        FOREIGN KEY (mentor_id) REFERENCES mentors(id) ON DELETE CASCADE,
+        FOREIGN KEY (mentee_id) REFERENCES mentee_accounts(id) ON DELETE CASCADE,
+        UNIQUE(booking_id)
+      )
+    `);
+
     // Migrate mentors table - add missing columns if they don't exist
     try {
       await pool.query(`ALTER TABLE mentors ADD COLUMN IF NOT EXISTS password_hash VARCHAR(255)`);
@@ -505,7 +522,21 @@ app.post('/api/book', async (req, res) => {
     });
   } catch (error) {
     console.error('Error creating booking:', error);
-    res.status(500).json({ error: 'Failed to create booking' });
+    let errorMsg = 'Failed to create booking';
+    let statusCode = 500;
+    
+    if (error.message.includes('duplicate')) {
+      errorMsg = 'This booking already exists';
+      statusCode = 400;
+    } else if (error.message.includes('not found')) {
+      errorMsg = 'Mentor not found';
+      statusCode = 404;
+    } else if (error.message.includes('no connection')) {
+      errorMsg = 'Database connection error. Please try again later.';
+      statusCode = 503;
+    }
+    
+    res.status(statusCode).json({ error: errorMsg, details: process.env.NODE_ENV === 'development' ? error.message : undefined });
   } finally {
     client.release();
   }
@@ -1606,6 +1637,171 @@ app.put('/api/mentor/profile', verifyMentorToken, async (req, res) => {
   }
 });
 
+// GET /api/mentor/bookings - Get all bookings for current mentor (requires JWT)
+app.get('/api/mentor/bookings', verifyMentorToken, async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT b.id, b.mentor_id, b.customer_name, b.customer_email, b.session_topic,
+              b.start_time, b.end_time, b.payment_status, b.booking_status, b.notes, b.created_at
+       FROM bookings b
+       WHERE b.mentor_id = $1
+       ORDER BY b.start_time DESC`,
+      [req.mentor.id]
+    );
+    
+    const upcoming = result.rows.filter(b => new Date(b.start_time) > new Date());
+    const past = result.rows.filter(b => new Date(b.start_time) <= new Date());
+    
+    res.json({
+      bookings: result.rows,
+      upcoming: upcoming.length,
+      past: past.length,
+      total: result.rows.length
+    });
+  } catch (error) {
+    console.error('Error fetching mentor bookings:', error);
+    res.status(500).json({ error: 'Failed to fetch bookings', details: error.message });
+  }
+});
+
+// GET /api/mentor/stats - Get mentor statistics (requires JWT)
+app.get('/api/mentor/stats', verifyMentorToken, async (req, res) => {
+  try {
+    const bookingsResult = await pool.query(
+      `SELECT COUNT(*) as total, 
+              SUM(CASE WHEN start_time > NOW() THEN 1 ELSE 0 END) as upcoming,
+              SUM(CASE WHEN start_time <= NOW() THEN 1 ELSE 0 END) as completed
+       FROM bookings
+       WHERE mentor_id = $1`,
+      [req.mentor.id]
+    );
+    
+    const mentorResult = await pool.query(
+      `SELECT rating, session_count FROM mentors WHERE id = $1`,
+      [req.mentor.id]
+    );
+    
+    const stats = bookingsResult.rows[0] || { total: 0, upcoming: 0, completed: 0 };
+    const mentor = mentorResult.rows[0] || { rating: 0, session_count: 0 };
+    
+    res.json({
+      total_bookings: parseInt(stats.total),
+      upcoming_bookings: parseInt(stats.upcoming),
+      completed_sessions: parseInt(stats.completed),
+      average_rating: mentor.rating || 0,
+      total_sessions: mentor.session_count || 0
+    });
+  } catch (error) {
+    console.error('Error fetching mentor stats:', error);
+    res.status(500).json({ error: 'Failed to fetch stats', details: error.message });
+  }
+});
+
+// POST /api/ratings - Submit a rating for a booking (requires JWT)
+app.post('/api/ratings', verifyToken, async (req, res) => {
+  try {
+    const { booking_id, rating, review } = req.body;
+    
+    if (!booking_id || !rating) {
+      return res.status(400).json({ error: 'booking_id and rating are required' });
+    }
+    
+    if (rating < 1 || rating > 5) {
+      return res.status(400).json({ error: 'Rating must be between 1 and 5' });
+    }
+    
+    // Get booking details
+    const bookingRes = await pool.query(
+      'SELECT * FROM bookings WHERE id = $1 AND mentee_id = $2',
+      [booking_id, req.user.id]
+    );
+    
+    if (bookingRes.rows.length === 0) {
+      return res.status(404).json({ error: 'Booking not found or unauthorized' });
+    }
+    
+    const booking = bookingRes.rows[0];
+    
+    // Check if rating already exists
+    const existingRes = await pool.query('SELECT id FROM ratings WHERE booking_id = $1', [booking_id]);
+    if (existingRes.rows.length > 0) {
+      return res.status(400).json({ error: 'You have already rated this session' });
+    }
+    
+    // Insert rating
+    const insertRes = await pool.query(
+      `INSERT INTO ratings (booking_id, mentor_id, mentee_id, rating, review)
+       VALUES ($1, $2, $3, $4, $5)
+       RETURNING id, booking_id, rating, review, created_at`,
+      [booking_id, booking.mentor_id, req.user.id, rating, review || null]
+    );
+    
+    // Update mentor's average rating
+    const mentorStatsRes = await pool.query(
+      `SELECT AVG(rating) as avg_rating, COUNT(*) as total_ratings FROM ratings WHERE mentor_id = $1`,
+      [booking.mentor_id]
+    );
+    
+    const avgRating = parseFloat(mentorStatsRes.rows[0].avg_rating) || 0;
+    await pool.query(
+      'UPDATE mentors SET rating = $1 WHERE id = $2',
+      [avgRating.toFixed(2), booking.mentor_id]
+    );
+    
+    res.json({
+      success: true,
+      rating: insertRes.rows[0]
+    });
+  } catch (error) {
+    console.error('Error submitting rating:', error);
+    res.status(500).json({ error: 'Failed to submit rating', details: error.message });
+  }
+});
+
+// GET /api/ratings/mentor/:mentorId - Get all ratings for a mentor
+app.get('/api/ratings/mentor/:mentorId', async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT r.id, r.rating, r.review, r.created_at, 
+              ma.name as mentee_name
+       FROM ratings r
+       LEFT JOIN mentee_accounts ma ON r.mentee_id = ma.id
+       WHERE r.mentor_id = $1
+       ORDER BY r.created_at DESC`,
+      [req.params.mentorId]
+    );
+    
+    res.json({
+      ratings: result.rows,
+      average: result.rows.length > 0 
+        ? (result.rows.reduce((sum, r) => sum + r.rating, 0) / result.rows.length).toFixed(1)
+        : 0,
+      total: result.rows.length
+    });
+  } catch (error) {
+    console.error('Error fetching ratings:', error);
+    res.status(500).json({ error: 'Failed to fetch ratings', details: error.message });
+  }
+});
+
+// GET /api/ratings/booking/:bookingId - Get rating for a booking (requires JWT)
+app.get('/api/ratings/booking/:bookingId', verifyToken, async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT r.id, r.rating, r.review, r.created_at FROM ratings 
+       WHERE booking_id = $1 AND mentee_id = $2`,
+      [req.params.bookingId, req.user.id]
+    );
+    
+    res.json({
+      rating: result.rows[0] || null
+    });
+  } catch (error) {
+    console.error('Error fetching rating:', error);
+    res.status(500).json({ error: 'Failed to fetch rating', details: error.message });
+  }
+});
+
 // ============= ADMIN ROUTES =============
 
 const ADMIN_EMAIL = 'admin@megaverselive.com';
@@ -1642,6 +1838,77 @@ const verifyAdminToken = (req, res, next) => {
     res.status(401).json({ error: 'Invalid token' });
   }
 };
+
+// GET /api/admin/analytics - Get analytics data (admin)
+app.get('/api/admin/analytics', verifyAdminToken, async (req, res) => {
+  try {
+    // Total bookings
+    const bookingsRes = await pool.query(`SELECT COUNT(*) as total FROM bookings`);
+    const totalBookings = parseInt(bookingsRes.rows[0].total);
+
+    // Bookings by status
+    const statusRes = await pool.query(`
+      SELECT booking_status, COUNT(*) as count 
+      FROM bookings 
+      GROUP BY booking_status
+    `);
+    const bookingsByStatus = {};
+    statusRes.rows.forEach(row => {
+      bookingsByStatus[row.booking_status || 'unknown'] = parseInt(row.count);
+    });
+
+    // Revenue calculation
+    const revenueRes = await pool.query(`
+      SELECT COALESCE(SUM(CAST(amount AS DECIMAL)), 0) as total 
+      FROM payment_records 
+      WHERE status = 'completed'
+    `);
+    const revenue = parseFloat(revenueRes.rows[0].total);
+
+    // Active mentees and mentors
+    const menteesRes = await pool.query(`SELECT COUNT(*) as total FROM mentee_accounts WHERE is_active = true`);
+    const mentorsRes = await pool.query(`SELECT COUNT(*) as total FROM mentors WHERE is_active = true`);
+    const activeMentees = parseInt(menteesRes.rows[0].total);
+    const activeMentors = parseInt(mentorsRes.rows[0].total);
+
+    // Upcoming sessions
+    const upcomingRes = await pool.query(`
+      SELECT COUNT(*) as total FROM bookings WHERE start_time > NOW()
+    `);
+    const upcomingSessions = parseInt(upcomingRes.rows[0].total);
+
+    // Completed sessions
+    const completedRes = await pool.query(`
+      SELECT COUNT(*) as total FROM bookings WHERE start_time <= NOW()
+    `);
+    const completedSessions = parseInt(completedRes.rows[0].total);
+
+    // Average rating
+    const ratingRes = await pool.query(`
+      SELECT AVG(rating) as avg_rating FROM ratings
+    `);
+    const averageRating = parseFloat(ratingRes.rows[0].avg_rating) || 0;
+
+    // Total ratings
+    const totalRatingsRes = await pool.query(`SELECT COUNT(*) as total FROM ratings`);
+    const totalRatings = parseInt(totalRatingsRes.rows[0].total);
+
+    res.json({
+      totalBookings,
+      bookingsByStatus,
+      revenue: revenue.toFixed(2),
+      activeMentees,
+      activeMentors,
+      upcomingSessions,
+      completedSessions,
+      averageRating: averageRating.toFixed(1),
+      totalRatings
+    });
+  } catch (error) {
+    console.error('Error fetching analytics:', error);
+    res.status(500).json({ error: 'Failed to fetch analytics', details: error.message });
+  }
+});
 
 // Get all mentors (admin)
 app.get('/api/admin/mentors', verifyAdminToken, async (req, res) => {

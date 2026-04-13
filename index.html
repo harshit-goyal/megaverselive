@@ -388,6 +388,51 @@
       ::-webkit-scrollbar { width: 8px; }
       ::-webkit-scrollbar-track { background: #f8fafc; }
       ::-webkit-scrollbar-thumb { background: linear-gradient(#a855f7, #ec4899); border-radius: 10px; }
+
+      /* Mobile Responsiveness */
+      @media (max-width: 768px) {
+        .container { padding: 16px; }
+        h1 { font-size: 28px; }
+        h2 { font-size: 22px; }
+        .top-nav {
+          top: 12px;
+          right: 12px;
+          font-size: 13px;
+          gap: 8px;
+        }
+        .mentor-grid { grid-template-columns: 1fr; }
+        .steps { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .faq-item { padding: 12px; }
+        summary { font-size: 14px; }
+        button { font-size: 13px; padding: 10px 16px; }
+      }
+      
+      @media (max-width: 480px) {
+        .container { padding: 12px; }
+        h1 { font-size: 24px; }
+        h2 { font-size: 18px; }
+        p { font-size: 14px; }
+        .top-nav {
+          flex-direction: column;
+          gap: 6px;
+          width: 100px;
+        }
+        .dropdown-menu {
+          width: 120px !important;
+          right: -20px !important;
+        }
+        .mentor-grid { grid-template-columns: 1fr; }
+        .steps { grid-template-columns: 1fr; gap: 10px; }
+        .step-title { font-size: 14px; }
+        .hero { padding: 40px 16px; }
+        button { 
+          width: 100%;
+          font-size: 12px; 
+          padding: 10px 12px;
+        }
+        .faq-item { padding: 10px; }
+        summary { font-size: 13px; }
+      }
     </style>
 
     <!-- Payment SDKs -->

@@ -231,17 +231,76 @@
     
     @media (max-width: 600px) {
       .container {
-        padding: 24px;
+        padding: 16px;
       }
       h1 {
-        font-size: 24px;
+        font-size: 20px;
       }
       .form-row {
         grid-template-columns: 1fr;
       }
       .top-nav {
-        top: 10px;
-        right: 10px;
+        top: 8px;
+        right: 8px;
+        font-size: 14px;
+      }
+      .form-group {
+        margin-bottom: 16px;
+      }
+      label {
+        font-size: 14px;
+      }
+      input, textarea, select {
+        font-size: 16px;
+        padding: 10px 12px;
+      }
+      button {
+        font-size: 14px;
+        padding: 10px 16px;
+      }
+      .header {
+        padding: 24px 16px !important;
+      }
+      .badge {
+        font-size: 24px;
+      }
+      .logo {
+        font-size: 32px;
+      }
+      .page {
+        min-height: 100vh;
+        padding: 80px 16px 40px;
+      }
+      /* Modal responsiveness */
+      #ratingModal {
+        padding: 10px !important;
+      }
+      #ratingModal > div {
+        margin: 20px auto !important;
+      }
+      /* Tab responsiveness */
+      .tabs {
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .tab-btn {
+        font-size: 12px;
+        padding: 8px 12px;
+        flex: 1;
+        min-width: 80px;
+      }
+      table {
+        font-size: 12px !important;
+      }
+      table th, table td {
+        padding: 8px 4px !important;
+      }
+      /* Grid responsiveness */
+      .form-group {
+        display: grid;
+      }
+      .form-group > div {
+        grid-template-columns: 1fr !important;
       }
     }
   </style>
@@ -390,6 +449,37 @@
       <button onclick="menteeLogout()" style="background: #f56565; margin-top: 8px;">Logout</button>
     </div>
 
+    <!-- Rating Modal -->
+    <div id="ratingModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; padding: 20px;">
+      <div style="background: white; max-width: 500px; margin: 50px auto; border-radius: 12px; padding: 24px;">
+        <h2 style="margin: 0 0 16px 0;">Rate Your Session</h2>
+        <div id="ratingError" class="error" style="display: none;"></div>
+        <div id="ratingSuccess" class="success" style="display: none;"></div>
+        
+        <div style="margin-bottom: 16px;">
+          <label style="display: block; margin-bottom: 8px; font-weight: 500;">Rating</label>
+          <div style="display: flex; gap: 8px;">
+            <button type="button" onclick="setRating(1)" class="star-btn" data-rating="1">⭐</button>
+            <button type="button" onclick="setRating(2)" class="star-btn" data-rating="2">⭐</button>
+            <button type="button" onclick="setRating(3)" class="star-btn" data-rating="3">⭐</button>
+            <button type="button" onclick="setRating(4)" class="star-btn" data-rating="4">⭐</button>
+            <button type="button" onclick="setRating(5)" class="star-btn" data-rating="5">⭐</button>
+          </div>
+          <div id="selectedRating" style="margin-top: 8px; color: #667eea; font-weight: 600;">Select a rating</div>
+        </div>
+        
+        <div style="margin-bottom: 16px;">
+          <label for="ratingReview" style="display: block; margin-bottom: 8px; font-weight: 500;">Review (Optional)</label>
+          <textarea id="ratingReview" placeholder="Share your feedback..." style="width: 100%; padding: 8px; border: 1px solid #e2e8f0; border-radius: 6px; font-family: inherit; resize: vertical;"></textarea>
+        </div>
+        
+        <div style="display: flex; gap: 12px;">
+          <button onclick="submitRating()" style="flex: 1; background: #667eea; color: white; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; font-weight: 500;">Submit Rating</button>
+          <button onclick="closeRatingModal()" style="flex: 1; background: #e2e8f0; color: #2d3748; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; font-weight: 500;">Cancel</button>
+        </div>
+      </div>
+    </div>
+
     <!-- ========== MENTOR PAGES ========== -->
     
     <!-- Mentor Login -->
@@ -470,10 +560,90 @@
         <h1 id="mentorWelcome">Welcome Back</h1>
         <p class="subtitle">Your mentor dashboard</p>
       </div>
-      <div style="text-align: center; padding: 40px 20px;">
-        <p style="color: #718096; margin-bottom: 20px;">Mentor dashboard coming soon!</p>
+      
+      <div id="mentorContent" style="display: none;">
+        <!-- Stats Cards -->
+        <div class="form-group" style="background: #f7fafc; padding: 16px; border-radius: 8px; margin-bottom: 20px; border: none;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+            <div>
+              <div style="font-size: 12px; color: #718096; font-weight: 500;">Upcoming Sessions</div>
+              <div id="mentorUpcoming" style="font-size: 24px; font-weight: 700; color: #667eea;">0</div>
+            </div>
+            <div>
+              <div style="font-size: 12px; color: #718096; font-weight: 500;">Total Bookings</div>
+              <div id="mentorTotal" style="font-size: 24px; font-weight: 700; color: #764ba2;">0</div>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div>
+              <div style="font-size: 12px; color: #718096; font-weight: 500;">Completed Sessions</div>
+              <div id="mentorCompleted" style="font-size: 24px; font-weight: 700; color: #48bb78;">0</div>
+            </div>
+            <div>
+              <div style="font-size: 12px; color: #718096; font-weight: 500;">Average Rating</div>
+              <div id="mentorRating" style="font-size: 24px; font-weight: 700; color: #ed8936;">⭐ 0.0</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Actions -->
+        <button onclick="switchPage('mentorBookings')" style="background: #4a5568; margin-bottom: 12px;">View All Bookings</button>
+        <button onclick="switchPage('mentorProfile')" style="background: #718096;">Edit Profile</button>
       </div>
-      <button onclick="mentorLogout()" style="background: #f56565;">Logout</button>
+      
+      <div id="mentorLoading" style="text-align: center; color: #718096;">Loading dashboard...</div>
+      <button onclick="mentorLogout()" style="background: #f56565; margin-top: 20px;">Logout</button>
+    </div>
+
+    <!-- Mentor Bookings -->
+    <div id="mentorBookings" class="page">
+      <div class="header">
+        <div class="logo">📅</div>
+        <h1>Your Bookings</h1>
+        <p class="subtitle">Upcoming and past sessions</p>
+      </div>
+      <div id="mentorBookingsList" style="max-height: 500px; overflow-y: auto;"></div>
+      <div id="mentorBookingsLoading" style="text-align: center; color: #718096;">Loading bookings...</div>
+      <button onclick="switchPage('mentorDashboard')" style="background: #718096; margin-top: 20px;">Back to Dashboard</button>
+    </div>
+
+    <!-- Mentor Profile -->
+    <div id="mentorProfile" class="page">
+      <div class="header">
+        <div class="logo">👤</div>
+        <h1>Your Profile</h1>
+        <p class="subtitle">Update your information</p>
+      </div>
+      <div id="mentorProfileError" class="error" style="display: none;"></div>
+      <div id="mentorProfileSuccess" class="success" style="display: none;"></div>
+      <form id="mentorProfileForm">
+        <div class="form-group">
+          <label for="mentorProfileName">Full Name</label>
+          <input type="text" id="mentorProfileName" required>
+        </div>
+        <div class="form-group">
+          <label for="mentorProfileEmail">Email Address (Read-only)</label>
+          <input type="email" id="mentorProfileEmail" readonly style="background: #f7fafc;">
+        </div>
+        <div class="form-group">
+          <label for="mentorProfileBio">Bio</label>
+          <textarea id="mentorProfileBio" placeholder="Tell us about yourself..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>Tracks</label>
+          <div style="display: flex; gap: 16px; margin-top: 8px;">
+            <label style="display: flex; align-items: center; cursor: pointer;">
+              <input type="checkbox" name="mentorProfileTracks" value="english"> English
+            </label>
+            <label style="display: flex; align-items: center; cursor: pointer;">
+              <input type="checkbox" name="mentorProfileTracks" value="backend"> Backend
+            </label>
+          </div>
+        </div>
+        <button type="submit">Save Changes</button>
+      </form>
+      <button onclick="switchPage('mentorDashboard')" style="background: #718096; margin-top: 12px;">Back to Dashboard</button>
+      <button onclick="mentorLogout()" style="background: #f56565; margin-top: 8px;">Logout</button>
     </div>
   </div>
 
@@ -501,6 +671,7 @@
       document.getElementById('menteeProfileForm').onsubmit = handleMenteeProfileUpdate;
       document.getElementById('mentorLoginForm').onsubmit = handleMentorLogin;
       document.getElementById('mentorSignupForm').onsubmit = handleMentorSignup;
+      document.getElementById('mentorProfileForm').onsubmit = handleMentorProfileUpdate;
     });
 
     function toggleMenu() {
@@ -542,6 +713,19 @@
     function switchPage(pageName) {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById(pageName).classList.add('active');
+      
+      // Load data for specific pages
+      if (pageName === 'menteeDashboard') {
+        loadMenteeDashboard();
+      } else if (pageName === 'menteeBookings') {
+        loadMenteeBookings();
+      } else if (pageName === 'mentorDashboard') {
+        loadMentorDashboard();
+      } else if (pageName === 'mentorBookings') {
+        loadMentorBookings();
+      } else if (pageName === 'mentorProfile') {
+        loadMentorProfile();
+      }
     }
 
     function checkAuth() {
@@ -627,14 +811,77 @@
           headers: { 'Authorization': `Bearer ${token}` }
         });
         
+        if (!res.ok) throw new Error('Failed to fetch bookings');
+        
         const data = await res.json();
         currentUser = JSON.parse(localStorage.getItem('menteeUser') || '{}');
         document.getElementById('menteeWelcome').textContent = `Welcome, ${currentUser.name}!`;
         document.getElementById('totalBookings').textContent = data.bookings?.length || 0;
+        document.getElementById('upcomingCount').textContent = data.upcoming || 0;
         document.getElementById('menteeLoading').style.display = 'none';
         document.getElementById('menteeContent').style.display = 'block';
       } catch (error) {
-        document.getElementById('menteeLoading').textContent = 'Error loading dashboard';
+        console.error('Dashboard error:', error);
+        document.getElementById('menteeLoading').textContent = 'Error loading dashboard. Please try again.';
+      }
+    }
+
+    async function loadMenteeBookings() {
+      document.getElementById('bookingsLoading').style.display = 'block';
+      document.getElementById('bookingsList').innerHTML = '';
+    
+    try {
+      const token = localStorage.getItem('menteeToken');
+      const res = await fetch(`${API_URL}/api/mentee/bookings`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      
+      if (!res.ok) throw new Error('Failed to fetch bookings');
+      
+      const data = await res.json();
+      const bookings = data.bookings || [];
+      
+      if (bookings.length === 0) {
+        document.getElementById('bookingsList').innerHTML = '<p style="text-align: center; color: #718096; padding: 20px;">No bookings yet. Book your first session!</p>';
+      } else {
+        const now = new Date();
+        const html = bookings.map(b => {
+          const startTime = new Date(b.start_time);
+          const endTime = new Date(b.end_time);
+          const isUpcoming = startTime > now;
+          const status = isUpcoming ? '🟢 Upcoming' : '✅ Completed';
+          const timeStr = startTime.toLocaleString();
+          const mentorName = b.mentor_name || 'Harshit Goyal';
+          const paymentStatus = b.payment_status === 'completed' ? '✅ Paid' : '⏳ Pending';
+          
+          const rateButton = !isUpcoming ? `<button onclick="openRatingModal(${b.id})" style="background: #667eea; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; margin-top: 8px;">Rate Session</button>` : '';
+          
+          return `
+            <div style="background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 12px;">
+              <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px;">
+                <div>
+                  <h3 style="margin: 0 0 8px 0; color: #2d3748;">${mentorName}</h3>
+                  <p style="margin: 0 0 4px 0; color: #4a5568; font-size: 14px;">📚 ${b.session_topic}</p>
+                  <p style="margin: 0 0 4px 0; color: #718096; font-size: 13px;">📅 ${timeStr}</p>
+                  <p style="margin: 0; color: #718096; font-size: 13px;">⏰ ${startTime.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})} - ${endTime.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}</p>
+                </div>
+                <div style="text-align: right;">
+                  <div style="font-weight: 600; color: ${isUpcoming ? '#48bb78' : '#718096'}; margin-bottom: 8px;">${status}</div>
+                  <div style="font-size: 13px; color: #718096; margin-bottom: 8px;">${paymentStatus}</div>
+                  ${rateButton}
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+        
+        document.getElementById('bookingsList').innerHTML = html;
+      }
+      
+      document.getElementById('bookingsLoading').style.display = 'none';
+    } catch (error) {
+        console.error('Bookings error:', error);
+        document.getElementById('bookingsLoading').textContent = 'Error loading bookings. Please try again.';
       }
     }
 
@@ -663,6 +910,77 @@
       } catch (error) {
         document.getElementById('menteeProfileError').textContent = 'Error updating profile';
         document.getElementById('menteeProfileError').style.display = 'block';
+      }
+    }
+
+    let currentBookingId = null;
+    let currentRating = 0;
+
+    function openRatingModal(bookingId) {
+      currentBookingId = bookingId;
+      currentRating = 0;
+      document.getElementById('selectedRating').textContent = 'Select a rating';
+      document.getElementById('ratingReview').value = '';
+      document.getElementById('ratingError').style.display = 'none';
+      document.getElementById('ratingSuccess').style.display = 'none';
+      document.querySelectorAll('.star-btn').forEach(btn => btn.style.opacity = '0.5');
+      document.getElementById('ratingModal').style.display = 'block';
+    }
+
+    function closeRatingModal() {
+      document.getElementById('ratingModal').style.display = 'none';
+      currentBookingId = null;
+      currentRating = 0;
+    }
+
+    function setRating(rating) {
+      currentRating = rating;
+      document.getElementById('selectedRating').textContent = `${rating} Star${rating !== 1 ? 's' : ''} Selected`;
+      document.querySelectorAll('.star-btn').forEach((btn, idx) => {
+        btn.style.opacity = idx < rating ? '1' : '0.5';
+      });
+    }
+
+    async function submitRating() {
+      if (currentRating === 0) {
+        document.getElementById('ratingError').textContent = 'Please select a rating';
+        document.getElementById('ratingError').style.display = 'block';
+        return;
+      }
+
+      const review = document.getElementById('ratingReview').value;
+      const token = localStorage.getItem('menteeToken');
+
+      try {
+        const res = await fetch(`${API_URL}/api/ratings`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            booking_id: currentBookingId,
+            rating: currentRating,
+            review: review || null
+          })
+        });
+
+        if (!res.ok) {
+          const data = await res.json();
+          document.getElementById('ratingError').textContent = data.error || 'Failed to submit rating';
+          document.getElementById('ratingError').style.display = 'block';
+          return;
+        }
+
+        document.getElementById('ratingSuccess').textContent = 'Rating submitted successfully!';
+        document.getElementById('ratingSuccess').style.display = 'block';
+        setTimeout(() => {
+          closeRatingModal();
+          loadMenteeBookings();
+        }, 2000);
+      } catch (error) {
+        document.getElementById('ratingError').textContent = 'Error submitting rating';
+        document.getElementById('ratingError').style.display = 'block';
       }
     }
 
@@ -746,6 +1064,147 @@
       } catch (error) {
         document.getElementById('mentorSignupError').textContent = 'Network error';
         document.getElementById('mentorSignupError').style.display = 'block';
+      }
+    }
+
+    async function loadMentorDashboard() {
+      document.getElementById('mentorLoading').style.display = 'block';
+      document.getElementById('mentorContent').style.display = 'none';
+      
+      try {
+        const token = localStorage.getItem('mentorToken');
+        const res = await fetch(`${API_URL}/api/mentor/stats`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!res.ok) throw new Error('Failed to fetch stats');
+        
+        const data = await res.json();
+        document.getElementById('mentorUpcoming').textContent = data.upcoming_bookings;
+        document.getElementById('mentorTotal').textContent = data.total_bookings;
+        document.getElementById('mentorCompleted').textContent = data.completed_sessions;
+        const rating = data.average_rating ? data.average_rating.toFixed(1) : '0.0';
+        document.getElementById('mentorRating').textContent = `⭐ ${rating}`;
+        
+        document.getElementById('mentorLoading').style.display = 'none';
+        document.getElementById('mentorContent').style.display = 'block';
+      } catch (error) {
+        console.error('Dashboard error:', error);
+        document.getElementById('mentorLoading').textContent = 'Error loading dashboard. Please try again.';
+      }
+    }
+
+    async function loadMentorBookings() {
+      document.getElementById('mentorBookingsLoading').style.display = 'block';
+      document.getElementById('mentorBookingsList').innerHTML = '';
+      
+      try {
+        const token = localStorage.getItem('mentorToken');
+        const res = await fetch(`${API_URL}/api/mentor/bookings`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!res.ok) throw new Error('Failed to fetch bookings');
+        
+        const data = await res.json();
+        const bookings = data.bookings || [];
+        
+        if (bookings.length === 0) {
+          document.getElementById('mentorBookingsList').innerHTML = '<p style="text-align: center; color: #718096; padding: 20px;">No bookings yet.</p>';
+        } else {
+          const now = new Date();
+          const html = bookings.map(b => {
+            const startTime = new Date(b.start_time);
+            const endTime = new Date(b.end_time);
+            const isUpcoming = startTime > now;
+            const status = isUpcoming ? '🟢 Upcoming' : '✅ Completed';
+            const timeStr = startTime.toLocaleString();
+            const paymentStatus = b.payment_status === 'completed' ? '✅ Paid' : '⏳ Pending';
+            
+            return `
+              <div style="background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 12px;">
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px;">
+                  <div>
+                    <h3 style="margin: 0 0 8px 0; color: #2d3748;">${b.customer_name}</h3>
+                    <p style="margin: 0 0 4px 0; color: #4a5568; font-size: 14px;">📧 ${b.customer_email}</p>
+                    <p style="margin: 0 0 4px 0; color: #4a5568; font-size: 14px;">📚 ${b.session_topic}</p>
+                    <p style="margin: 0 0 4px 0; color: #718096; font-size: 13px;">📅 ${timeStr}</p>
+                    <p style="margin: 0; color: #718096; font-size: 13px;">⏰ ${startTime.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})} - ${endTime.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}</p>
+                  </div>
+                  <div style="text-align: right;">
+                    <div style="font-weight: 600; color: ${isUpcoming ? '#48bb78' : '#718096'}; margin-bottom: 8px;">${status}</div>
+                    <div style="font-size: 13px; color: #718096;">${paymentStatus}</div>
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('');
+          
+        document.getElementById('mentorBookingsList').innerHTML = html;
+        }
+        
+        document.getElementById('mentorBookingsLoading').style.display = 'none';
+      } catch (error) {
+        console.error('Bookings error:', error);
+        document.getElementById('mentorBookingsLoading').textContent = 'Error loading bookings. Please try again.';
+      }
+    }
+
+    async function handleMentorProfileUpdate(e) {
+      e.preventDefault();
+      const token = localStorage.getItem('mentorToken');
+      const name = document.getElementById('mentorProfileName').value;
+      const bio = document.getElementById('mentorProfileBio').value;
+      
+      const trackCheckboxes = document.querySelectorAll('input[name="mentorProfileTracks"]:checked');
+      const tracks = Array.from(trackCheckboxes).map(cb => cb.value);
+      
+      try {
+        const res = await fetch(`${API_URL}/api/mentor/profile`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ name, bio, tracks: tracks.length > 0 ? tracks : undefined })
+        });
+        
+        if (res.ok) {
+          document.getElementById('mentorProfileSuccess').textContent = 'Profile updated!';
+          document.getElementById('mentorProfileSuccess').style.display = 'block';
+          setTimeout(() => document.getElementById('mentorProfileSuccess').style.display = 'none', 3000);
+        } else {
+          const data = await res.json();
+          document.getElementById('mentorProfileError').textContent = data.error || 'Update failed';
+          document.getElementById('mentorProfileError').style.display = 'block';
+        }
+      } catch (error) {
+        document.getElementById('mentorProfileError').textContent = 'Error updating profile';
+        document.getElementById('mentorProfileError').style.display = 'block';
+      }
+    }
+
+    async function loadMentorProfile() {
+      try {
+        const token = localStorage.getItem('mentorToken');
+        const res = await fetch(`${API_URL}/api/mentor/profile`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!res.ok) throw new Error('Failed to fetch profile');
+        
+        const data = await res.json();
+        document.getElementById('mentorProfileName').value = data.mentor.name || '';
+        document.getElementById('mentorProfileEmail').value = data.mentor.email || '';
+        document.getElementById('mentorProfileBio').value = data.mentor.bio || '';
+        
+        // Set tracks
+        const tracks = data.mentor.tracks || [];
+        document.querySelectorAll('input[name="mentorProfileTracks"]').forEach(cb => {
+          cb.checked = tracks.includes(cb.value);
+        });
+      } catch (error) {
+        console.error('Profile load error:', error);
       }
     }
 

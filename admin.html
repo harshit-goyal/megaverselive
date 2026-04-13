@@ -262,9 +262,63 @@
     }
 
     @media (max-width: 768px) {
-      .dashboard-header { flex-direction: column; gap: 10px; }
-      table { font-size: 12px; }
-      th, td { padding: 10px; }
+      .dashboard-header { 
+        flex-direction: column; 
+        gap: 10px; 
+      }
+      .dashboard-container {
+        padding: 16px;
+      }
+      .tabs {
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .tab-btn {
+        flex: 1;
+        font-size: 12px;
+        padding: 8px 12px;
+        min-width: 70px;
+      }
+      table { 
+        font-size: 11px; 
+      }
+      th, td { 
+        padding: 8px 4px; 
+      }
+      .add-btn {
+        width: 100%;
+        margin-bottom: 12px;
+      }
+      /* Analytics grid responsiveness */
+      div[style*="grid-template-columns: repeat"] {
+        grid-template-columns: 1fr !important;
+      }
+      .modal {
+        padding: 16px !important;
+      }
+      input, textarea {
+        font-size: 16px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .login-box {
+        padding: 24px;
+        margin: 16px;
+      }
+      .dashboard-header {
+        font-size: 18px;
+      }
+      button {
+        font-size: 12px;
+        padding: 8px 12px;
+      }
+      table { 
+        font-size: 10px; 
+      }
+      th, td { 
+        padding: 6px 2px; 
+      }
     }
   </style>
 </head>
@@ -298,12 +352,53 @@
 
     <div class="dashboard-content">
       <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('mentors')">👨‍🏫 Mentors</button>
+        <button class="tab-btn active" onclick="switchTab('analytics')">📊 Analytics</button>
+        <button class="tab-btn" onclick="switchTab('mentors')">👨‍🏫 Mentors</button>
         <button class="tab-btn" onclick="switchTab('mentees')">👤 Mentees</button>
       </div>
 
+      <!-- Analytics Tab -->
+      <div id="analyticsTab" class="tab-content active">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 20px;">
+          <div style="background: white; padding: 16px; border-radius: 8px; border-left: 4px solid #667eea;">
+            <div style="font-size: 12px; color: #718096; font-weight: 500;">Total Bookings</div>
+            <div id="analyticsTotalBookings" style="font-size: 24px; font-weight: 700; color: #667eea;">0</div>
+          </div>
+          <div style="background: white; padding: 16px; border-radius: 8px; border-left: 4px solid #48bb78;">
+            <div style="font-size: 12px; color: #718096; font-weight: 500;">Revenue</div>
+            <div id="analyticsRevenue" style="font-size: 24px; font-weight: 700; color: #48bb78;">$0</div>
+          </div>
+          <div style="background: white; padding: 16px; border-radius: 8px; border-left: 4px solid #ed8936;">
+            <div style="font-size: 12px; color: #718096; font-weight: 500;">Upcoming Sessions</div>
+            <div id="analyticsUpcoming" style="font-size: 24px; font-weight: 700; color: #ed8936;">0</div>
+          </div>
+          <div style="background: white; padding: 16px; border-radius: 8px; border-left: 4px solid #764ba2;">
+            <div style="font-size: 12px; color: #718096; font-weight: 500;">Completed Sessions</div>
+            <div id="analyticsCompleted" style="font-size: 24px; font-weight: 700; color: #764ba2;">0</div>
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+          <div style="background: white; padding: 16px; border-radius: 8px; border-left: 4px solid #667eea;">
+            <div style="font-size: 12px; color: #718096; font-weight: 500;">Active Mentees</div>
+            <div id="analyticsActiveMentees" style="font-size: 24px; font-weight: 700; color: #667eea;">0</div>
+          </div>
+          <div style="background: white; padding: 16px; border-radius: 8px; border-left: 4px solid #764ba2;">
+            <div style="font-size: 12px; color: #718096; font-weight: 500;">Active Mentors</div>
+            <div id="analyticsActiveMentors" style="font-size: 24px; font-weight: 700; color: #764ba2;">0</div>
+          </div>
+          <div style="background: white; padding: 16px; border-radius: 8px; border-left: 4px solid #ed8936;">
+            <div style="font-size: 12px; color: #718096; font-weight: 500;">Average Rating</div>
+            <div id="analyticsAvgRating" style="font-size: 24px; font-weight: 700; color: #ed8936;">⭐ 0.0</div>
+          </div>
+          <div style="background: white; padding: 16px; border-radius: 8px; border-left: 4px solid #48bb78;">
+            <div style="font-size: 12px; color: #718096; font-weight: 500;">Total Ratings</div>
+            <div id="analyticsTotalRatings" style="font-size: 24px; font-weight: 700; color: #48bb78;">0</div>
+          </div>
+        </div>
+      </div>
+
       <!-- Mentors Tab -->
-      <div id="mentorsTab" class="tab-content active">
+      <div id="mentorsTab" class="tab-content">
         <button class="add-btn" onclick="openMentorModal('add')">+ Add Mentor</button>
         <table id="mentorsTable">
           <thead>
@@ -423,6 +518,7 @@
       if (token) {
         adminToken = token;
         showDashboard();
+        loadAnalytics();
         loadMentors();
         loadMentees();
       }
@@ -473,6 +569,34 @@
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
       document.getElementById(tab + 'Tab').classList.add('active');
       event.target.classList.add('active');
+      
+      if (tab === 'analytics') {
+        loadAnalytics();
+      } else if (tab === 'mentors') {
+        loadMentors();
+      } else if (tab === 'mentees') {
+        loadMentees();
+      }
+    }
+
+    async function loadAnalytics() {
+      try {
+        const res = await fetch(`${API_URL}/api/admin/analytics`, {
+          headers: { 'Authorization': `Bearer ${adminToken}` }
+        });
+        const data = await res.json();
+        
+        document.getElementById('analyticsTotalBookings').textContent = data.totalBookings;
+        document.getElementById('analyticsRevenue').textContent = `$${data.revenue}`;
+        document.getElementById('analyticsUpcoming').textContent = data.upcomingSessions;
+        document.getElementById('analyticsCompleted').textContent = data.completedSessions;
+        document.getElementById('analyticsActiveMentees').textContent = data.activeMentees;
+        document.getElementById('analyticsActiveMentors').textContent = data.activeMentors;
+        document.getElementById('analyticsAvgRating').textContent = `⭐ ${data.averageRating}`;
+        document.getElementById('analyticsTotalRatings').textContent = data.totalRatings;
+      } catch (error) {
+        console.error('Error loading analytics:', error);
+      }
     }
 
     async function loadMentors() {
