@@ -438,6 +438,18 @@
         <h1 id="menteeWelcome">Welcome</h1>
         <p class="subtitle">Your booking dashboard</p>
       </div>
+      
+      <!-- Email Verification Banner -->
+      <div id="verificationBanner" style="background: #fef3c7; border: 1px solid #fcd34d; border-radius: 8px; padding: 14px; margin-bottom: 16px; display: none;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <div style="font-size: 20px;">⚠️</div>
+          <div style="flex: 1;">
+            <div style="font-weight: 600; color: #92400e;">Email Not Verified</div>
+            <div style="font-size: 13px; color: #b45309; margin: 4px 0;">Verify your email to unlock booking features</div>
+          </div>
+          <button onclick="sendVerificationEmail()" style="background: #f59e0b; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 500;">Send Verification</button>
+        </div>
+      </div>
       <div id="menteeContent" style="display: none;">
         <div class="form-group" style="background: #f7fafc; padding: 16px; border-radius: 8px; margin-bottom: 20px; border: none;">
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
@@ -1457,6 +1469,58 @@
     function notifyWarning(title, message) {
       showNotification(title, message, 'warning');
     }
+
+    // ========== EMAIL VERIFICATION ==========
+
+    async function checkVerificationStatus() {
+      try {
+        const token = localStorage.getItem('menteeToken');
+        if (!token) return;
+        
+        const res = await fetch(`${API_URL}/api/auth/verification-status?type=mentee`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        const data = await res.json();
+        const banner = document.getElementById('verificationBanner');
+        
+        if (!data.is_verified && banner) {
+          banner.style.display = 'block';
+        } else if (data.is_verified && banner) {
+          banner.style.display = 'none';
+          notifySuccess('Email Verified!', 'Your email has been successfully verified.');
+        }
+      } catch (error) {
+        console.log('Error checking verification status:', error);
+      }
+    }
+
+    async function sendVerificationEmail() {
+      try {
+        const token = localStorage.getItem('menteeToken');
+        const res = await fetch(`${API_URL}/api/auth/send-verification`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ userType: 'mentee' })
+        });
+        
+        if (!res.ok) {
+          const data = await res.json();
+          notifyError('Failed', data.error || 'Could not send verification email');
+          return;
+        }
+        
+        notifySuccess('Email Sent!', 'Check your inbox for the verification link');
+      } catch (error) {
+        notifyError('Error', 'Failed to send verification email');
+      }
+    }
+
+    // Check verification on page load
+    window.addEventListener('load', checkVerificationStatus);
   </script>
 </body>
 </html>

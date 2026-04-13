@@ -92,6 +92,18 @@ async function initializeDatabase() {
       await pool.query(`ALTER TABLE bookings ADD COLUMN IF NOT EXISTS cancelled_at TIMESTAMP`);
       await pool.query(`ALTER TABLE bookings ADD COLUMN IF NOT EXISTS cancelled_by VARCHAR(50)`);
     } catch (e) {
+
+      // Add verification columns to mentee_accounts
+      await pool.query(`ALTER TABLE mentee_accounts ADD COLUMN IF NOT EXISTS is_verified BOOLEAN DEFAULT FALSE`);
+      await pool.query(`ALTER TABLE mentee_accounts ADD COLUMN IF NOT EXISTS verification_token VARCHAR(255)`);
+      await pool.query(`ALTER TABLE mentee_accounts ADD COLUMN IF NOT EXISTS verification_token_expires TIMESTAMP`);
+      await pool.query(`ALTER TABLE mentee_accounts ADD COLUMN IF NOT EXISTS verified_at TIMESTAMP`);
+      
+      // Add verification columns to mentors
+      await pool.query(`ALTER TABLE mentors ADD COLUMN IF NOT EXISTS is_verified BOOLEAN DEFAULT FALSE`);
+      await pool.query(`ALTER TABLE mentors ADD COLUMN IF NOT EXISTS verification_token VARCHAR(255)`);
+      await pool.query(`ALTER TABLE mentors ADD COLUMN IF NOT EXISTS verification_token_expires TIMESTAMP`);
+      await pool.query(`ALTER TABLE mentors ADD COLUMN IF NOT EXISTS verified_at TIMESTAMP`);
       // Columns might already exist
     }
 
@@ -471,7 +483,20 @@ app.post('/api/book', async (req, res) => {
     if (token) {
       try {
         const decoded = jwt.verify(token, process.env.MENTEE_JWT_SECRET || 'mentee-secret-key');
-        mentee_id = decoded.mentee_id;
+        mentee_id = decoded.id || decoded.mentee_id;
+        
+        // Check if mentee is verified
+        const menteeRes = await client.query(
+          'SELECT is_verified FROM mentee_accounts WHERE id = $1',
+          [mentee_id]
+        );
+        
+        if (menteeRes.rows.length > 0 && !menteeRes.rows[0].is_verified) {
+          return res.status(403).json({ 
+            error: 'Email verification required', 
+            message: 'Please verify your email before booking sessions'
+          });
+        }
       } catch (e) {
         // Token verification failed, continue without mentee_id
       }
@@ -1179,6 +1204,130 @@ app.post('/api/auth/signup', async (req, res) => {
     }
     console.error('Signup error:', error);
     res.status(500).json({ error: 'Signup failed', details: error.message });
+  }
+});
+
+
+// POST /api/auth/send-verification - Send verification email
+app.post('/api/auth/send-verification', verifyToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const userType = req.body.userType || 'mentee'; // 'mentee' or 'mentor'
+    
+    const tableName = userType === 'mentor' ? 'mentors' : 'mentee_accounts';
+    
+    // Get user
+    const userRes = await pool.query(`SELECT email, name, is_verified FROM ${tableName} WHERE id = $1`, [userId]);
+    if (userRes.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    
+    const user = userRes.rows[0];
+    
+    if (user.is_verified) {
+      return res.status(400).json({ error: 'User is already verified' });
+    }
+    
+    // Generate verification token
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    const expiryTime = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+    
+    // Save token
+    await pool.query(
+      `UPDATE ${tableName} SET verification_token = $1, verification_token_expires = $2 WHERE id = $3`,
+      [verificationToken, expiryTime, userId]
+    );
+    
+    // Send email
+    const verificationLink = `${process.env.FRONTEND_URL || 'https://megaverselive.com'}/verify?token=${verificationToken}&type=${userType}`;
+    
+    const html = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #7e22ce;">Verify Your Email ✅</h2>
+        <p>Hi ${user.name},</p>
+        <p>Thank you for joining Megaverse Live! Please verify your email address to complete your signup.</p>
+        <p>
+          <a href="${verificationLink}" style="display: inline-block; background: #7e22ce; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold;">
+            Verify Email
+          </a>
+        </p>
+        <p style="color: #666; font-size: 12px;">
+          This link will expire in 24 hours. If you didn't create this account, please ignore this email.
+        </p>
+      </div>
+    `;
+    
+    await emailService.transporter.sendMail({
+      from: process.env.EMAIL_FROM || 'hello@megaverselive.com',
+      to: user.email,
+      subject: 'Verify Your Email - Megaverse Live',
+      html
+    });
+    
+    res.json({ success: true, message: 'Verification email sent' });
+  } catch (error) {
+    console.error('Error sending verification:', error);
+    res.status(500).json({ error: 'Failed to send verification email' });
+  }
+});
+
+// GET /api/auth/verify - Verify email with token
+app.get('/api/auth/verify', async (req, res) => {
+  try {
+    const { token, type } = req.query;
+    
+    if (!token || !type) {
+      return res.status(400).json({ error: 'Token and type are required' });
+    }
+    
+    const tableName = type === 'mentor' ? 'mentors' : 'mentee_accounts';
+    
+    // Find user with token
+    const userRes = await pool.query(
+      `SELECT id, email, name FROM ${tableName} WHERE verification_token = $1 AND verification_token_expires > CURRENT_TIMESTAMP`,
+      [token]
+    );
+    
+    if (userRes.rows.length === 0) {
+      return res.status(400).json({ error: 'Invalid or expired verification token' });
+    }
+    
+    const user = userRes.rows[0];
+    
+    // Mark as verified
+    await pool.query(
+      `UPDATE ${tableName} SET is_verified = TRUE, verified_at = CURRENT_TIMESTAMP, verification_token = NULL, verification_token_expires = NULL WHERE id = $1`,
+      [user.id]
+    );
+    
+    res.json({
+      success: true,
+      message: 'Email verified successfully!',
+      user: { id: user.id, email: user.email, name: user.name }
+    });
+  } catch (error) {
+    console.error('Error verifying email:', error);
+    res.status(500).json({ error: 'Failed to verify email' });
+  }
+});
+
+// GET /api/auth/verification-status - Check if user is verified
+app.get('/api/auth/verification-status', verifyToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const userType = req.query.type || 'mentee';
+    
+    const tableName = userType === 'mentor' ? 'mentors' : 'mentee_accounts';
+    
+    const result = await pool.query(`SELECT is_verified, email FROM ${tableName} WHERE id = $1`, [userId]);
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    
+    res.json({ is_verified: result.rows[0].is_verified, email: result.rows[0].email });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to check verification status' });
   }
 });
 

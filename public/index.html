@@ -1859,6 +1859,37 @@
         setTimeout(() => openPaymentModal(), 300);
       }
 
+      // Handle email verification
+      if (params.get('verify') === '1' && params.get('token')) {
+        const token = params.get('token');
+        const type = params.get('type') || 'mentee';
+        
+        async function verifyEmail() {
+          try {
+            const res = await fetch(`/api/auth/verify?token=${token}&type=${type}`);
+            const data = await res.json();
+            
+            if (!res.ok) {
+              notifyError('Verification Failed', data.error || 'Invalid token');
+              return;
+            }
+            
+            notifySuccess('Email Verified!', 'Your email has been successfully verified. You can now book sessions!');
+            localStorage.setItem('emailVerified', 'true');
+            
+            // Redirect to auth page after 2 seconds
+            setTimeout(() => {
+              window.location.href = '/auth.html';
+            }, 2000);
+          } catch (error) {
+            notifyError('Error', 'Verification failed');
+          }
+        }
+        
+        verifyEmail();
+      }
+
+
       // Keep-alive: Ping backend every 10 minutes to prevent cold start on Render free tier
       function keepAlive() {
         fetch('https://megaverse-live.onrender.com/api/health', { method: 'GET' })
