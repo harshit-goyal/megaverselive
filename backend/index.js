@@ -32,6 +32,10 @@ const pool = new Pool({
   database: dbName,
   port: process.env.DB_PORT,
   ssl: { rejectUnauthorized: false }, // Required for Azure
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 5000,
+  max: 5, // Reduced for free tier Render
+  min: 1
 });
 
 // Initialize database schema
@@ -172,8 +176,14 @@ async function initializeDatabase() {
   }
 }
 
-// Call on startup
-initializeDatabase();
+// Start DB initialization asynchronously (don't block server startup)
+let dbInitPromise = null;
+setImmediate(async () => {
+  const startTime = Date.now();
+  dbInitPromise = initializeDatabase();
+  await dbInitPromise;
+  console.log(`⏱ DB schema init took ${Date.now() - startTime}ms`);
+});
 
 // Middleware
 app.use(cors());
@@ -2421,26 +2431,35 @@ app.delete('/api/admin/mentee/:id', verifyAdminToken, async (req, res) => {
 
 // ============= START SERVER =============
 
-// Schedule reminder check every 15 minutes
-const reminderScheduleInterval = setInterval(async () => {
-  try {
-    const response = await fetch(`http://localhost:${PORT}/api/bookings/send-reminders`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' }
-    });
-    const data = await response.json();
-    if (data.reminders_sent_24h > 0 || data.reminders_sent_1h > 0) {
-      console.log(`✅ Reminders sent: 24h=${data.reminders_sent_24h}, 1h=${data.reminders_sent_1h}`);
+// Schedule reminder check every 15 minutes (defer until after server starts)
+let reminderScheduleInterval = null;
+function startReminderScheduler() {
+  reminderScheduleInterval = setInterval(async () => {
+    try {
+      const response = await fetch(`http://localhost:${PORT}/api/bookings/send-reminders`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      const data = await response.json();
+      if (data.reminders_sent_24h > 0 || data.reminders_sent_1h > 0) {
+        console.log(`✅ Reminders sent: 24h=${data.reminders_sent_24h}, 1h=${data.reminders_sent_1h}`);
+      }
+    } catch (error) {
+      console.error('Error in reminder scheduler:', error.message);
     }
-  } catch (error) {
-    console.error('Error in reminder scheduler:', error.message);
-  }
-}, 15 * 60 * 1000); // Run every 15 minutes
+  }, 15 * 60 * 1000); // Run every 15 minutes
+}
 
 app.listen(PORT, () => {
   console.log(`Megaverse Live API running on port ${PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV}`);
-  console.log(`✅ Booking reminder scheduler started (checks every 15 minutes)`);
+  console.log(`✅ Server started and ready to accept requests`);
+  
+  // Start scheduler AFTER server is listening
+  setImmediate(() => {
+    startReminderScheduler();
+    console.log(`✅ Booking reminder scheduler started (checks every 15 minutes)`);
+  });
 });
 
 module.exports = app;
