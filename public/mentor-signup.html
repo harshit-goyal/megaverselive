@@ -98,53 +98,42 @@
       min-width: 100px;
       border: none;
       outline: none;
-      font-size: 16px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
     }
     
     .photo-upload {
-      position: relative;
-      width: 120px;
-      height: 120px;
-      background: #f7fafc;
-      border: 2px dashed #cbd5e0;
+      border: 2px dashed #a855f7;
       border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      padding: 40px;
+      text-align: center;
       cursor: pointer;
       transition: all 0.2s;
-      margin: 0 auto;
-    }
-    
-    .photo-upload:hover {
-      border-color: #a855f7;
       background: #f3e8ff;
     }
     
+    .photo-upload:hover {
+      border-color: #7e22ce;
+      background: #ede9fe;
+    }
+    
+    .photo-upload.has-image {
+      border: 2px solid #a855f7;
+      background: white;
+      padding: 20px;
+    }
+    
     .photo-upload img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 10px;
-      display: none;
-    }
-    
-    .photo-upload.has-image img {
-      display: block;
-    }
-    
-    .photo-upload.has-image .upload-icon {
-      display: none;
+      max-width: 100%;
+      max-height: 200px;
+      border-radius: 8px;
     }
     
     .upload-icon {
-      text-align: center;
-    }
-    
-    .session-length-options {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
     }
     
     .session-length-btn {
@@ -191,6 +180,59 @@
       border-radius: 4px;
       font-size: 14px;
     }
+    
+    .track-card {
+      border: 3px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 32px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      background: white;
+    }
+    
+    .track-card:hover {
+      border-color: #a855f7;
+      background: #f3e8ff;
+      transform: translateY(-4px);
+    }
+    
+    .track-card.selected {
+      border-color: #a855f7;
+      background: #a855f7;
+      color: white;
+    }
+    
+    .track-card.selected h3,
+    .track-card.selected p {
+      color: white;
+    }
+    
+    .track-card h3 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: #1f2937;
+    }
+    
+    .track-card p {
+      font-size: 14px;
+      color: #6b7280;
+      line-height: 1.6;
+    }
+    
+    .track-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+    
+    .track-field {
+      display: none;
+    }
+    
+    .track-field.visible {
+      display: block;
+    }
   </style>
 </head>
 <body class="bg-gradient-to-br from-purple-50 via-white to-pink-50 min-h-screen">
@@ -205,19 +247,43 @@
     <!-- Progress Bar -->
     <div class="mb-8">
       <div class="flex justify-between items-center mb-4">
-        <span class="text-sm font-semibold text-slate-700">Step <span id="currentStep">1</span> of 3</span>
-        <span id="stepLabel" class="text-sm text-slate-600">The Basics</span>
+        <span class="text-sm font-semibold text-slate-700">Step <span id="currentStep">0</span> of 4</span>
+        <span id="stepLabel" class="text-sm text-slate-600">Choose Your Track</span>
       </div>
       <div class="progress-bar">
-        <div class="progress-fill" id="progressFill" style="width: 33.33%"></div>
+        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
       </div>
     </div>
     
     <!-- Main Form Container -->
     <div class="bg-white rounded-lg shadow-lg p-8">
       
+      <!-- Step 0: Track Selection -->
+      <div class="step-content active" id="step0">
+        <h2 class="text-2xl font-bold text-slate-900 mb-4 text-center">Choose Your Track</h2>
+        <p class="text-center text-slate-600 mb-8">Select the area you want to mentor in</p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <!-- Tech Track -->
+          <div class="track-card" onclick="selectTrack('tech', this)">
+            <div class="track-icon">💻</div>
+            <h3>Tech Track</h3>
+            <p class="mb-4">DSA, System Design<br>Backend, Resume Review</p>
+          </div>
+          
+          <!-- English Track -->
+          <div class="track-card" onclick="selectTrack('english', this)">
+            <div class="track-icon">🗣️</div>
+            <h3>English Track</h3>
+            <p class="mb-4">IELTS, PTE<br>Spoken English, Communication</p>
+          </div>
+        </div>
+        
+        <input type="hidden" id="selectedTrack" value="">
+      </div>
+      
       <!-- Step 1: The Basics -->
-      <div class="step-content active" id="step1">
+      <div class="step-content" id="step1">
         <h2 class="text-2xl font-bold text-slate-900 mb-8">Tell us about yourself</h2>
         
         <div class="space-y-6">
@@ -249,13 +315,24 @@
             </div>
           </div>
           
-          <!-- Current Role + Company -->
-          <div>
+          <!-- Current Role + Company (Tech Track) -->
+          <div class="track-field tech">
             <label class="block text-sm font-semibold text-slate-700 mb-2">Current Role + Company *</label>
             <input 
               type="text" 
               id="currentRole"
-              placeholder="e.g. SDE2 @ Google"
+              placeholder="e.g. SDE2 @ Google, PM @ Microsoft"
+              class="w-full px-4 py-3 border-2 border-slate-200 rounded-lg focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-200"
+            >
+          </div>
+          
+          <!-- Current Role + Company (English Track) -->
+          <div class="track-field english">
+            <label class="block text-sm font-semibold text-slate-700 mb-2">Current Role + Certification *</label>
+            <input 
+              type="text" 
+              id="currentRoleEnglish"
+              placeholder="e.g. IELTS Examiner, CELTA Coach"
               class="w-full px-4 py-3 border-2 border-slate-200 rounded-lg focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-200"
             >
           </div>
@@ -271,29 +348,48 @@
             >
           </div>
           
-          <!-- What do you mentor -->
-          <div>
-            <label class="block text-sm font-semibold text-slate-700 mb-4">What do you mentor? *</label>
-            <div class="checkbox-grid" id="mentorCategories">
+          <!-- What do you mentor (Tech Track) -->
+          <div class="track-field tech">
+            <label class="block text-sm font-semibold text-slate-700 mb-4">Specializations *</label>
+            <div class="checkbox-grid" id="mentorCategoriesTech">
               <label class="checkbox-item">
-                <input type="checkbox" name="category" value="Backend Prep">
-                <span>Backend Prep</span>
+                <input type="checkbox" name="category-tech" value="DSA">
+                <label>DSA</label>
               </label>
               <label class="checkbox-item">
-                <input type="checkbox" name="category" value="System Design">
-                <span>System Design</span>
+                <input type="checkbox" name="category-tech" value="System Design">
+                <label>System Design</label>
               </label>
               <label class="checkbox-item">
-                <input type="checkbox" name="category" value="IELTS">
-                <span>IELTS</span>
+                <input type="checkbox" name="category-tech" value="Backend">
+                <label>Backend</label>
               </label>
               <label class="checkbox-item">
-                <input type="checkbox" name="category" value="DSA">
-                <span>DSA</span>
+                <input type="checkbox" name="category-tech" value="Resume Review">
+                <label>Resume Review</label>
+              </label>
+            </div>
+          </div>
+          
+          <!-- What do you mentor (English Track) -->
+          <div class="track-field english">
+            <label class="block text-sm font-semibold text-slate-700 mb-4">Specializations *</label>
+            <div class="checkbox-grid" id="mentorCategoriesEnglish">
+              <label class="checkbox-item">
+                <input type="checkbox" name="category-english" value="IELTS">
+                <label>IELTS</label>
               </label>
               <label class="checkbox-item">
-                <input type="checkbox" name="category" value="Resume Review">
-                <span>Resume Review</span>
+                <input type="checkbox" name="category-english" value="PTE">
+                <label>PTE</label>
+              </label>
+              <label class="checkbox-item">
+                <input type="checkbox" name="category-english" value="Spoken English">
+                <label>Spoken English</label>
+              </label>
+              <label class="checkbox-item">
+                <input type="checkbox" name="category-english" value="Business English">
+                <label>Business English</label>
               </label>
             </div>
           </div>
@@ -303,49 +399,59 @@
       
       <!-- Step 2: Your Story -->
       <div class="step-content" id="step2">
-        <h2 class="text-2xl font-bold text-slate-900 mb-8">Your Story</h2>
+        <h2 class="text-2xl font-bold text-slate-900 mb-8">Tell us your story</h2>
         
         <div class="space-y-6">
           
-          <!-- One-line Bio -->
+          <!-- Bio -->
           <div>
             <label class="block text-sm font-semibold text-slate-700 mb-2">One-line Bio *</label>
-            <input 
-              type="text" 
+            <textarea 
               id="bio"
               placeholder="e.g. 3 years at Microsoft, cracked Google L5 in 2023"
               class="w-full px-4 py-3 border-2 border-slate-200 rounded-lg focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-200"
-              maxlength="100"
-            >
-            <p class="text-xs text-slate-500 mt-1"><span id="bioCount">0</span>/100 characters</p>
+              rows="3"
+            ></textarea>
+            <p class="text-xs text-slate-500 mt-1"><span id="bioCount">0</span>/150 characters</p>
           </div>
           
-          <!-- Companies Interviewed At -->
-          <div>
-            <label class="block text-sm font-semibold text-slate-700 mb-2">Companies you've interviewed at (tag them)</label>
-            <div class="tag-input-container" id="companiesContainer">
-              <input 
-                type="text" 
-                id="companiesInput"
-                placeholder="Type company name and press Enter"
-                class="flex-1"
-              >
-            </div>
-            <div class="text-xs text-slate-500 mt-2">Suggestions: Google, Amazon, Microsoft, Meta, Apple, Goldman Sachs, JPMorgan, etc.</div>
+          <!-- Companies/Certifications (Tech Track) -->
+          <div class="track-field tech">
+            <label class="block text-sm font-semibold text-slate-700 mb-2">Companies you've interviewed at</label>
+            <div class="tag-input-container" id="companiesTags"></div>
+            <input 
+              type="text" 
+              id="companiesInput"
+              placeholder="Type a company name and press Enter"
+              class="w-full mt-2 px-4 py-3 border-2 border-slate-200 rounded-lg focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-200"
+            >
+            <p class="text-xs text-slate-500 mt-1">e.g. Google, Amazon, Microsoft</p>
+          </div>
+          
+          <!-- Certifications (English Track) -->
+          <div class="track-field english">
+            <label class="block text-sm font-semibold text-slate-700 mb-2">Your Certifications</label>
+            <div class="tag-input-container" id="certificationsContainer"></div>
+            <input 
+              type="text" 
+              id="certificationsInput"
+              placeholder="Type a certification and press Enter"
+              class="w-full mt-2 px-4 py-3 border-2 border-slate-200 rounded-lg focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-200"
+            >
+            <p class="text-xs text-slate-500 mt-1">e.g. IELTS Examiner Cert, CELTA</p>
           </div>
           
           <!-- Languages -->
           <div>
             <label class="block text-sm font-semibold text-slate-700 mb-2">Languages you're comfortable in</label>
-            <div class="tag-input-container" id="languagesContainer">
-              <input 
-                type="text" 
-                id="languagesInput"
-                placeholder="Type language and press Enter"
-                class="flex-1"
-              >
-            </div>
-            <div class="text-xs text-slate-500 mt-2">e.g. English, Hindi, Telugu, Tamil, Kannada, Marathi, etc.</div>
+            <div class="tag-input-container" id="languagesTags"></div>
+            <input 
+              type="text" 
+              id="languagesInput"
+              placeholder="Type a language and press Enter"
+              class="w-full mt-2 px-4 py-3 border-2 border-slate-200 rounded-lg focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-200"
+            >
+            <p class="text-xs text-slate-500 mt-1">e.g. English, Hindi, Telugu</p>
           </div>
           
           <!-- Session Rate -->
@@ -362,7 +468,7 @@
                 class="flex-1 ml-2 px-4 py-3 border-2 border-slate-200 rounded-lg focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-200"
               >
             </div>
-            <p class="text-xs text-slate-500 mt-1">Default: ₹1,200. You can adjust later.</p>
+            <p class="text-xs text-slate-500 mt-1" id="rateNote">Default: ₹1,200. You can adjust later.</p>
           </div>
           
         </div>
@@ -370,43 +476,48 @@
       
       <!-- Step 3: Availability -->
       <div class="step-content" id="step3">
-        <h2 class="text-2xl font-bold text-slate-900 mb-8">Your Availability</h2>
+        <h2 class="text-2xl font-bold text-slate-900 mb-8">Set your availability</h2>
         
         <div class="space-y-6">
           
           <!-- Preferred Session Length -->
           <div>
             <label class="block text-sm font-semibold text-slate-700 mb-4">Preferred Session Length *</label>
-            <div class="session-length-options">
-              <button class="session-length-btn" data-value="45" onclick="selectSessionLength(this)">45 min</button>
-              <button class="session-length-btn selected" data-value="60" onclick="selectSessionLength(this)">60 min</button>
-              <button class="session-length-btn" data-value="90" onclick="selectSessionLength(this)">90 min</button>
+            <div class="grid grid-cols-3 gap-4" id="sessionLengthContainer">
+              <button 
+                type="button" 
+                class="session-length-btn"
+                onclick="selectSessionLength(45)"
+              >
+                45 min
+              </button>
+              <button 
+                type="button" 
+                class="session-length-btn selected"
+                onclick="selectSessionLength(60)"
+              >
+                60 min
+              </button>
+              <button 
+                type="button" 
+                class="session-length-btn"
+                onclick="selectSessionLength(90)"
+              >
+                90 min
+              </button>
             </div>
-            <input type="hidden" id="sessionLength" value="60">
           </div>
           
-          <!-- Calendar Integration Note -->
-          <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <h3 class="font-semibold text-blue-900 mb-2">📅 Schedule Your Availability</h3>
-            <p class="text-sm text-blue-800 mb-3">You can set your availability in two ways:</p>
-            <ul class="text-sm text-blue-800 space-y-2 ml-4">
-              <li><strong>Option 1:</strong> Connect your Cal.com account (recommended) for automatic calendar sync</li>
-              <li><strong>Option 2:</strong> Set recurring weekly availability slots directly</li>
-            </ul>
-            <p class="text-xs text-blue-700 mt-4">You'll be able to set detailed availability after signing up.</p>
-          </div>
-          
-          <!-- Create Password -->
+          <!-- Password -->
           <div>
             <label class="block text-sm font-semibold text-slate-700 mb-2">Create Password *</label>
             <input 
               type="password" 
               id="password"
-              placeholder="Min 8 characters"
+              placeholder="At least 8 characters"
               class="w-full px-4 py-3 border-2 border-slate-200 rounded-lg focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-200"
-              minlength="8"
             >
-            <p class="text-xs text-slate-500 mt-1">Use a strong password with letters, numbers, and symbols</p>
+            <p class="text-xs text-slate-500 mt-1">Must be at least 8 characters long</p>
           </div>
           
           <!-- Confirm Password -->
@@ -415,17 +526,20 @@
             <input 
               type="password" 
               id="confirmPassword"
-              placeholder="Confirm your password"
+              placeholder="Re-enter your password"
               class="w-full px-4 py-3 border-2 border-slate-200 rounded-lg focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-200"
-              minlength="8"
             >
           </div>
           
           <!-- Terms Agreement -->
           <div class="flex items-start gap-3">
-            <input type="checkbox" id="termsAgree" class="mt-1">
-            <label for="termsAgree" class="text-sm text-slate-600">
-              I agree to the <a href="/terms-of-service.html" class="text-purple-600 hover:text-purple-700 font-semibold" target="_blank">Terms of Service</a> and <a href="/privacy-policy.html" class="text-purple-600 hover:text-purple-700 font-semibold" target="_blank">Privacy Policy</a>
+            <input 
+              type="checkbox" 
+              id="termsAgree"
+              class="mt-1"
+            >
+            <label for="termsAgree" class="text-sm text-slate-700">
+              I agree to Megaverse Live's <a href="/terms-of-service.html" target="_blank" class="text-purple-600 hover:underline">terms of service</a> and <a href="/privacy-policy.html" target="_blank" class="text-purple-600 hover:underline">privacy policy</a> *
             </label>
           </div>
           
@@ -441,6 +555,7 @@
           id="prevBtn"
           onclick="previousStep()"
           class="px-6 py-3 border-2 border-slate-300 text-slate-700 font-semibold rounded-lg hover:bg-slate-100 transition disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled
         >
           ← Back
         </button>
@@ -468,13 +583,13 @@
           ← Back to Home
         </button>
       </div>
-      
     </div>
   </div>
-  
+
   <script>
-    const MAX_PHOTO_SIZE = 5 * 1024 * 1024; // 5MB
+    const MAX_PHOTO_SIZE = 5 * 1024 * 1024;
     const formData = {
+      track: '',
       fullName: '',
       photo: null,
       currentRole: '',
@@ -483,14 +598,45 @@
       bio: '',
       companies: [],
       languages: [],
+      certifications: [],
       sessionRate: 1200,
       sessionLength: 60,
-      email: '', // Will be filled with generated email
+      email: '',
       password: '',
       termsAgree: false
     };
     
-    // Photo Upload Handler
+    const STEP_LABELS = ['Choose Your Track', 'The Basics', 'Your Story', 'Availability'];
+    const TOTAL_STEPS = 4;
+    
+    function selectTrack(track, element) {
+      formData.track = track;
+      document.querySelectorAll('.track-card').forEach(card => card.classList.remove('selected'));
+      element.classList.add('selected');
+      
+      if (track === 'tech') {
+        formData.sessionRate = 1200;
+      } else if (track === 'english') {
+        formData.sessionRate = 900;
+      }
+      
+      updateTrackFields();
+    }
+    
+    function updateTrackFields() {
+      const track = formData.track;
+      document.querySelectorAll('.track-field').forEach(field => {
+        field.classList.remove('visible');
+        field.style.display = 'none';
+      });
+      if (track) {
+        document.querySelectorAll('.track-field.' + track).forEach(field => {
+          field.classList.add('visible');
+          field.style.display = 'block';
+        });
+      }
+    }
+    
     document.getElementById('photoUpload').addEventListener('click', () => {
       document.getElementById('photoInput').click();
     });
@@ -513,17 +659,14 @@
       }
     });
     
-    // Bio Character Count
     document.getElementById('bio').addEventListener('input', (e) => {
       document.getElementById('bioCount').textContent = e.target.value.length;
     });
     
-    // Session Rate Input
     document.getElementById('sessionRate').addEventListener('change', (e) => {
-      formData.sessionRate = parseInt(e.target.value) || 1200;
+      formData.sessionRate = parseInt(e.target.value) || formData.sessionRate;
     });
     
-    // Tag Input Handler (Companies)
     document.getElementById('companiesInput').addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
         e.preventDefault();
@@ -535,7 +678,17 @@
       }
     });
     
-    // Tag Input Handler (Languages)
+    document.getElementById('certificationsInput').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const value = e.target.value.trim();
+        if (value) {
+          addTag(value, 'certifications');
+          e.target.value = '';
+        }
+      }
+    });
+    
     document.getElementById('languagesInput').addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
         e.preventDefault();
@@ -548,63 +701,64 @@
     });
     
     function addTag(value, type) {
-      const container = document.getElementById(type === 'companies' ? 'companiesContainer' : 'languagesContainer');
-      const input = document.getElementById(type === 'companies' ? 'companiesInput' : 'languagesInput');
-      
-      const tag = document.createElement('div');
-      tag.className = 'tag';
-      tag.innerHTML = `
-        ${value}
-        <button type="button" onclick="removeTag(this, '${type}')">&times;</button>
-      `;
-      
-      container.insertBefore(tag, input);
-      
-      if (type === 'companies') {
+      if (type === 'companies' && !formData.companies.includes(value)) {
         formData.companies.push(value);
-      } else {
+        renderTags('companies');
+      } else if (type === 'certifications' && !formData.certifications.includes(value)) {
+        formData.certifications.push(value);
+        renderTags('certifications');
+      } else if (type === 'languages' && !formData.languages.includes(value)) {
         formData.languages.push(value);
+        renderTags('languages');
       }
     }
     
-    function removeTag(btn, type) {
-      const tag = btn.parentElement;
-      const value = tag.textContent.replace('×', '').trim();
-      
+    function removeTag(value, type) {
       if (type === 'companies') {
         formData.companies = formData.companies.filter(c => c !== value);
-      } else {
+        renderTags('companies');
+      } else if (type === 'certifications') {
+        formData.certifications = formData.certifications.filter(c => c !== value);
+        renderTags('certifications');
+      } else if (type === 'languages') {
         formData.languages = formData.languages.filter(l => l !== value);
+        renderTags('languages');
       }
+    }
+    
+    function renderTags(type) {
+      const containerId = type === 'companies' ? 'companiesTags' : type === 'certifications' ? 'certificationsContainer' : 'languagesTags';
+      const container = document.getElementById(containerId);
+      const data = type === 'companies' ? formData.companies : type === 'certifications' ? formData.certifications : formData.languages;
       
-      tag.remove();
+      container.innerHTML = data.map(tag => `
+        <div class="tag">
+          ${tag}
+          <button type="button" onclick="removeTag('${tag}', '${type}')">✕</button>
+        </div>
+      `).join('');
     }
     
-    // Session Length Selection
-    function selectSessionLength(btn) {
-      document.querySelectorAll('.session-length-btn').forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
-      formData.sessionLength = parseInt(btn.dataset.value);
-      document.getElementById('sessionLength').value = formData.sessionLength;
+    function selectSessionLength(length) {
+      formData.sessionLength = length;
+      document.querySelectorAll('.session-length-btn').forEach(btn => btn.classList.remove('selected'));
+      event.target.classList.add('selected');
     }
     
-    // Step Navigation
     function nextStep() {
       if (!validateStep()) return;
       
       const currentStep = parseInt(document.getElementById('currentStep').textContent);
-      if (currentStep < 3) {
+      if (currentStep < TOTAL_STEPS - 1) {
         document.getElementById('step' + currentStep).classList.remove('active');
         document.getElementById('step' + (currentStep + 1)).classList.add('active');
         document.getElementById('currentStep').textContent = currentStep + 1;
         
-        const labels = ['The Basics', 'Your Story', 'Availability'];
-        document.getElementById('stepLabel').textContent = labels[currentStep];
-        
-        document.getElementById('progressFill').style.width = ((currentStep + 1) / 3 * 100) + '%';
+        document.getElementById('stepLabel').textContent = STEP_LABELS[currentStep + 1];
+        document.getElementById('progressFill').style.width = ((currentStep + 1) / (TOTAL_STEPS - 1) * 100) + '%';
         document.getElementById('prevBtn').disabled = false;
         
-        if (currentStep + 1 === 3) {
+        if (currentStep + 1 === TOTAL_STEPS - 1) {
           document.getElementById('nextBtn').textContent = 'Submit Application';
         }
         
@@ -616,18 +770,16 @@
     
     function previousStep() {
       const currentStep = parseInt(document.getElementById('currentStep').textContent);
-      if (currentStep > 1) {
+      if (currentStep > 0) {
         document.getElementById('step' + currentStep).classList.remove('active');
         document.getElementById('step' + (currentStep - 1)).classList.add('active');
         document.getElementById('currentStep').textContent = currentStep - 1;
         
-        const labels = ['The Basics', 'Your Story', 'Availability'];
-        document.getElementById('stepLabel').textContent = labels[currentStep - 2];
-        
-        document.getElementById('progressFill').style.width = ((currentStep - 1) / 3 * 100) + '%';
+        document.getElementById('stepLabel').textContent = STEP_LABELS[currentStep - 1];
+        document.getElementById('progressFill').style.width = ((currentStep - 1) / (TOTAL_STEPS - 1) * 100) + '%';
         document.getElementById('nextBtn').textContent = 'Continue →';
         
-        if (currentStep - 1 === 1) {
+        if (currentStep - 1 === 0) {
           document.getElementById('prevBtn').disabled = true;
         }
         
@@ -639,6 +791,15 @@
       const currentStep = parseInt(document.getElementById('currentStep').textContent);
       clearError();
       
+      if (currentStep === 0) {
+        if (!formData.track) {
+          showError('Please select a track to continue');
+          return false;
+        }
+        updateTrackFields();
+        return true;
+      }
+      
       if (currentStep === 1) {
         if (!document.getElementById('fullName').value.trim()) {
           showError('Please enter your full name');
@@ -648,8 +809,13 @@
           showError('Please upload a profile photo');
           return false;
         }
-        if (!document.getElementById('currentRole').value.trim()) {
-          showError('Please enter your current role and company');
+        
+        const roleField = formData.track === 'tech' ? 
+          document.getElementById('currentRole') : 
+          document.getElementById('currentRoleEnglish');
+        
+        if (!roleField.value.trim()) {
+          showError('Please enter your current role');
           return false;
         }
         if (!document.getElementById('linkedinUrl').value.trim()) {
@@ -657,14 +823,18 @@
           return false;
         }
         
-        const selectedCategories = Array.from(document.querySelectorAll('#mentorCategories input:checked')).map(c => c.value);
+        const categorySelector = formData.track === 'tech' ? 
+          '#mentorCategoriesTech input:checked' : 
+          '#mentorCategoriesEnglish input:checked';
+        const selectedCategories = Array.from(document.querySelectorAll(categorySelector)).map(c => c.value);
+        
         if (selectedCategories.length === 0) {
-          showError('Please select at least one mentoring category');
+          showError('Please select at least one specialization');
           return false;
         }
         
         formData.fullName = document.getElementById('fullName').value;
-        formData.currentRole = document.getElementById('currentRole').value;
+        formData.currentRole = roleField.value;
         formData.linkedinUrl = document.getElementById('linkedinUrl').value;
         formData.mentorCategories = selectedCategories;
       }
@@ -676,7 +846,7 @@
         }
         
         formData.bio = document.getElementById('bio').value;
-        formData.sessionRate = parseInt(document.getElementById('sessionRate').value) || 1200;
+        formData.sessionRate = parseInt(document.getElementById('sessionRate').value) || formData.sessionRate;
       }
       
       if (currentStep === 3) {
@@ -715,11 +885,11 @@
     
     async function submitForm() {
       try {
-        // Generate a temporary email for the mentor
         const timestamp = Date.now();
         const tempEmail = `mentor_${timestamp}@megaverselive.com`;
         
         const payload = {
+          track: formData.track,
           fullName: formData.fullName,
           email: tempEmail,
           password: formData.password,
@@ -728,6 +898,7 @@
           mentorCategories: formData.mentorCategories,
           bio: formData.bio,
           companies: formData.companies,
+          certifications: formData.certifications,
           languages: formData.languages,
           sessionRate: formData.sessionRate,
           sessionLength: formData.sessionLength,
@@ -747,7 +918,6 @@
           return;
         }
         
-        // Show success message
         document.querySelector('.bg-white.rounded-lg').style.display = 'none';
         document.getElementById('successContainer').classList.remove('hidden');
       } catch (error) {
@@ -760,7 +930,6 @@
       window.location.href = '/';
     }
     
-    // Initialize
     document.getElementById('prevBtn').disabled = true;
   </script>
 </body>

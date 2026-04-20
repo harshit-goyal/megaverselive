@@ -1506,6 +1506,7 @@ async function initMentorApplicationsTable() {
     await pool.query(`
       CREATE TABLE IF NOT EXISTS mentor_applications (
         id SERIAL PRIMARY KEY,
+        track VARCHAR(50) NOT NULL DEFAULT 'tech',
         full_name VARCHAR(255) NOT NULL,
         email VARCHAR(255) UNIQUE NOT NULL,
         password_hash VARCHAR(255) NOT NULL,
@@ -1514,6 +1515,7 @@ async function initMentorApplicationsTable() {
         mentor_categories TEXT[] DEFAULT ARRAY[]::TEXT[],
         bio VARCHAR(100),
         companies TEXT[] DEFAULT ARRAY[]::TEXT[],
+        certifications TEXT[] DEFAULT ARRAY[]::TEXT[],
         languages TEXT[] DEFAULT ARRAY[]::TEXT[],
         session_rate INT DEFAULT 1200,
         session_length INT DEFAULT 60,
@@ -1537,6 +1539,7 @@ initMentorApplicationsTable();
 app.post('/api/mentor/onboarding', async (req, res) => {
   try {
     const {
+      track,
       fullName,
       email,
       password,
@@ -1545,6 +1548,7 @@ app.post('/api/mentor/onboarding', async (req, res) => {
       mentorCategories,
       bio,
       companies,
+      certifications,
       languages,
       sessionRate,
       sessionLength,
@@ -1552,8 +1556,12 @@ app.post('/api/mentor/onboarding', async (req, res) => {
     } = req.body;
 
     // Validation
-    if (!fullName || !password || !currentRole || !linkedinUrl || !mentorCategories || mentorCategories.length === 0) {
+    if (!track || !fullName || !password || !currentRole || !linkedinUrl || !mentorCategories || mentorCategories.length === 0) {
       return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    if (!['tech', 'english'].includes(track)) {
+      return res.status(400).json({ error: 'Invalid track' });
     }
 
     if (password.length < 8) {
@@ -1567,11 +1575,12 @@ app.post('/api/mentor/onboarding', async (req, res) => {
       // Insert mentor application
       const result = await pool.query(
         `INSERT INTO mentor_applications 
-         (full_name, email, password_hash, current_role, linkedin_url, mentor_categories, 
-          bio, companies, languages, session_rate, session_length, profile_photo, status)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
-         RETURNING id, email, full_name, status`,
+         (track, full_name, email, password_hash, current_role, linkedin_url, mentor_categories, 
+          bio, companies, certifications, languages, session_rate, session_length, profile_photo, status)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+         RETURNING id, email, full_name, status, track`,
         [
+          track,
           fullName,
           email,
           passwordHash,
@@ -1580,8 +1589,9 @@ app.post('/api/mentor/onboarding', async (req, res) => {
           mentorCategories,
           bio,
           companies || [],
+          certifications || [],
           languages || [],
-          sessionRate || 1200,
+          sessionRate || (track === 'tech' ? 1200 : 900),
           sessionLength || 60,
           profilePhoto ? Buffer.from(profilePhoto, 'base64') : null,
           'pending_review'
