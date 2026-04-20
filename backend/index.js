@@ -1535,6 +1535,21 @@ async function initMentorApplicationsTable() {
 
 initMentorApplicationsTable();
 
+// Admin token verification middleware
+const verifyAdminToken = (req, res, next) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) return res.status(401).json({ error: 'No token provided' });
+  
+  try {
+    const decoded = jwt.verify(token, ADMIN_JWT_SECRET);
+    if (decoded.role !== 'admin') return res.status(403).json({ error: 'Forbidden' });
+    req.admin = decoded;
+    next();
+  } catch (error) {
+    res.status(401).json({ error: 'Invalid token' });
+  }
+};
+
 // POST /api/mentor/onboarding - Submit mentor onboarding application
 app.post('/api/mentor/onboarding', async (req, res) => {
   try {
@@ -2032,6 +2047,65 @@ app.get('/api/mentor/profile', verifyMentorToken, async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch profile', details: error.message });
   }
 });
+// GET /api/mentor/bookings - Get all bookings for current mentor (requires JWT)
+app.get('/api/mentor/bookings', verifyMentorToken, async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT b.id, b.mentor_id, b.customer_name, b.customer_email, b.session_topic,
+              b.start_time, b.end_time, b.payment_status, b.booking_status, b.notes, b.created_at
+       FROM bookings b
+       WHERE b.mentor_id = $1
+       ORDER BY b.start_time DESC`,
+      [req.mentor.id]
+    );
+    
+    const upcoming = result.rows.filter(b => new Date(b.start_time) > new Date());
+    const past = result.rows.filter(b => new Date(b.start_time) <= new Date());
+    
+    res.json({
+      bookings: result.rows,
+      upcoming: upcoming.length,
+      past: past.length,
+      total: result.rows.length
+    });
+  } catch (error) {
+    console.error('Error fetching mentor bookings:', error);
+    res.status(500).json({ error: 'Failed to fetch bookings', details: error.message });
+  }
+});
+
+// GET /api/mentor/stats - Get mentor statistics (requires JWT)
+app.get('/api/mentor/stats', verifyMentorToken, async (req, res) => {
+  try {
+    const bookingsResult = await pool.query(
+      `SELECT COUNT(*) as total, 
+              SUM(CASE WHEN start_time > NOW() THEN 1 ELSE 0 END) as upcoming,
+              SUM(CASE WHEN start_time <= NOW() THEN 1 ELSE 0 END) as completed
+       FROM bookings
+       WHERE mentor_id = $1`,
+      [req.mentor.id]
+    );
+    
+    const mentorResult = await pool.query(
+      `SELECT rating, session_count FROM mentors WHERE id = $1`,
+      [req.mentor.id]
+    );
+    
+    const stats = bookingsResult.rows[0] || { total: 0, upcoming: 0, completed: 0 };
+    const mentor = mentorResult.rows[0] || { rating: 0, session_count: 0 };
+    
+    res.json({
+      total_bookings: parseInt(stats.total),
+      upcoming_bookings: parseInt(stats.upcoming),
+      completed_sessions: parseInt(stats.completed),
+      average_rating: mentor.rating || 0,
+      total_sessions: mentor.session_count || 0
+    });
+  } catch (error) {
+    console.error('Error fetching mentor stats:', error);
+    res.status(500).json({ error: 'Failed to fetch stats', details: error.message });
+  }
+});
 
 // GET /api/mentor/:id - Get specific mentor profile (public)
 app.get('/api/mentor/:id', async (req, res) => {
@@ -2097,66 +2171,6 @@ app.put('/api/mentor/profile', verifyMentorToken, async (req, res) => {
   } catch (error) {
     console.error('Error updating mentor profile:', error);
     res.status(500).json({ error: 'Failed to update profile', details: error.message });
-  }
-});
-
-// GET /api/mentor/bookings - Get all bookings for current mentor (requires JWT)
-app.get('/api/mentor/bookings', verifyMentorToken, async (req, res) => {
-  try {
-    const result = await pool.query(
-      `SELECT b.id, b.mentor_id, b.customer_name, b.customer_email, b.session_topic,
-              b.start_time, b.end_time, b.payment_status, b.booking_status, b.notes, b.created_at
-       FROM bookings b
-       WHERE b.mentor_id = $1
-       ORDER BY b.start_time DESC`,
-      [req.mentor.id]
-    );
-    
-    const upcoming = result.rows.filter(b => new Date(b.start_time) > new Date());
-    const past = result.rows.filter(b => new Date(b.start_time) <= new Date());
-    
-    res.json({
-      bookings: result.rows,
-      upcoming: upcoming.length,
-      past: past.length,
-      total: result.rows.length
-    });
-  } catch (error) {
-    console.error('Error fetching mentor bookings:', error);
-    res.status(500).json({ error: 'Failed to fetch bookings', details: error.message });
-  }
-});
-
-// GET /api/mentor/stats - Get mentor statistics (requires JWT)
-app.get('/api/mentor/stats', verifyMentorToken, async (req, res) => {
-  try {
-    const bookingsResult = await pool.query(
-      `SELECT COUNT(*) as total, 
-              SUM(CASE WHEN start_time > NOW() THEN 1 ELSE 0 END) as upcoming,
-              SUM(CASE WHEN start_time <= NOW() THEN 1 ELSE 0 END) as completed
-       FROM bookings
-       WHERE mentor_id = $1`,
-      [req.mentor.id]
-    );
-    
-    const mentorResult = await pool.query(
-      `SELECT rating, session_count FROM mentors WHERE id = $1`,
-      [req.mentor.id]
-    );
-    
-    const stats = bookingsResult.rows[0] || { total: 0, upcoming: 0, completed: 0 };
-    const mentor = mentorResult.rows[0] || { rating: 0, session_count: 0 };
-    
-    res.json({
-      total_bookings: parseInt(stats.total),
-      upcoming_bookings: parseInt(stats.upcoming),
-      completed_sessions: parseInt(stats.completed),
-      average_rating: mentor.rating || 0,
-      total_sessions: mentor.session_count || 0
-    });
-  } catch (error) {
-    console.error('Error fetching mentor stats:', error);
-    res.status(500).json({ error: 'Failed to fetch stats', details: error.message });
   }
 });
 
@@ -2486,21 +2500,6 @@ app.post('/api/admin/login', async (req, res) => {
     res.status(500).json({ error: 'Login failed', details: error.message });
   }
 });
-
-// Verify admin token middleware
-const verifyAdminToken = (req, res, next) => {
-  const token = req.headers.authorization?.split(' ')[1];
-  if (!token) return res.status(401).json({ error: 'No token provided' });
-  
-  try {
-    const decoded = jwt.verify(token, ADMIN_JWT_SECRET);
-    if (decoded.role !== 'admin') return res.status(403).json({ error: 'Forbidden' });
-    req.admin = decoded;
-    next();
-  } catch (error) {
-    res.status(401).json({ error: 'Invalid token' });
-  }
-};
 
 // GET /api/admin/analytics - Get analytics data (admin)
 app.get('/api/admin/analytics', verifyAdminToken, async (req, res) => {
