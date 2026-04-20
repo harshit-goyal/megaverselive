@@ -1918,6 +1918,10 @@ app.post('/api/mentor/signup', async (req, res) => {
           });
         } catch (initError) {
           console.error('Failed to initialize mentors schema:', initError);
+          // Check if it's a duplicate key error (email already exists)
+          if (initError.code === '23505') {
+            return res.status(400).json({ error: 'Email already registered' });
+          }
           throw dbError;
         }
       }
