@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mentor Application Review — Megaverse Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚙️</text></svg>">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    
+    .application-card {
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 20px;
+      transition: all 0.3s;
+    }
+    
+    .application-card:hover {
+      border-color: #a855f7;
+      box-shadow: 0 4px 12px rgba(168, 85, 247, 0.1);
+    }
+    
+    .track-badge {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    
+    .track-tech {
+      background: #e0e7ff;
+      color: #3730a3;
+    }
+    
+    .track-english {
+      background: #fef3c7;
+      color: #a16207;
+    }
+    
+    .status-badge {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    
+    .status-pending {
+      background: #fef3c7;
+      color: #a16207;
+    }
+    
+    .status-approved {
+      background: #d1fae5;
+      color: #065f46;
+    }
+    
+    .status-rejected {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    
+    .field-group {
+      margin-bottom: 16px;
+    }
+    
+    .field-label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: #64748b;
+      margin-bottom: 4px;
+    }
+    
+    .field-value {
+      font-size: 14px;
+      color: #1e293b;
+      word-break: break-word;
+    }
+    
+    .category-tag {
+      display: inline-block;
+      padding: 4px 8px;
+      background: #f1f5f9;
+      border-radius: 4px;
+      font-size: 12px;
+      margin-right: 6px;
+      margin-bottom: 6px;
+      color: #475569;
+    }
+    
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+    }
+    
+    .btn {
+      flex: 1;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+    }
+    
+    .btn-approve {
+      background: #10b981;
+      color: white;
+    }
+    
+    .btn-approve:hover {
+      background: #059669;
+    }
+    
+    .btn-approve:disabled {
+      background: #d1d5db;
+      cursor: not-allowed;
+    }
+    
+    .btn-reject {
+      background: #ef4444;
+      color: white;
+    }
+    
+    .btn-reject:hover {
+      background: #dc2626;
+    }
+    
+    .btn-reject:disabled {
+      background: #d1d5db;
+      cursor: not-allowed;
+    }
+    
+    .filter-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #e2e8f0;
+    }
+    
+    .filter-tab {
+      padding: 12px 16px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      color: #64748b;
+      transition: all 0.2s;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+    }
+    
+    .filter-tab.active {
+      color: #a855f7;
+      border-bottom-color: #a855f7;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #94a3b8;
+    }
+    
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .modal.active {
+      display: flex;
+    }
+    
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    
+    .modal-header {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: #1e293b;
+    }
+    
+    .modal-input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 14px;
+      margin-bottom: 15px;
+      font-family: inherit;
+    }
+    
+    .modal-buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+    }
+    
+    .loading-spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <!-- Header -->
+  <div class="bg-white border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">Mentor Applications</h1>
+        <p class="text-gray-500 text-sm mt-1">Review and approve new mentor signups</p>
+      </div>
+      <button onclick="handleLogout()" class="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition">Logout</button>
+    </div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+    <!-- Filter Tabs -->
+    <div class="filter-tabs">
+      <button class="filter-tab active" onclick="filterApplications('all', this)">All <span id="count-all" class="ml-2 text-purple-600 font-bold"></span></button>
+      <button class="filter-tab" onclick="filterApplications('pending', this)">Pending <span id="count-pending" class="ml-2 text-purple-600 font-bold"></span></button>
+      <button class="filter-tab" onclick="filterApplications('approved', this)">Approved <span id="count-approved" class="ml-2 text-purple-600 font-bold"></span></button>
+      <button class="filter-tab" onclick="filterApplications('rejected', this)">Rejected <span id="count-rejected" class="ml-2 text-purple-600 font-bold"></span></button>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loading-state" class="text-center py-12">
+      <div class="inline-block">
+        <div class="loading-spinner"></div>
+      </div>
+      <p class="text-gray-500 mt-4">Loading applications...</p>
+    </div>
+
+    <!-- Applications List -->
+    <div id="applications-container" style="display: none;"></div>
+
+    <!-- Empty State -->
+    <div id="empty-state" class="empty-state" style="display: none;">
+      <p>📋 No applications to display</p>
+    </div>
+  </div>
+
+  <!-- Rejection Modal -->
+  <div id="rejection-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">Reject Application</div>
+      <p class="text-gray-600 text-sm mb-4">Please provide a reason for rejection</p>
+      <textarea id="rejection-reason" class="modal-input" style="resize: vertical; height: 100px;" placeholder="Enter rejection reason (this will be sent to the mentor)"></textarea>
+      <div class="modal-buttons">
+        <button onclick="closeRejectionModal()" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">Cancel</button>
+        <button id="confirm-reject-btn" onclick="confirmReject()" class="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">Reject</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = window.location.origin;
+    let currentFilter = 'all';
+    let applications = [];
+    let rejectingApplicationId = null;
+    let adminToken = localStorage.getItem('admin_token');
+
+    // Check admin authentication
+    function checkAdminAuth() {
+      if (!adminToken) {
+        window.location.href = '/admin.html';
+        return false;
+      }
+      return true;
+    }
+
+    // Load applications
+    async function loadApplications() {
+      try {
+        const response = await fetch(`${API_BASE}/api/mentor/applications`, {
+          headers: {
+            'Authorization': `Bearer ${adminToken}`
+          }
+        });
+
+        if (response.status === 401) {
+          localStorage.removeItem('admin_token');
+          window.location.href = '/admin.html';
+          return;
+        }
+
+        if (!response.ok) throw new Error('Failed to load applications');
+
+        applications = await response.json();
+        renderApplications();
+        updateCounts();
+      } catch (error) {
+        console.error('Error loading applications:', error);
+        showError('Failed to load applications: ' + error.message);
+      }
+    }
+
+    // Filter applications
+    function filterApplications(filter, element) {
+      currentFilter = filter;
+      document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
+      element.classList.add('active');
+      renderApplications();
+    }
+
+    // Render applications
+    function renderApplications() {
+      const container = document.getElementById('applications-container');
+      const loadingState = document.getElementById('loading-state');
+      const emptyState = document.getElementById('empty-state');
+
+      loadingState.style.display = 'none';
+
+      let filtered = applications;
+      if (currentFilter !== 'all') {
+        filtered = applications.filter(app => app.status === currentFilter + '_review' || app.status === currentFilter);
+      }
+
+      if (filtered.length === 0) {
+        container.style.display = 'none';
+        emptyState.style.display = 'block';
+        return;
+      }
+
+      container.style.display = 'block';
+      emptyState.style.display = 'none';
+
+      container.innerHTML = filtered.map(app => `
+        <div class="application-card">
+          <div class="flex justify-between items-start mb-4">
+            <div>
+              <h3 class="text-lg font-bold text-gray-900">${escapeHtml(app.full_name)}</h3>
+              <p class="text-sm text-gray-500 mt-1">${escapeHtml(app.email)}</p>
+            </div>
+            <div class="flex gap-2">
+              <span class="track-badge track-${app.track}">${app.track === 'tech' ? '💻 Tech' : '🗣️ English'}</span>
+              <span class="status-badge status-${getStatusClass(app.status)}">${formatStatus(app.status)}</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4 mb-4">
+            <div class="field-group">
+              <div class="field-label">Role</div>
+              <div class="field-value">${escapeHtml(app.current_role)}</div>
+            </div>
+            <div class="field-group">
+              <div class="field-label">Session Rate</div>
+              <div class="field-value">₹${app.session_rate}/hour</div>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <div class="field-label">Bio</div>
+            <div class="field-value">${escapeHtml(app.bio || 'Not provided')}</div>
+          </div>
+
+          ${app.track === 'tech' ? `
+            <div class="field-group">
+              <div class="field-label">Expertise</div>
+              <div>
+                ${(app.mentor_categories || []).map(cat => `<span class="category-tag">${escapeHtml(cat)}</span>`).join('')}
+              </div>
+            </div>
+
+            <div class="field-group">
+              <div class="field-label">Companies Interviewed At</div>
+              <div>
+                ${(app.companies || []).map(co => `<span class="category-tag">${escapeHtml(co)}</span>`).join('')}
+              </div>
+            </div>
+          ` : `
+            <div class="field-group">
+              <div class="field-label">Specialization</div>
+              <div>
+                ${(app.mentor_categories || []).map(cat => `<span class="category-tag">${escapeHtml(cat)}</span>`).join('')}
+              </div>
+            </div>
+
+            <div class="field-group">
+              <div class="field-label">Certifications</div>
+              <div>
+                ${(app.certifications || []).map(cert => `<span class="category-tag">${escapeHtml(cert)}</span>`).join('')}
+              </div>
+            </div>
+          `}
+
+          <div class="field-group">
+            <div class="field-label">LinkedIn</div>
+            <div class="field-value">
+              <a href="${escapeHtml(app.linkedin_url)}" target="_blank" class="text-purple-600 hover:underline">View Profile →</a>
+            </div>
+          </div>
+
+          ${app.status === 'pending_review' ? `
+            <div class="action-buttons">
+              <button onclick="approveApplication(${app.id})" class="btn btn-approve">✓ Approve</button>
+              <button onclick="openRejectionModal(${app.id})" class="btn btn-reject">✗ Reject</button>
+            </div>
+          ` : ''}
+        </div>
+      `).join('');
+    }
+
+    // Get status class
+    function getStatusClass(status) {
+      if (status === 'pending_review') return 'pending';
+      if (status === 'approved_review') return 'approved';
+      if (status === 'rejected_review') return 'rejected';
+      return status;
+    }
+
+    // Format status
+    function formatStatus(status) {
+      const map = {
+        'pending_review': 'Pending Review',
+        'approved_review': 'Approved',
+        'rejected_review': 'Rejected'
+      };
+      return map[status] || status;
+    }
+
+    // Approve application
+    async function approveApplication(applicationId) {
+      if (!confirm('Are you sure you want to approve this mentor?')) return;
+
+      try {
+        const btn = event.target;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="loading-spinner"></span>';
+
+        const response = await fetch(`${API_BASE}/api/mentor/onboarding/${applicationId}/approve`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${adminToken}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.status === 401) {
+          localStorage.removeItem('admin_token');
+          window.location.href = '/admin.html';
+          return;
+        }
+
+        if (!response.ok) throw new Error('Failed to approve application');
+
+        const result = await response.json();
+        alert('Mentor approved successfully!');
+        loadApplications();
+      } catch (error) {
+        console.error('Error approving application:', error);
+        alert('Failed to approve application: ' + error.message);
+      }
+    }
+
+    // Open rejection modal
+    function openRejectionModal(applicationId) {
+      rejectingApplicationId = applicationId;
+      document.getElementById('rejection-reason').value = '';
+      document.getElementById('rejection-modal').classList.add('active');
+    }
+
+    // Close rejection modal
+    function closeRejectionModal() {
+      document.getElementById('rejection-modal').classList.remove('active');
+      rejectingApplicationId = null;
+    }
+
+    // Confirm rejection
+    async function confirmReject() {
+      const reason = document.getElementById('rejection-reason').value.trim();
+      if (!reason) {
+        alert('Please provide a reason for rejection');
+        return;
+      }
+
+      try {
+        const btn = document.getElementById('confirm-reject-btn');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="loading-spinner"></span>';
+
+        const response = await fetch(`${API_BASE}/api/mentor/onboarding/${rejectingApplicationId}/reject`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${adminToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ reason })
+        });
+
+        if (response.status === 401) {
+          localStorage.removeItem('admin_token');
+          window.location.href = '/admin.html';
+          return;
+        }
+
+        if (!response.ok) throw new Error('Failed to reject application');
+
+        alert('Application rejected successfully');
+        closeRejectionModal();
+        loadApplications();
+      } catch (error) {
+        console.error('Error rejecting application:', error);
+        alert('Failed to reject application: ' + error.message);
+      }
+    }
+
+    // Update counts
+    function updateCounts() {
+      const counts = {
+        all: applications.length,
+        pending: applications.filter(a => a.status === 'pending_review').length,
+        approved: applications.filter(a => a.status === 'approved_review').length,
+        rejected: applications.filter(a => a.status === 'rejected_review').length
+      };
+
+      Object.entries(counts).forEach(([key, count]) => {
+        const el = document.getElementById(`count-${key}`);
+        if (el) el.textContent = count;
+      });
+    }
+
+    // Utility functions
+    function escapeHtml(text) {
+      if (!text) return '';
+      const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+      };
+      return text.replace(/[&<>"']/g, m => map[m]);
+    }
+
+    function showError(message) {
+      alert(message);
+    }
+
+    function handleLogout() {
+      localStorage.removeItem('admin_token');
+      window.location.href = '/admin.html';
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      if (checkAdminAuth()) {
+        loadApplications();
+        setInterval(loadApplications, 30000); // Refresh every 30 seconds
+      }
+    });
+
+    // Close modal when clicking outside
+    document.getElementById('rejection-modal').addEventListener('click', (e) => {
+      if (e.target.id === 'rejection-modal') {
+        closeRejectionModal();
+      }
+    });
+  </script>
+</body>
+</html>

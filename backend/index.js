@@ -1798,15 +1798,13 @@ app.post('/api/mentor/onboarding/:id/reject', verifyAdminToken, async (req, res)
 app.get('/api/mentor/applications', verifyAdminToken, async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT id, full_name, email, current_role, mentor_categories, bio, status, created_at
+      `SELECT id, full_name, email, current_role, mentor_categories, bio, status, created_at,
+              track, companies, certifications, languages, session_rate, linkedin_url
        FROM mentor_applications
        ORDER BY created_at DESC`
     );
 
-    res.json({
-      applications: result.rows,
-      total: result.rows.length
-    });
+    res.json(result.rows);
   } catch (error) {
     console.error('Error fetching applications:', error);
     res.status(500).json({ error: 'Failed to fetch applications' });
