@@ -1500,6 +1500,281 @@ app.get('/api/mentee/bookings/:id', verifyToken, async (req, res) => {
 
 // ============= MENTOR AUTH ENDPOINTS =============
 
+// Create mentor_applications table if it doesn't exist
+async function initMentorApplicationsTable() {
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS mentor_applications (
+        id SERIAL PRIMARY KEY,
+        full_name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) UNIQUE NOT NULL,
+        password_hash VARCHAR(255) NOT NULL,
+        current_role VARCHAR(255) NOT NULL,
+        linkedin_url VARCHAR(512) NOT NULL,
+        mentor_categories TEXT[] DEFAULT ARRAY[]::TEXT[],
+        bio VARCHAR(100),
+        companies TEXT[] DEFAULT ARRAY[]::TEXT[],
+        languages TEXT[] DEFAULT ARRAY[]::TEXT[],
+        session_rate INT DEFAULT 1200,
+        session_length INT DEFAULT 60,
+        profile_photo BYTEA,
+        status VARCHAR(50) DEFAULT 'pending_review',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        reviewed_at TIMESTAMP,
+        reviewed_by VARCHAR(255),
+        rejection_reason TEXT
+      )
+    `);
+    console.log('✓ Mentor applications table ready');
+  } catch (error) {
+    console.error('Error creating mentor_applications table:', error.message);
+  }
+}
+
+initMentorApplicationsTable();
+
+// POST /api/mentor/onboarding - Submit mentor onboarding application
+app.post('/api/mentor/onboarding', async (req, res) => {
+  try {
+    const {
+      fullName,
+      email,
+      password,
+      currentRole,
+      linkedinUrl,
+      mentorCategories,
+      bio,
+      companies,
+      languages,
+      sessionRate,
+      sessionLength,
+      profilePhoto
+    } = req.body;
+
+    // Validation
+    if (!fullName || !password || !currentRole || !linkedinUrl || !mentorCategories || mentorCategories.length === 0) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    if (password.length < 8) {
+      return res.status(400).json({ error: 'Password must be at least 8 characters' });
+    }
+
+    // Hash password
+    const passwordHash = await bcrypt.hash(password, 12);
+
+    try {
+      // Insert mentor application
+      const result = await pool.query(
+        `INSERT INTO mentor_applications 
+         (full_name, email, password_hash, current_role, linkedin_url, mentor_categories, 
+          bio, companies, languages, session_rate, session_length, profile_photo, status)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+         RETURNING id, email, full_name, status`,
+        [
+          fullName,
+          email,
+          passwordHash,
+          currentRole,
+          linkedinUrl,
+          mentorCategories,
+          bio,
+          companies || [],
+          languages || [],
+          sessionRate || 1200,
+          sessionLength || 60,
+          profilePhoto ? Buffer.from(profilePhoto, 'base64') : null,
+          'pending_review'
+        ]
+      );
+
+      const application = result.rows[0];
+
+      // Send notification to admin (WhatsApp/Email)
+      try {
+        await fetch(`http://localhost:${PORT}/api/notify-admin`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'mentor_application',
+            title: `New mentor application from ${fullName}`,
+            applicationId: application.id,
+            email: application.email
+          })
+        }).catch(err => console.log('Notification skipped:', err.message));
+      } catch (notifyError) {
+        console.log('Admin notification error (non-blocking):', notifyError.message);
+      }
+
+      return res.status(201).json({
+        success: true,
+        message: 'Application submitted successfully. Your profile is under review.',
+        applicationId: application.id,
+        email: application.email
+      });
+    } catch (dbError) {
+      if (dbError.code === '23505') {
+        return res.status(409).json({ error: 'Email already registered' });
+      }
+      throw dbError;
+    }
+  } catch (error) {
+    console.error('Mentor onboarding error:', error);
+    res.status(500).json({ error: 'Failed to submit application', details: error.message });
+  }
+});
+
+// POST /api/mentor/onboarding/:id/approve - Approve mentor application (admin only)
+app.post('/api/mentor/onboarding/:id/approve', verifyAdminToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Get application
+    const appResult = await pool.query(
+      'SELECT * FROM mentor_applications WHERE id = $1',
+      [id]
+    );
+
+    if (appResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Application not found' });
+    }
+
+    const app = appResult.rows[0];
+
+    // Create actual mentor account
+    const mentorResult = await pool.query(
+      `INSERT INTO mentors 
+       (email, password_hash, name, bio, tracks, avatar_url, rating, session_count, is_active)
+       VALUES ($1, $2, $3, $4, $5, $6, 5.0, 0, true)
+       RETURNING id, email, name`,
+      [
+        app.email,
+        app.password_hash,
+        app.full_name,
+        app.bio,
+        app.mentor_categories,
+        app.profile_photo ? `data:image/jpeg;base64,${Buffer.from(app.profile_photo).toString('base64')}` : null
+      ]
+    );
+
+    const mentor = mentorResult.rows[0];
+
+    // Update application status
+    await pool.query(
+      `UPDATE mentor_applications 
+       SET status = $1, reviewed_at = CURRENT_TIMESTAMP, reviewed_by = $2
+       WHERE id = $3`,
+      ['approved', req.user.email, id]
+    );
+
+    // Send approval email/WhatsApp to mentor
+    try {
+      const emailService = require('./services/email');
+      await emailService.send({
+        to: app.email,
+        subject: '🎉 Welcome to Megaverse Live as a Mentor!',
+        html: `
+          <h2>Your mentor profile is approved!</h2>
+          <p>Hi ${app.full_name},</p>
+          <p>Great news! Your application has been approved. Your mentor profile is now live on Megaverse Live.</p>
+          <p><strong>Next steps:</strong></p>
+          <ul>
+            <li>Log in to your mentor dashboard</li>
+            <li>Set your weekly availability</li>
+            <li>Connect your calendar (optional)</li>
+            <li>Start accepting bookings!</li>
+          </ul>
+          <p><a href="https://megaverselive.com/auth?type=mentor&action=login" style="background: #a855f7; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none;">Log In to Dashboard</a></p>
+          <p>Questions? Reply to this email or contact support on WhatsApp.</p>
+        `
+      });
+    } catch (emailError) {
+      console.log('Approval email error:', emailError.message);
+    }
+
+    res.json({
+      success: true,
+      message: 'Mentor application approved',
+      mentor: mentor
+    });
+  } catch (error) {
+    console.error('Mentor approval error:', error);
+    res.status(500).json({ error: 'Failed to approve application', details: error.message });
+  }
+});
+
+// POST /api/mentor/onboarding/:id/reject - Reject mentor application (admin only)
+app.post('/api/mentor/onboarding/:id/reject', verifyAdminToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { reason } = req.body;
+
+    const appResult = await pool.query(
+      'SELECT email FROM mentor_applications WHERE id = $1',
+      [id]
+    );
+
+    if (appResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Application not found' });
+    }
+
+    const app = appResult.rows[0];
+
+    // Update application status
+    await pool.query(
+      `UPDATE mentor_applications 
+       SET status = $1, reviewed_at = CURRENT_TIMESTAMP, reviewed_by = $2, rejection_reason = $3
+       WHERE id = $4`,
+      ['rejected', req.user.email, reason || 'No reason provided', id]
+    );
+
+    // Send rejection email
+    try {
+      const emailService = require('./services/email');
+      await emailService.send({
+        to: app.email,
+        subject: 'Megaverse Live Mentor Application Status',
+        html: `
+          <h2>Thank you for your application</h2>
+          <p>We appreciate your interest in becoming a mentor with Megaverse Live.</p>
+          <p>Unfortunately, we're unable to proceed with your application at this time.</p>
+          <p><strong>Reason:</strong> ${reason || 'Your profile does not meet our current requirements'}</p>
+          <p>Feel free to reapply in the future or contact us for more information.</p>
+        `
+      });
+    } catch (emailError) {
+      console.log('Rejection email error:', emailError.message);
+    }
+
+    res.json({
+      success: true,
+      message: 'Mentor application rejected'
+    });
+  } catch (error) {
+    console.error('Mentor rejection error:', error);
+    res.status(500).json({ error: 'Failed to reject application', details: error.message });
+  }
+});
+
+// GET /api/mentor/applications - List pending mentor applications (admin only)
+app.get('/api/mentor/applications', verifyAdminToken, async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT id, full_name, email, current_role, mentor_categories, bio, status, created_at
+       FROM mentor_applications
+       ORDER BY created_at DESC`
+    );
+
+    res.json({
+      applications: result.rows,
+      total: result.rows.length
+    });
+  } catch (error) {
+    console.error('Error fetching applications:', error);
+    res.status(500).json({ error: 'Failed to fetch applications' });
+  }
+});
+
 // POST /api/mentor/signup - Create new mentor account
 app.post('/api/mentor/signup', async (req, res) => {
   try {
