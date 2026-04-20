@@ -1949,6 +1949,27 @@ app.post('/api/mentor/login', async (req, res) => {
     );
     
     if (result.rows.length === 0) {
+      // Check if they have a pending application
+      const appResult = await pool.query(
+        'SELECT status FROM mentor_applications WHERE email = $1',
+        [email]
+      );
+      
+      if (appResult.rows.length > 0) {
+        const status = appResult.rows[0].status;
+        if (status === 'pending_review') {
+          return res.status(403).json({ 
+            error: 'Your profile is under review. We typically approve applications within 24 hours.',
+            pending: true 
+          });
+        } else if (status === 'rejected') {
+          return res.status(403).json({ 
+            error: 'Your application was rejected. Please contact support for more information.',
+            rejected: true 
+          });
+        }
+      }
+      
       return res.status(401).json({ error: 'Invalid email or password' });
     }
     

@@ -906,6 +906,11 @@
       
       try {
         const token = localStorage.getItem('menteeToken');
+        if (!token) {
+          document.getElementById('menteeLoading').innerHTML = '<p style="color: #718096; text-align: center;">Please log in to view your dashboard</p><button onclick="switchPage(\'menteeLogin\')" style="margin-top: 16px; padding: 8px 16px; background: #9f7aea; color: white; border: none; border-radius: 4px; cursor: pointer;">Go to Login</button>';
+          return;
+        }
+        
         const res = await fetch(`${API_URL}/api/mentee/bookings`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -921,7 +926,7 @@
         document.getElementById('menteeContent').style.display = 'block';
       } catch (error) {
         console.error('Dashboard error:', error);
-        document.getElementById('menteeLoading').textContent = 'Error loading dashboard. Please try again.';
+        document.getElementById('menteeLoading').innerHTML = '<p style="color: #e53e3e; text-align: center;">Error loading dashboard: ' + error.message + '</p><button onclick="switchPage(\'menteeLogin\')" style="margin-top: 16px; padding: 8px 16px; background: #9f7aea; color: white; border: none; border-radius: 4px; cursor: pointer;">Try Again</button>';
       }
     }
 
@@ -1254,11 +1259,23 @@
       
       try {
         const token = localStorage.getItem('mentorToken');
+        if (!token) {
+          document.getElementById('mentorLoading').innerHTML = '<p style="color: #718096; text-align: center;">Please log in to view your dashboard</p><button onclick="switchPage(\'mentorLogin\')" style="margin-top: 16px; padding: 8px 16px; background: #9f7aea; color: white; border: none; border-radius: 4px; cursor: pointer;">Go to Login</button>';
+          return;
+        }
+        
         const res = await fetch(`${API_URL}/api/mentor/stats`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         
-        if (!res.ok) throw new Error('Failed to fetch stats');
+        if (!res.ok) {
+          const errorData = await res.json();
+          if (res.status === 403 && errorData.pending) {
+            document.getElementById('mentorLoading').innerHTML = '<div style="text-align: center; padding: 20px;"><p style="font-weight: 600; margin-bottom: 8px;">🕐 Application Under Review</p><p style="color: #718096; margin-bottom: 16px;">' + errorData.error + '</p><button onclick="goHome()" style="padding: 8px 16px; background: #9f7aea; color: white; border: none; border-radius: 4px; cursor: pointer;">Back to Home</button></div>';
+            return;
+          }
+          throw new Error(errorData.error || 'Failed to fetch stats');
+        }
         
         const data = await res.json();
         document.getElementById('mentorUpcoming').textContent = data.upcoming_bookings;
@@ -1271,7 +1288,7 @@
         document.getElementById('mentorContent').style.display = 'block';
       } catch (error) {
         console.error('Dashboard error:', error);
-        document.getElementById('mentorLoading').textContent = 'Error loading dashboard. Please try again.';
+        document.getElementById('mentorLoading').innerHTML = '<p style="color: #e53e3e; text-align: center;">Error loading dashboard: ' + error.message + '</p><button onclick="switchPage(\'mentorLogin\')" style="margin-top: 16px; padding: 8px 16px; background: #9f7aea; color: white; border: none; border-radius: 4px; cursor: pointer;">Try Again</button>';
       }
     }
 
