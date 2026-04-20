@@ -1503,6 +1503,7 @@ app.get('/api/mentee/bookings/:id', verifyToken, async (req, res) => {
 // Create mentor_applications table if it doesn't exist
 async function initMentorApplicationsTable() {
   try {
+    // Create table if it doesn't exist
     await pool.query(`
       CREATE TABLE IF NOT EXISTS mentor_applications (
         id SERIAL PRIMARY KEY,
@@ -1527,6 +1528,18 @@ async function initMentorApplicationsTable() {
         rejection_reason TEXT
       )
     `);
+    
+    // Add missing columns if they don't exist
+    await pool.query(`
+      ALTER TABLE mentor_applications
+      ADD COLUMN IF NOT EXISTS track VARCHAR(50) NOT NULL DEFAULT 'tech'
+    `);
+    
+    await pool.query(`
+      ALTER TABLE mentor_applications
+      ADD COLUMN IF NOT EXISTS certifications TEXT[] DEFAULT ARRAY[]::TEXT[]
+    `);
+    
     console.log('✓ Mentor applications table ready');
   } catch (error) {
     console.error('Error creating mentor_applications table:', error.message);
