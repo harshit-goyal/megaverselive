@@ -2,13 +2,20 @@
 
 ## Problem Statement
 
-- **Budget Set:** $2/month
-- **Current Charges:** $5/month
-- **Overage:** $3/month over budget
+**ACTUAL CHARGES IDENTIFIED:**
+- Virtual Machines D2 v3: ₹462.16/month ❌ (SHOULD BE ₹0)
+- Public IP Address: ₹37.38/month ❌ (SHOULD BE ₹0)
+- Managed Disks: ₹7.89/month ❌ (SHOULD BE ₹0)
+- **Total: ₹507.43/month (~$6.10) - Budget was ₹150/month ($2)**
+
+**The Problem:**
+- VM is being charged when it SHOULD be FREE
+- This indicates Azure Free Tier benefits are NOT being applied
+- This is an account-level issue, not a deployment issue
 
 ## Root Cause Analysis
 
-Azure should be FREE for your deployment because:
+Your Azure Free Tier benefits are NOT active. Here's what should be happening:
 
 1. **VM (Standard_D2s_v3):** FREE (included in free tier, 12 months)
 2. **PostgreSQL Database:** FREE (5GB included in free tier, 12 months)
@@ -23,6 +30,30 @@ If you're being charged $5, there's likely:
 - Monitoring/logging services
 - Orphaned resources
 - Snapshots or backups
+
+---
+
+## CRITICAL: Check Free Tier Status FIRST
+
+### Is Your Free Tier Active?
+
+This is the most important step!
+
+**Go to Azure Portal:**
+1. Search: "Free tier"
+2. Look for: "My free tier benefits"
+3. Check the status of your D2 v3 VM
+4. It should say "FREE" (not "PAID")
+
+**If it says "PAID":**
+- Your free tier is NOT active
+- This explains the ₹462/month charge
+- Solution: Activate free tier or create new account
+
+**If it says "FREE":**
+- Free tier is active
+- But VM is still being charged (bug or misconfiguration)
+- Contact Azure support
 
 ---
 
