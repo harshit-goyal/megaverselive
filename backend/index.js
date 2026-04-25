@@ -1511,7 +1511,7 @@ async function initMentorApplicationsTable() {
         full_name VARCHAR(255) NOT NULL,
         email VARCHAR(255) UNIQUE NOT NULL,
         password_hash VARCHAR(255) NOT NULL,
-        current_role VARCHAR(255) NOT NULL,
+        "current_role" VARCHAR(255) NOT NULL,
         linkedin_url VARCHAR(512) NOT NULL,
         mentor_categories TEXT[] DEFAULT ARRAY[]::TEXT[],
         bio VARCHAR(100),
@@ -1603,7 +1603,7 @@ app.post('/api/mentor/onboarding', async (req, res) => {
       // Insert mentor application
       const result = await pool.query(
         `INSERT INTO mentor_applications 
-         (track, full_name, email, password_hash, current_role, linkedin_url, mentor_categories, 
+         (track, full_name, email, password_hash, "current_role", linkedin_url, mentor_categories, 
           bio, companies, certifications, languages, session_rate, session_length, profile_photo, status)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
          RETURNING id, email, full_name, status, track`,
@@ -1798,7 +1798,7 @@ app.post('/api/mentor/onboarding/:id/reject', verifyAdminToken, async (req, res)
 app.get('/api/mentor/applications', verifyAdminToken, async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT id, full_name, email, current_role, mentor_categories, bio, status, created_at,
+      `SELECT id, full_name, email, "current_role", mentor_categories, bio, status, created_at,
               track, companies, certifications, languages, session_rate, linkedin_url
        FROM mentor_applications
        ORDER BY created_at DESC`
