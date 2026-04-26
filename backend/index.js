@@ -187,6 +187,9 @@ async function initializeDatabase() {
       // Add mentor feedback columns to bookings
       await pool.query(`ALTER TABLE bookings ADD COLUMN IF NOT EXISTS mentor_rating INT`);
       await pool.query(`ALTER TABLE bookings ADD COLUMN IF NOT EXISTS mentor_feedback TEXT`);
+
+       // Add session_status to time_slots
+       await pool.query(`ALTER TABLE time_slots ADD COLUMN IF NOT EXISTS session_status VARCHAR(50) DEFAULT 'available'`);
       
       // Create blocked_slots table for mentor availability management
       await pool.query(`
