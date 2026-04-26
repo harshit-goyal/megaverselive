@@ -169,6 +169,63 @@ async function initializeDatabase() {
       // Indexes might already exist
     }
     
+    // ============= PHASE 1: MENTOR DASHBOARD SCHEMA MIGRATIONS =============
+    try {
+      // Add session_status and related columns to bookings
+      await pool.query(`ALTER TABLE bookings ADD COLUMN IF NOT EXISTS session_status VARCHAR(50) DEFAULT 'scheduled'`);
+      await pool.query(`ALTER TABLE bookings ADD COLUMN IF NOT EXISTS follow_up_sent BOOLEAN DEFAULT FALSE`);
+      await pool.query(`ALTER TABLE bookings ADD COLUMN IF NOT EXISTS mentor_notes TEXT`);
+      
+      // Add columns to mentors table for availability management
+      await pool.query(`ALTER TABLE mentors ADD COLUMN IF NOT EXISTS availability_status VARCHAR(50) DEFAULT 'available'`);
+      await pool.query(`ALTER TABLE mentors ADD COLUMN IF NOT EXISTS no_show_count INT DEFAULT 0`);
+      
+      // Add reminder tracking columns to bookings
+      await pool.query(`ALTER TABLE bookings ADD COLUMN IF NOT EXISTS reminder_24h_sent BOOLEAN DEFAULT FALSE`);
+      await pool.query(`ALTER TABLE bookings ADD COLUMN IF NOT EXISTS reminder_1h_sent BOOLEAN DEFAULT FALSE`);
+      
+      // Add mentor feedback columns to bookings
+      await pool.query(`ALTER TABLE bookings ADD COLUMN IF NOT EXISTS mentor_rating INT`);
+      await pool.query(`ALTER TABLE bookings ADD COLUMN IF NOT EXISTS mentor_feedback TEXT`);
+      
+      // Create blocked_slots table for mentor availability management
+      await pool.query(`
+        CREATE TABLE IF NOT EXISTS blocked_slots (
+          id SERIAL PRIMARY KEY,
+          mentor_id INT NOT NULL,
+          start_time TIMESTAMP NOT NULL,
+          end_time TIMESTAMP NOT NULL,
+          reason VARCHAR(255),
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          FOREIGN KEY (mentor_id) REFERENCES mentors(id) ON DELETE CASCADE
+        )
+      `);
+      
+      // Create notifications table for in-app notifications
+      await pool.query(`
+        CREATE TABLE IF NOT EXISTS notifications (
+          id SERIAL PRIMARY KEY,
+          user_id INT NOT NULL,
+          user_type VARCHAR(20) NOT NULL CHECK (user_type IN ('mentor', 'mentee')),
+          type VARCHAR(50) NOT NULL,
+          title VARCHAR(255) NOT NULL,
+          message TEXT NOT NULL,
+          is_read BOOLEAN DEFAULT FALSE,
+          related_booking_id INT,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          FOREIGN KEY (related_booking_id) REFERENCES bookings(id) ON DELETE SET NULL
+        )
+      `);
+      
+      // Create indexes for Phase 1
+      await pool.query(`CREATE INDEX IF NOT EXISTS idx_blocked_slots_mentor_time ON blocked_slots(mentor_id, start_time)`);
+      await pool.query(`CREATE INDEX IF NOT EXISTS idx_bookings_session_status ON bookings(session_status)`);
+      await pool.query(`CREATE INDEX IF NOT EXISTS idx_bookings_mentor_payment ON bookings(mentor_id, payment_status)`);
+      await pool.query(`CREATE INDEX IF NOT EXISTS idx_notifications_user ON notifications(user_id, user_type)`);
+    } catch (e) {
+      // Phase 1 columns might already exist
+    }
+    
     console.log('✓ Database schema initialized');
   } catch (error) {
     console.error('Database initialization error:', error.message);
