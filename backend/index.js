@@ -2131,11 +2131,11 @@ app.get('/api/mentor/stats', verifyMentorToken, async (req, res) => {
     const mentor = mentorResult.rows[0] || { rating: 0, session_count: 0 };
     
     res.json({
-      total_bookings: parseInt(stats.total),
-      upcoming_bookings: parseInt(stats.upcoming),
-      completed_sessions: parseInt(stats.completed),
-      average_rating: mentor.rating || 0,
-      total_sessions: mentor.session_count || 0
+      total_bookings: parseInt(stats.total) || 0,
+      upcoming_bookings: stats.upcoming ? parseInt(stats.upcoming) : 0,
+      completed_sessions: stats.completed ? parseInt(stats.completed) : 0,
+      average_rating: mentor.rating ? parseFloat(mentor.rating) : 0,
+      total_sessions: parseInt(mentor.session_count) || 0
     });
   } catch (error) {
     console.error('Error fetching mentor stats:', error);
