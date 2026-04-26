@@ -2143,6 +2143,296 @@ app.get('/api/mentor/stats', verifyMentorToken, async (req, res) => {
   }
 });
 
+// ============= PHASE 1: MENTOR DASHBOARD ENDPOINTS =============
+
+// GET /api/mentor/schedule - Get mentor's schedule for a specific month
+app.get('/api/mentor/schedule', verifyMentorToken, async (req, res) => {
+  try {
+    const { month } = req.query; // Format: YYYY-MM
+    const mentorId = req.mentor.id;
+    
+    if (!month || !month.match(/^\d{4}-\d{2}$/)) {
+      return res.status(400).json({ error: 'Invalid month format. Use YYYY-MM' });
+    }
+    
+    const [year, monthNum] = month.split('-');
+    const startDate = new Date(`${year}-${monthNum}-01`);
+    const endDate = new Date(year, monthNum, 0); // Last day of month
+    
+    const result = await pool.query(
+      `SELECT 
+        b.id,
+        b.start_time,
+        b.end_time,
+        b.customer_name,
+        b.session_topic,
+        b.session_status,
+        b.payment_status,
+        m.name as mentee_name
+       FROM bookings b
+       LEFT JOIN mentee_accounts m ON b.mentee_id = m.id
+       WHERE b.mentor_id = $1 AND b.start_time >= $2 AND b.end_time <= $3
+       ORDER BY b.start_time ASC`,
+      [mentorId, startDate, endDate]
+    );
+    
+    res.json({
+      month,
+      total_sessions: result.rows.length,
+      sessions: result.rows
+    });
+  } catch (error) {
+    console.error('Error fetching mentor schedule:', error);
+    res.status(500).json({ error: 'Failed to fetch schedule', details: error.message });
+  }
+});
+
+// GET /api/mentor/earnings - Get earnings summary
+app.get('/api/mentor/earnings', verifyMentorToken, async (req, res) => {
+  try {
+    const { period } = req.query; // 'week', 'month', 'all'
+    const mentorId = req.mentor.id;
+    
+    let dateFilter = '';
+    if (period === 'week') {
+      dateFilter = `AND b.created_at >= NOW() - INTERVAL '7 days'`;
+    } else if (period === 'month') {
+      dateFilter = `AND b.created_at >= NOW() - INTERVAL '30 days'`;
+    }
+    
+    const result = await pool.query(
+      `SELECT 
+        COUNT(DISTINCT b.id) as total_sessions,
+        SUM(CASE WHEN p.status = 'completed' THEN p.amount_cents ELSE 0 END) as total_earned,
+        SUM(CASE WHEN p.status = 'pending' THEN p.amount_cents ELSE 0 END) as pending_amount,
+        COUNT(DISTINCT CASE WHEN b.session_status = 'completed' THEN b.id END) as completed_sessions,
+        COUNT(DISTINCT CASE WHEN b.session_status = 'no_show' THEN b.id END) as no_show_count
+       FROM bookings b
+       LEFT JOIN payments p ON b.id = p.booking_id
+       WHERE b.mentor_id = $1 ${dateFilter}`,
+      [mentorId]
+    );
+    
+    const row = result.rows[0];
+    res.json({
+      period: period || 'all',
+      total_sessions: parseInt(row.total_sessions) || 0,
+      total_earned: row.total_earned ? Math.round(parseInt(row.total_earned) / 100) : 0, // Convert cents to dollars
+      pending_amount: row.pending_amount ? Math.round(parseInt(row.pending_amount) / 100) : 0,
+      completed_sessions: parseInt(row.completed_sessions) || 0,
+      no_show_count: parseInt(row.no_show_count) || 0,
+      completion_rate: row.total_sessions ? Math.round(((parseInt(row.completed_sessions) || 0) / parseInt(row.total_sessions)) * 100) : 0
+    });
+  } catch (error) {
+    console.error('Error fetching earnings:', error);
+    res.status(500).json({ error: 'Failed to fetch earnings', details: error.message });
+  }
+});
+
+// GET /api/mentor/earnings/history - Get detailed earnings history
+app.get('/api/mentor/earnings/history', verifyMentorToken, async (req, res) => {
+  try {
+    const { limit = 50 } = req.query;
+    const mentorId = req.mentor.id;
+    
+    const result = await pool.query(
+      `SELECT 
+        b.id,
+        b.start_time,
+        b.customer_name,
+        b.session_topic,
+        b.session_status,
+        p.amount_cents as amount,
+        p.status as payment_status,
+        p.created_at as payment_date
+       FROM bookings b
+       LEFT JOIN payments p ON b.id = p.booking_id
+       WHERE b.mentor_id = $1
+       ORDER BY b.created_at DESC
+       LIMIT $2`,
+      [mentorId, parseInt(limit)]
+    );
+    
+    const transactions = result.rows.map(row => ({
+      id: row.id,
+      date: row.payment_date || row.start_time,
+      mentee_name: row.customer_name,
+      topic: row.session_topic,
+      session_status: row.session_status,
+      amount: row.amount ? Math.round(row.amount / 100) : 0,
+      payment_status: row.payment_status
+    }));
+    
+    res.json({
+      total: transactions.length,
+      transactions
+    });
+  } catch (error) {
+    console.error('Error fetching earnings history:', error);
+    res.status(500).json({ error: 'Failed to fetch earnings history', details: error.message });
+  }
+});
+
+// GET /api/mentor/sessions - Get session history
+app.get('/api/mentor/sessions', verifyMentorToken, async (req, res) => {
+  try {
+    const { status } = req.query; // 'upcoming', 'completed', 'all'
+    const mentorId = req.mentor.id;
+    
+    let statusFilter = '';
+    if (status === 'upcoming') {
+      statusFilter = `AND b.start_time > NOW()`;
+    } else if (status === 'completed') {
+      statusFilter = `AND b.session_status IN ('completed', 'no_show')`;
+    }
+    
+    const result = await pool.query(
+      `SELECT 
+        b.id,
+        b.start_time,
+        b.end_time,
+        b.customer_name,
+        b.session_topic,
+        b.session_status,
+        b.mentor_notes,
+        m.name as mentee_name
+       FROM bookings b
+       LEFT JOIN mentee_accounts m ON b.mentee_id = m.id
+       WHERE b.mentor_id = $1 ${statusFilter}
+       ORDER BY b.start_time DESC`,
+      [mentorId]
+    );
+    
+    res.json({
+      status: status || 'all',
+      total_sessions: result.rows.length,
+      sessions: result.rows
+    });
+  } catch (error) {
+    console.error('Error fetching sessions:', error);
+    res.status(500).json({ error: 'Failed to fetch sessions', details: error.message });
+  }
+});
+
+// PUT /api/mentor/sessions/:sessionId - Update session status
+app.put('/api/mentor/sessions/:sessionId', verifyMentorToken, async (req, res) => {
+  try {
+    const { sessionId } = req.params;
+    const { session_status, mentor_notes } = req.body;
+    const mentorId = req.mentor.id;
+    
+    if (!['scheduled', 'completed', 'no_show', 'cancelled'].includes(session_status)) {
+      return res.status(400).json({ error: 'Invalid session status' });
+    }
+    
+    const result = await pool.query(
+      `UPDATE bookings 
+       SET session_status = $1, mentor_notes = $2
+       WHERE id = $3 AND mentor_id = $4
+       RETURNING id, session_status, mentor_notes`,
+      [session_status, mentor_notes || '', sessionId, mentorId]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Session not found' });
+    }
+    
+    res.json({ success: true, session: result.rows[0] });
+  } catch (error) {
+    console.error('Error updating session:', error);
+    res.status(500).json({ error: 'Failed to update session', details: error.message });
+  }
+});
+
+// GET /api/mentor/availability - Get available time slots for next 60 days
+app.get('/api/mentor/availability', verifyMentorToken, async (req, res) => {
+  try {
+    const mentorId = req.mentor.id;
+    const today = new Date();
+    const sixtyDaysLater = new Date(today.getTime() + 60 * 24 * 60 * 60 * 1000);
+    
+    const result = await pool.query(
+      `SELECT 
+        ts.id,
+        ts.start_time,
+        ts.end_time,
+        ts.is_booked,
+        ts.session_status
+       FROM time_slots ts
+       WHERE ts.mentor_id = $1 
+       AND ts.start_time >= $2 
+       AND ts.end_time <= $3
+       AND NOT EXISTS (
+         SELECT 1 FROM blocked_slots bs 
+         WHERE bs.mentor_id = $1 
+         AND ts.start_time >= bs.start_time 
+         AND ts.end_time <= bs.end_time
+       )
+       ORDER BY ts.start_time ASC`,
+      [mentorId, today, sixtyDaysLater]
+    );
+    
+    const available = result.rows.filter(slot => !slot.is_booked);
+    const booked = result.rows.filter(slot => slot.is_booked);
+    
+    res.json({
+      available_slots: available.length,
+      booked_slots: booked.length,
+      available: available,
+      booked: booked
+    });
+  } catch (error) {
+    console.error('Error fetching availability:', error);
+    res.status(500).json({ error: 'Failed to fetch availability', details: error.message });
+  }
+});
+
+// PUT /api/mentor/availability/:slotId - Block/unblock a time slot
+app.put('/api/mentor/availability/:slotId', verifyMentorToken, async (req, res) => {
+  try {
+    const { slotId } = req.params;
+    const { action } = req.body; // 'block' or 'unblock'
+    const mentorId = req.mentor.id;
+    
+    if (!['block', 'unblock'].includes(action)) {
+      return res.status(400).json({ error: 'Action must be block or unblock' });
+    }
+    
+    // Get the slot details first
+    const slotResult = await pool.query(
+      'SELECT start_time, end_time FROM time_slots WHERE id = $1 AND mentor_id = $2',
+      [slotId, mentorId]
+    );
+    
+    if (slotResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Slot not found' });
+    }
+    
+    const { start_time, end_time } = slotResult.rows[0];
+    
+    if (action === 'block') {
+      // Add to blocked_slots
+      await pool.query(
+        `INSERT INTO blocked_slots (mentor_id, start_time, end_time, reason)
+         VALUES ($1, $2, $3, 'Mentor blocked')
+         ON CONFLICT DO NOTHING`,
+        [mentorId, start_time, end_time]
+      );
+    } else {
+      // Remove from blocked_slots
+      await pool.query(
+        'DELETE FROM blocked_slots WHERE mentor_id = $1 AND start_time = $2 AND end_time = $3',
+        [mentorId, start_time, end_time]
+      );
+    }
+    
+    res.json({ success: true, message: `Slot ${action}ed successfully` });
+  } catch (error) {
+    console.error('Error updating availability:', error);
+    res.status(500).json({ error: 'Failed to update availability', details: error.message });
+  }
+});
+
 // GET /api/mentor/:id - Get specific mentor profile (public)
 app.get('/api/mentor/:id', async (req, res) => {
   try {
@@ -2746,296 +3036,6 @@ app.delete('/api/admin/mentee/:id', verifyAdminToken, async (req, res) => {
     res.json({ message: 'Mentee deleted', id });
   } catch (error) {
     res.status(500).json({ error: 'Failed to delete mentee', details: error.message });
-  }
-});
-
-// ============= PHASE 1: MENTOR DASHBOARD ENDPOINTS =============
-
-// GET /api/mentor/schedule - Get mentor's schedule for a specific month
-app.get('/api/mentor/schedule', verifyMentorToken, async (req, res) => {
-  try {
-    const { month } = req.query; // Format: YYYY-MM
-    const mentorId = req.mentor.id;
-    
-    if (!month || !month.match(/^\d{4}-\d{2}$/)) {
-      return res.status(400).json({ error: 'Invalid month format. Use YYYY-MM' });
-    }
-    
-    const [year, monthNum] = month.split('-');
-    const startDate = new Date(`${year}-${monthNum}-01`);
-    const endDate = new Date(year, monthNum, 0); // Last day of month
-    
-    const result = await pool.query(
-      `SELECT 
-        b.id,
-        b.start_time,
-        b.end_time,
-        b.customer_name,
-        b.session_topic,
-        b.session_status,
-        b.payment_status,
-        m.name as mentee_name
-       FROM bookings b
-       LEFT JOIN mentee_accounts m ON b.mentee_id = m.id
-       WHERE b.mentor_id = $1 AND b.start_time >= $2 AND b.end_time <= $3
-       ORDER BY b.start_time ASC`,
-      [mentorId, startDate, endDate]
-    );
-    
-    res.json({
-      month,
-      total_sessions: result.rows.length,
-      sessions: result.rows
-    });
-  } catch (error) {
-    console.error('Error fetching mentor schedule:', error);
-    res.status(500).json({ error: 'Failed to fetch schedule', details: error.message });
-  }
-});
-
-// GET /api/mentor/availability - Get available time slots for next 60 days
-app.get('/api/mentor/availability', verifyMentorToken, async (req, res) => {
-  try {
-    const mentorId = req.mentor.id;
-    const today = new Date();
-    const sixtyDaysLater = new Date(today.getTime() + 60 * 24 * 60 * 60 * 1000);
-    
-    const result = await pool.query(
-      `SELECT 
-        ts.id,
-        ts.start_time,
-        ts.end_time,
-        ts.is_booked,
-        ts.session_status
-       FROM time_slots ts
-       WHERE ts.mentor_id = $1 
-       AND ts.start_time >= $2 
-       AND ts.end_time <= $3
-       AND NOT EXISTS (
-         SELECT 1 FROM blocked_slots bs 
-         WHERE bs.mentor_id = $1 
-         AND ts.start_time >= bs.start_time 
-         AND ts.end_time <= bs.end_time
-       )
-       ORDER BY ts.start_time ASC`,
-      [mentorId, today, sixtyDaysLater]
-    );
-    
-    const available = result.rows.filter(slot => !slot.is_booked);
-    const booked = result.rows.filter(slot => slot.is_booked);
-    
-    res.json({
-      available_slots: available.length,
-      booked_slots: booked.length,
-      available: available,
-      booked: booked
-    });
-  } catch (error) {
-    console.error('Error fetching availability:', error);
-    res.status(500).json({ error: 'Failed to fetch availability', details: error.message });
-  }
-});
-
-// PUT /api/mentor/availability/:slotId - Block/unblock a time slot
-app.put('/api/mentor/availability/:slotId', verifyMentorToken, async (req, res) => {
-  try {
-    const { slotId } = req.params;
-    const { action } = req.body; // 'block' or 'unblock'
-    const mentorId = req.mentor.id;
-    
-    if (!['block', 'unblock'].includes(action)) {
-      return res.status(400).json({ error: 'Action must be block or unblock' });
-    }
-    
-    // Get the slot details first
-    const slotResult = await pool.query(
-      'SELECT start_time, end_time FROM time_slots WHERE id = $1 AND mentor_id = $2',
-      [slotId, mentorId]
-    );
-    
-    if (slotResult.rows.length === 0) {
-      return res.status(404).json({ error: 'Slot not found' });
-    }
-    
-    const { start_time, end_time } = slotResult.rows[0];
-    
-    if (action === 'block') {
-      // Add to blocked_slots
-      await pool.query(
-        `INSERT INTO blocked_slots (mentor_id, start_time, end_time, reason)
-         VALUES ($1, $2, $3, 'Mentor blocked')
-         ON CONFLICT DO NOTHING`,
-        [mentorId, start_time, end_time]
-      );
-    } else {
-      // Remove from blocked_slots
-      await pool.query(
-        'DELETE FROM blocked_slots WHERE mentor_id = $1 AND start_time = $2 AND end_time = $3',
-        [mentorId, start_time, end_time]
-      );
-    }
-    
-    res.json({ success: true, message: `Slot ${action}ed successfully` });
-  } catch (error) {
-    console.error('Error updating availability:', error);
-    res.status(500).json({ error: 'Failed to update availability', details: error.message });
-  }
-});
-
-// GET /api/mentor/earnings - Get earnings summary
-app.get('/api/mentor/earnings', verifyMentorToken, async (req, res) => {
-  try {
-    const { period } = req.query; // 'week', 'month', 'all'
-    const mentorId = req.mentor.id;
-    
-    let dateFilter = '';
-    if (period === 'week') {
-      dateFilter = `AND b.created_at >= NOW() - INTERVAL '7 days'`;
-    } else if (period === 'month') {
-      dateFilter = `AND b.created_at >= NOW() - INTERVAL '30 days'`;
-    }
-    
-    const result = await pool.query(
-      `SELECT 
-        COUNT(DISTINCT b.id) as total_sessions,
-        SUM(CASE WHEN p.status = 'completed' THEN p.amount_cents ELSE 0 END) as total_earned,
-        SUM(CASE WHEN p.status = 'pending' THEN p.amount_cents ELSE 0 END) as pending_amount,
-        COUNT(DISTINCT CASE WHEN b.session_status = 'completed' THEN b.id END) as completed_sessions,
-        COUNT(DISTINCT CASE WHEN b.session_status = 'no_show' THEN b.id END) as no_show_count
-       FROM bookings b
-       LEFT JOIN payments p ON b.id = p.booking_id
-       WHERE b.mentor_id = $1 ${dateFilter}`,
-      [mentorId]
-    );
-    
-    const row = result.rows[0];
-    res.json({
-      period: period || 'all',
-      total_sessions: parseInt(row.total_sessions) || 0,
-      total_earned: row.total_earned ? Math.round(parseInt(row.total_earned) / 100) : 0, // Convert cents to dollars
-      pending_amount: row.pending_amount ? Math.round(parseInt(row.pending_amount) / 100) : 0,
-      completed_sessions: parseInt(row.completed_sessions) || 0,
-      no_show_count: parseInt(row.no_show_count) || 0,
-      completion_rate: row.total_sessions ? Math.round(((parseInt(row.completed_sessions) || 0) / parseInt(row.total_sessions)) * 100) : 0
-    });
-  } catch (error) {
-    console.error('Error fetching earnings:', error);
-    res.status(500).json({ error: 'Failed to fetch earnings', details: error.message });
-  }
-});
-
-// GET /api/mentor/earnings/history - Get detailed earnings history
-app.get('/api/mentor/earnings/history', verifyMentorToken, async (req, res) => {
-  try {
-    const { limit = 50 } = req.query;
-    const mentorId = req.mentor.id;
-    
-    const result = await pool.query(
-      `SELECT 
-        b.id,
-        b.start_time,
-        b.customer_name,
-        b.session_topic,
-        b.session_status,
-        p.amount_cents as amount,
-        p.status as payment_status,
-        p.created_at as payment_date
-       FROM bookings b
-       LEFT JOIN payments p ON b.id = p.booking_id
-       WHERE b.mentor_id = $1
-       ORDER BY b.created_at DESC
-       LIMIT $2`,
-      [mentorId, parseInt(limit)]
-    );
-    
-    const transactions = result.rows.map(row => ({
-      id: row.id,
-      date: row.payment_date || row.start_time,
-      mentee_name: row.customer_name,
-      topic: row.session_topic,
-      session_status: row.session_status,
-      amount: row.amount ? Math.round(row.amount / 100) : 0,
-      payment_status: row.payment_status
-    }));
-    
-    res.json({
-      total: transactions.length,
-      transactions
-    });
-  } catch (error) {
-    console.error('Error fetching earnings history:', error);
-    res.status(500).json({ error: 'Failed to fetch earnings history', details: error.message });
-  }
-});
-
-// GET /api/mentor/sessions - Get session history
-app.get('/api/mentor/sessions', verifyMentorToken, async (req, res) => {
-  try {
-    const { status } = req.query; // 'upcoming', 'completed', 'all'
-    const mentorId = req.mentor.id;
-    
-    let statusFilter = '';
-    if (status === 'upcoming') {
-      statusFilter = `AND b.start_time > NOW()`;
-    } else if (status === 'completed') {
-      statusFilter = `AND b.session_status IN ('completed', 'no_show')`;
-    }
-    
-    const result = await pool.query(
-      `SELECT 
-        b.id,
-        b.start_time,
-        b.end_time,
-        b.customer_name,
-        b.session_topic,
-        b.session_status,
-        b.mentor_notes,
-        m.name as mentee_name
-       FROM bookings b
-       LEFT JOIN mentee_accounts m ON b.mentee_id = m.id
-       WHERE b.mentor_id = $1 ${statusFilter}
-       ORDER BY b.start_time DESC`,
-      [mentorId]
-    );
-    
-    res.json({
-      status: status || 'all',
-      total_sessions: result.rows.length,
-      sessions: result.rows
-    });
-  } catch (error) {
-    console.error('Error fetching sessions:', error);
-    res.status(500).json({ error: 'Failed to fetch sessions', details: error.message });
-  }
-});
-
-// PUT /api/mentor/sessions/:sessionId - Update session status
-app.put('/api/mentor/sessions/:sessionId', verifyMentorToken, async (req, res) => {
-  try {
-    const { sessionId } = req.params;
-    const { session_status, mentor_notes } = req.body;
-    const mentorId = req.mentor.id;
-    
-    if (!['scheduled', 'completed', 'no_show', 'cancelled'].includes(session_status)) {
-      return res.status(400).json({ error: 'Invalid session status' });
-    }
-    
-    const result = await pool.query(
-      `UPDATE bookings 
-       SET session_status = $1, mentor_notes = $2
-       WHERE id = $3 AND mentor_id = $4
-       RETURNING id, session_status, mentor_notes`,
-      [session_status, mentor_notes || '', sessionId, mentorId]
-    );
-    
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Session not found' });
-    }
-    
-    res.json({ success: true, session: result.rows[0] });
-  } catch (error) {
-    console.error('Error updating session:', error);
-    res.status(500).json({ error: 'Failed to update session', details: error.message });
   }
 });
 
