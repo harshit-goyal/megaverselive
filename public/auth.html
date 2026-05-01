@@ -646,58 +646,124 @@
     </div>
 
     <!-- Mentor Dashboard (Placeholder) -->
-    <div id="mentorDashboard" class="page">
-      <div class="header">
-        <div class="badge mentor">👨‍🏫 Mentor</div>
-        <div class="logo">📊</div>
-        <h1 id="mentorWelcome">Welcome Back</h1>
-        <p class="subtitle">Your mentor dashboard</p>
-      </div>
-      
-      <div id="mentorContent" style="display: none;">
-        <!-- Stats Cards -->
-        <div class="form-group" style="background: #f7fafc; padding: 16px; border-radius: 8px; margin-bottom: 20px; border: none;">
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
-            <div>
-              <div style="font-size: 12px; color: #718096; font-weight: 500;">Upcoming Sessions</div>
-              <div id="mentorUpcoming" style="font-size: 24px; font-weight: 700; color: #667eea;">0</div>
-            </div>
-            <div>
-              <div style="font-size: 12px; color: #718096; font-weight: 500;">Total Bookings</div>
-              <div id="mentorTotal" style="font-size: 24px; font-weight: 700; color: #764ba2;">0</div>
-            </div>
+    <!-- Mentor Dashboard (Full-screen modern layout) -->
+    <div id="mentorDashboard" class="page" style="background: #f7f9fc; min-height: 100vh; padding: 0; overflow: auto;">
+      <div style="display: flex; height: 100vh; max-width: 100%; margin: 0;">
+        <!-- Sidebar -->
+        <div style="width: 260px; background: #1a202c; color: white; padding: 24px 16px; overflow-y: auto; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+          <div style="margin-bottom: 32px;">
+            <div style="font-size: 24px; font-weight: 700; margin-bottom: 4px;">📊</div>
+            <div style="font-size: 14px; color: #a0aec0;">Mentor Dashboard</div>
           </div>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-            <div>
-              <div style="font-size: 12px; color: #718096; font-weight: 500;">Completed Sessions</div>
-              <div id="mentorCompleted" style="font-size: 24px; font-weight: 700; color: #48bb78;">0</div>
-            </div>
-            <div>
-              <div style="font-size: 12px; color: #718096; font-weight: 500;">Average Rating</div>
-              <div id="mentorRating" style="font-size: 24px; font-weight: 700; color: #ed8936;">⭐ 0.0</div>
-            </div>
+          
+          <nav style="display: flex; flex-direction: column; gap: 8px;">
+            <button onclick="switchMentorTab('overview')" class="mentor-nav-btn active" style="background: #667eea; color: white; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; text-align: left; font-weight: 500; transition: all 0.2s;">📈 Overview</button>
+            <button onclick="switchMentorTab('schedule')" class="mentor-nav-btn" style="background: transparent; color: #cbd5e0; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; text-align: left; font-weight: 500; transition: all 0.2s;">📅 Schedule</button>
+            <button onclick="switchMentorTab('earnings')" class="mentor-nav-btn" style="background: transparent; color: #cbd5e0; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; text-align: left; font-weight: 500; transition: all 0.2s;">💰 Earnings</button>
+            <button onclick="switchMentorTab('sessions')" class="mentor-nav-btn" style="background: transparent; color: #cbd5e0; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; text-align: left; font-weight: 500; transition: all 0.2s;">👥 Sessions</button>
+            <button onclick="switchMentorTab('availability')" class="mentor-nav-btn" style="background: transparent; color: #cbd5e0; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; text-align: left; font-weight: 500; transition: all 0.2s;">🔔 Availability</button>
+          </nav>
+          
+          <div style="border-top: 1px solid #2d3748; margin-top: 24px; padding-top: 16px;">
+            <button onclick="switchPage('mentorProfile')" style="width: 100%; background: transparent; color: #cbd5e0; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; text-align: left; font-weight: 500; transition: all 0.2s;">👤 Profile</button>
+            <button onclick="mentorLogout()" style="width: 100%; background: transparent; color: #f56565; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; text-align: left; font-weight: 500; transition: all 0.2s; margin-top: 8px;">🚪 Logout</button>
           </div>
         </div>
         
-        <!-- Actions -->
-        <button onclick="switchPage('mentorBookings')" style="background: #4a5568; margin-bottom: 12px;">View All Bookings</button>
-        <button onclick="switchPage('mentorProfile')" style="background: #718096;">Edit Profile</button>
+        <!-- Main Content -->
+        <div style="flex: 1; overflow-y: auto; padding: 32px;">
+          <!-- Header -->
+          <div style="margin-bottom: 32px;">
+            <div style="font-size: 28px; font-weight: 700; color: #1a202c; margin-bottom: 4px;" id="mentorDashTitle">Welcome Back, Mentor</div>
+            <div style="font-size: 14px; color: #718096;">Here's your performance overview</div>
+          </div>
+          
+          <!-- Overview Tab -->
+          <div id="mentorTab-overview" class="mentor-tab">
+            <!-- Stats Grid -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 32px;">
+              <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                <div style="font-size: 13px; color: #718096; font-weight: 600; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">Upcoming Sessions</div>
+                <div style="font-size: 32px; font-weight: 700; color: #667eea;" id="mentorStatsUpcoming">0</div>
+                <div style="font-size: 12px; color: #a0aec0; margin-top: 8px;">Next 7 days</div>
+              </div>
+              
+              <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                <div style="font-size: 13px; color: #718096; font-weight: 600; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">Total Earnings</div>
+                <div style="font-size: 32px; font-weight: 700; color: #48bb78;" id="mentorStatsTotalEarnings">₹0</div>
+                <div style="font-size: 12px; color: #a0aec0; margin-top: 8px;">All time</div>
+              </div>
+              
+              <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                <div style="font-size: 13px; color: #718096; font-weight: 600; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">Completed Sessions</div>
+                <div style="font-size: 32px; font-weight: 700; color: #9f7aea;" id="mentorStatsCompleted">0</div>
+                <div style="font-size: 12px; color: #a0aec0; margin-top: 8px;">Total count</div>
+              </div>
+              
+              <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                <div style="font-size: 13px; color: #718096; font-weight: 600; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">Average Rating</div>
+                <div style="font-size: 32px; font-weight: 700; color: #ed8936;" id="mentorStatsRating">⭐ 0.0</div>
+                <div style="font-size: 12px; color: #a0aec0; margin-top: 8px;">From mentees</div>
+              </div>
+            </div>
+            
+            <!-- This Month Earnings -->
+            <div style="background: white; padding: 24px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+              <div style="font-size: 16px; font-weight: 700; color: #1a202c; margin-bottom: 16px;">Earnings This Month</div>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px;">
+                <div style="background: #f0f4ff; padding: 16px; border-radius: 8px; border-left: 4px solid #667eea;">
+                  <div style="font-size: 12px; color: #4c51bf; font-weight: 600; margin-bottom: 4px;">This Month</div>
+                  <div style="font-size: 24px; font-weight: 700; color: #667eea;" id="mentorMonthEarnings">₹0</div>
+                </div>
+                <div style="background: #f0fdf4; padding: 16px; border-radius: 8px; border-left: 4px solid #48bb78;">
+                  <div style="font-size: 12px; color: #16a34a; font-weight: 600; margin-bottom: 4px;">Pending</div>
+                  <div style="font-size: 24px; font-weight: 700; color: #48bb78;" id="mentorPendingEarnings">₹0</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Schedule Tab -->
+          <div id="mentorTab-schedule" class="mentor-tab" style="display: none;">
+            <div style="background: white; padding: 24px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+              <div style="font-size: 16px; font-weight: 700; color: #1a202c; margin-bottom: 16px;">Your Schedule</div>
+              <div id="mentorScheduleContent" style="min-height: 300px;">
+                <div style="text-align: center; color: #a0aec0; padding: 40px 20px;">Loading calendar...</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Earnings Tab -->
+          <div id="mentorTab-earnings" class="mentor-tab" style="display: none;">
+            <div style="background: white; padding: 24px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+              <div style="font-size: 16px; font-weight: 700; color: #1a202c; margin-bottom: 16px;">Earnings History</div>
+              <div id="mentorEarningsContent" style="min-height: 300px;">
+                <div style="text-align: center; color: #a0aec0; padding: 40px 20px;">Loading earnings...</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Sessions Tab -->
+          <div id="mentorTab-sessions" class="mentor-tab" style="display: none;">
+            <div style="background: white; padding: 24px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+              <div style="font-size: 16px; font-weight: 700; color: #1a202c; margin-bottom: 16px;">Session History</div>
+              <div id="mentorSessionsContent" style="min-height: 300px;">
+                <div style="text-align: center; color: #a0aec0; padding: 40px 20px;">Loading sessions...</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Availability Tab -->
+          <div id="mentorTab-availability" class="mentor-tab" style="display: none;">
+            <div style="background: white; padding: 24px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+              <div style="font-size: 16px; font-weight: 700; color: #1a202c; margin-bottom: 16px;">Manage Availability</div>
+              <div id="mentorAvailabilityContent" style="min-height: 300px;">
+                <div style="text-align: center; color: #a0aec0; padding: 40px 20px;">Loading availability...</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      
-      <div id="mentorLoading" style="text-align: center; color: #718096;">Loading dashboard...</div>
-      <button onclick="mentorLogout()" style="background: #f56565; margin-top: 20px;">Logout</button>
-    </div>
-
-    <!-- Mentor Bookings -->
-    <div id="mentorBookings" class="page">
-      <div class="header">
-        <div class="logo">📅</div>
-        <h1>Your Bookings</h1>
-        <p class="subtitle">Upcoming and past sessions</p>
-      </div>
-      <div id="mentorBookingsList" style="max-height: 500px; overflow-y: auto;"></div>
-      <div id="mentorBookingsLoading" style="text-align: center; color: #718096;">Loading bookings...</div>
-      <button onclick="switchPage('mentorDashboard')" style="background: #718096; margin-top: 20px;">Back to Dashboard</button>
     </div>
 
     <!-- Mentor Profile -->
@@ -1254,15 +1320,15 @@
     }
 
     async function loadMentorDashboard() {
-      document.getElementById('mentorLoading').style.display = 'block';
-      document.getElementById('mentorContent').style.display = 'none';
-      
       try {
         const token = localStorage.getItem('mentorToken');
         if (!token) {
-          document.getElementById('mentorLoading').innerHTML = '<p style="color: #718096; text-align: center;">Please log in to view your dashboard</p><button onclick="switchPage(\'mentorLogin\')" style="margin-top: 16px; padding: 8px 16px; background: #9f7aea; color: white; border: none; border-radius: 4px; cursor: pointer;">Go to Login</button>';
+          switchPage('mentorLogin');
           return;
         }
+        
+        const user = JSON.parse(localStorage.getItem('mentorUser') || '{}');
+        document.getElementById('mentorDashTitle').textContent = `Welcome back, ${user.name || 'Mentor'}!`;
         
         const res = await fetch(`${API_URL}/api/mentor/stats`, {
           headers: { 'Authorization': `Bearer ${token}` }
@@ -1271,80 +1337,250 @@
         if (!res.ok) {
           const errorData = await res.json();
           if (res.status === 403 && errorData.pending) {
-            document.getElementById('mentorLoading').innerHTML = '<div style="text-align: center; padding: 20px;"><p style="font-weight: 600; margin-bottom: 8px;">🕐 Application Under Review</p><p style="color: #718096; margin-bottom: 16px;">' + errorData.error + '</p><button onclick="goHome()" style="padding: 8px 16px; background: #9f7aea; color: white; border: none; border-radius: 4px; cursor: pointer;">Back to Home</button></div>';
+            document.getElementById('mentorTab-overview').innerHTML = '<div style="text-align: center; padding: 40px;"><p style="font-weight: 600; font-size: 16px; margin-bottom: 8px;">🕐 Application Under Review</p><p style="color: #718096;">' + errorData.error + '</p></div>';
             return;
           }
           throw new Error(errorData.error || 'Failed to fetch stats');
         }
         
         const data = await res.json();
-        document.getElementById('mentorUpcoming').textContent = data.upcoming_bookings;
-        document.getElementById('mentorTotal').textContent = data.total_bookings;
-        document.getElementById('mentorCompleted').textContent = data.completed_sessions;
-        const rating = data.average_rating ? data.average_rating.toFixed(1) : '0.0';
-        document.getElementById('mentorRating').textContent = `⭐ ${rating}`;
+        document.getElementById('mentorStatsUpcoming').textContent = data.upcoming_bookings || 0;
+        document.getElementById('mentorStatsCompleted').textContent = data.completed_sessions || 0;
+        document.getElementById('mentorStatsTotalEarnings').textContent = `₹${parseInt(data.total_earnings || 0).toLocaleString('en-IN')}`;
+        const rating = data.average_rating ? parseFloat(data.average_rating).toFixed(1) : '0.0';
+        document.getElementById('mentorStatsRating').textContent = `⭐ ${rating}`;
         
-        document.getElementById('mentorLoading').style.display = 'none';
-        document.getElementById('mentorContent').style.display = 'block';
+        document.getElementById('mentorMonthEarnings').textContent = `₹${parseInt(data.earnings_this_month || 0).toLocaleString('en-IN')}`;
+        document.getElementById('mentorPendingEarnings').textContent = `₹${parseInt(data.pending_earnings || 0).toLocaleString('en-IN')}`;
+        
+        switchMentorTab('overview');
       } catch (error) {
         console.error('Dashboard error:', error);
-        document.getElementById('mentorLoading').innerHTML = '<p style="color: #e53e3e; text-align: center;">Error loading dashboard: ' + error.message + '</p><button onclick="switchPage(\'mentorLogin\')" style="margin-top: 16px; padding: 8px 16px; background: #9f7aea; color: white; border: none; border-radius: 4px; cursor: pointer;">Try Again</button>';
       }
     }
-
-    async function loadMentorBookings() {
-      document.getElementById('mentorBookingsLoading').style.display = 'block';
-      document.getElementById('mentorBookingsList').innerHTML = '';
+    
+    function switchMentorTab(tabName) {
+      const tabs = document.querySelectorAll('.mentor-tab');
+      tabs.forEach(tab => tab.style.display = 'none');
+      document.getElementById(`mentorTab-${tabName}`).style.display = 'block';
+      
+      const buttons = document.querySelectorAll('.mentor-nav-btn');
+      buttons.forEach(btn => {
+        btn.style.background = 'transparent';
+        btn.style.color = '#cbd5e0';
+      });
+      event.target.style.background = '#667eea';
+      event.target.style.color = 'white';
+      
+      if (tabName === 'schedule') loadMentorSchedule();
+      else if (tabName === 'earnings') loadMentorEarnings();
+      else if (tabName === 'sessions') loadMentorSessions();
+      else if (tabName === 'availability') loadMentorAvailability();
+    }
+    
+    async function loadMentorSchedule() {
+      const content = document.getElementById('mentorScheduleContent');
+      content.innerHTML = '<div style="text-align: center; color: #a0aec0; padding: 40px 20px;">Loading schedule...</div>';
       
       try {
         const token = localStorage.getItem('mentorToken');
-        const res = await fetch(`${API_URL}/api/mentor/bookings`, {
+        const now = new Date();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const year = now.getFullYear();
+        
+        const res = await fetch(`${API_URL}/api/mentor/schedule?month=${year}-${month}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         
-        if (!res.ok) throw new Error('Failed to fetch bookings');
+        if (!res.ok) throw new Error('Failed to fetch schedule');
         
         const data = await res.json();
-        const bookings = data.bookings || [];
+        const slots = data.slots || [];
         
-        if (bookings.length === 0) {
-          document.getElementById('mentorBookingsList').innerHTML = '<p style="text-align: center; color: #718096; padding: 20px;">No bookings yet.</p>';
-        } else {
-          const now = new Date();
-          const html = bookings.map(b => {
-            const startTime = new Date(b.start_time);
-            const endTime = new Date(b.end_time);
-            const isUpcoming = startTime > now;
-            const status = isUpcoming ? '🟢 Upcoming' : '✅ Completed';
-            const timeStr = startTime.toLocaleString();
-            const paymentStatus = b.payment_status === 'completed' ? '✅ Paid' : '⏳ Pending';
-            
-            return `
-              <div style="background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 12px;">
-                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px;">
-                  <div>
-                    <h3 style="margin: 0 0 8px 0; color: #2d3748;">${b.customer_name}</h3>
-                    <p style="margin: 0 0 4px 0; color: #4a5568; font-size: 14px;">📧 ${b.customer_email}</p>
-                    <p style="margin: 0 0 4px 0; color: #4a5568; font-size: 14px;">📚 ${b.session_topic}</p>
-                    <p style="margin: 0 0 4px 0; color: #718096; font-size: 13px;">📅 ${timeStr}</p>
-                    <p style="margin: 0; color: #718096; font-size: 13px;">⏰ ${startTime.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})} - ${endTime.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}</p>
-                  </div>
-                  <div style="text-align: right;">
-                    <div style="font-weight: 600; color: ${isUpcoming ? '#48bb78' : '#718096'}; margin-bottom: 8px;">${status}</div>
-                    <div style="font-size: 13px; color: #718096;">${paymentStatus}</div>
-                  </div>
-                </div>
-              </div>
-            `;
-          }).join('');
-          
-        document.getElementById('mentorBookingsList').innerHTML = html;
+        if (slots.length === 0) {
+          content.innerHTML = '<p style="text-align: center; color: #a0aec0; padding: 40px;">No scheduled sessions this month.</p>';
+          return;
         }
         
-        document.getElementById('mentorBookingsLoading').style.display = 'none';
+        const html = slots.map(slot => {
+          const startTime = new Date(slot.start_time);
+          const endTime = new Date(slot.end_time);
+          const statusColor = slot.is_booked ? '#48bb78' : '#718096';
+          const statusText = slot.is_booked ? '✅ Booked' : '⏳ Available';
+          
+          return `
+            <div style="background: #f7fafc; border-left: 4px solid ${statusColor}; padding: 16px; margin-bottom: 12px; border-radius: 4px;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <div style="font-weight: 600; color: #2d3748;">${startTime.toLocaleDateString()}</div>
+                  <div style="font-size: 14px; color: #4a5568; margin-top: 4px;">
+                    ${startTime.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})} - ${endTime.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}
+                  </div>
+                  ${slot.customer_name ? `<div style="font-size: 13px; color: #718096; margin-top: 4px;">Mentee: ${slot.customer_name}</div>` : ''}
+                </div>
+                <div style="text-align: right; color: ${statusColor}; font-weight: 600;">${statusText}</div>
+              </div>
+            </div>
+          `;
+        }).join('');
+        
+        content.innerHTML = html;
       } catch (error) {
-        console.error('Bookings error:', error);
-        document.getElementById('mentorBookingsLoading').textContent = 'Error loading bookings. Please try again.';
+        console.error('Schedule error:', error);
+        content.innerHTML = `<p style="text-align: center; color: #e53e3e; padding: 40px;">Error loading schedule: ${error.message}</p>`;
+      }
+    }
+    
+    async function loadMentorEarnings() {
+      const content = document.getElementById('mentorEarningsContent');
+      content.innerHTML = '<div style="text-align: center; color: #a0aec0; padding: 40px 20px;">Loading earnings...</div>';
+      
+      try {
+        const token = localStorage.getItem('mentorToken');
+        const res = await fetch(`${API_URL}/api/mentor/earnings/history?limit=20`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!res.ok) throw new Error('Failed to fetch earnings');
+        
+        const data = await res.json();
+        const transactions = data.history || [];
+        
+        if (transactions.length === 0) {
+          content.innerHTML = '<p style="text-align: center; color: #a0aec0; padding: 40px;">No earnings yet.</p>';
+          return;
+        }
+        
+        const html = `
+          <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+              <tr style="border-bottom: 2px solid #e2e8f0;">
+                <th style="text-align: left; padding: 12px; color: #4a5568; font-weight: 600;">Mentee</th>
+                <th style="text-align: left; padding: 12px; color: #4a5568; font-weight: 600;">Amount</th>
+                <th style="text-align: left; padding: 12px; color: #4a5568; font-weight: 600;">Date</th>
+                <th style="text-align: left; padding: 12px; color: #4a5568; font-weight: 600;">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${transactions.map(t => `
+                <tr style="border-bottom: 1px solid #e2e8f0;">
+                  <td style="padding: 12px; color: #2d3748;">${t.customer_name || 'N/A'}</td>
+                  <td style="padding: 12px; color: #48bb78; font-weight: 600;">₹${parseInt(t.amount || 0).toLocaleString('en-IN')}</td>
+                  <td style="padding: 12px; color: #4a5568; font-size: 14px;">${new Date(t.booking_date).toLocaleDateString()}</td>
+                  <td style="padding: 12px; color: #718096; font-size: 14px;">${t.payment_status === 'completed' ? '✅ Paid' : '⏳ Pending'}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+        
+        content.innerHTML = html;
+      } catch (error) {
+        console.error('Earnings error:', error);
+        content.innerHTML = `<p style="text-align: center; color: #e53e3e; padding: 40px;">Error loading earnings: ${error.message}</p>`;
+      }
+    }
+    
+    async function loadMentorSessions() {
+      const content = document.getElementById('mentorSessionsContent');
+      content.innerHTML = '<div style="text-align: center; color: #a0aec0; padding: 40px 20px;">Loading sessions...</div>';
+      
+      try {
+        const token = localStorage.getItem('mentorToken');
+        const res = await fetch(`${API_URL}/api/mentor/sessions?status=all`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!res.ok) throw new Error('Failed to fetch sessions');
+        
+        const data = await res.json();
+        const sessions = data.sessions || [];
+        
+        if (sessions.length === 0) {
+          content.innerHTML = '<p style="text-align: center; color: #a0aec0; padding: 40px;">No sessions yet.</p>';
+          return;
+        }
+        
+        const html = sessions.map(session => {
+          const startTime = new Date(session.start_time);
+          const isCompleted = new Date(session.start_time) < new Date();
+          
+          return `
+            <div style="background: #f7fafc; border-radius: 8px; padding: 16px; margin-bottom: 12px;">
+              <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 16px;">
+                <div>
+                  <div style="font-weight: 600; color: #2d3748;">${session.customer_name}</div>
+                  <div style="font-size: 14px; color: #4a5568; margin-top: 4px; margin-bottom: 4px;">📚 ${session.session_topic || 'N/A'}</div>
+                  <div style="font-size: 13px; color: #718096;">📅 ${startTime.toLocaleDateString()} ${startTime.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}</div>
+                </div>
+                <div>
+                  <div style="font-size: 13px; color: #718096; margin-bottom: 8px; text-transform: uppercase; font-weight: 600;">Session Status</div>
+                  <div style="font-size: 14px; font-weight: 600; color: ${isCompleted ? '#48bb78' : '#667eea'};">
+                    ${isCompleted ? '✅ Completed' : '🟢 Upcoming'}
+                  </div>
+                </div>
+                <div>
+                  <div style="font-size: 13px; color: #718096; margin-bottom: 8px; text-transform: uppercase; font-weight: 600;">Amount</div>
+                  <div style="font-size: 14px; font-weight: 600; color: #48bb78;">₹${parseInt(session.amount || 0).toLocaleString('en-IN')}</div>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+        
+        content.innerHTML = html;
+      } catch (error) {
+        console.error('Sessions error:', error);
+        content.innerHTML = `<p style="text-align: center; color: #e53e3e; padding: 40px;">Error loading sessions: ${error.message}</p>`;
+      }
+    }
+    
+    async function loadMentorAvailability() {
+      const content = document.getElementById('mentorAvailabilityContent');
+      content.innerHTML = '<div style="text-align: center; color: #a0aec0; padding: 40px 20px;">Loading availability...</div>';
+      
+      try {
+        const token = localStorage.getItem('mentorToken');
+        const res = await fetch(`${API_URL}/api/mentor/availability`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!res.ok) throw new Error('Failed to fetch availability');
+        
+        const data = await res.json();
+        const slots = data.slots || [];
+        const blockedSlots = data.blocked || [];
+        
+        if (slots.length === 0) {
+          content.innerHTML = '<p style="text-align: center; color: #a0aec0; padding: 40px;">No availability data.</p>';
+          return;
+        }
+        
+        const html = `
+          <div style="margin-bottom: 24px;">
+            <div style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Available Slots: ${slots.filter(s => !s.is_blocked).length}</div>
+            ${slots.map(slot => {
+              const startTime = new Date(slot.start_time);
+              const endTime = new Date(slot.end_time);
+              
+              return `
+                <div style="background: ${slot.is_blocked ? '#fef2f2' : '#f0fdf4'}; border-left: 4px solid ${slot.is_blocked ? '#f56565' : '#48bb78'}; padding: 12px; margin-bottom: 8px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center;">
+                  <div style="font-size: 14px; color: #2d3748;">
+                    ${startTime.toLocaleDateString()} ${startTime.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})} - ${endTime.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}
+                  </div>
+                  <div style="font-size: 13px; font-weight: 600; color: ${slot.is_blocked ? '#f56565' : '#48bb78'};">
+                    ${slot.is_blocked ? '🚫 BLOCKED' : '✅ AVAILABLE'}
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        `;
+        
+        content.innerHTML = html;
+      } catch (error) {
+        console.error('Availability error:', error);
+        content.innerHTML = `<p style="text-align: center; color: #e53e3e; padding: 40px;">Error loading availability: ${error.message}</p>`;
       }
     }
 
