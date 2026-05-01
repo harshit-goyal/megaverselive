@@ -1558,6 +1558,100 @@ app.get('/api/mentee/bookings/:id', verifyToken, async (req, res) => {
   }
 });
 
+// PUT /api/mentee/bookings/:id/reschedule - Request to reschedule booking
+app.put('/api/mentee/bookings/:id/reschedule', verifyToken, async (req, res) => {
+  try {
+    const { new_start_time, reason } = req.body;
+    const bookingId = req.params.id;
+    const menteeId = req.user.id;
+    const menteeEmail = req.user.email;
+    
+    if (!new_start_time) {
+      return res.status(400).json({ error: 'new_start_time is required' });
+    }
+    
+    const newStart = new Date(new_start_time);
+    const duration = 60; // Default 1 hour session
+    const newEnd = new Date(newStart.getTime() + duration * 60000);
+    
+    // Check if booking exists and belongs to mentee
+    const bookingCheck = await pool.query(
+      `SELECT id, mentor_id, start_time, end_time FROM bookings WHERE id = $1 AND (mentee_id = $2 OR customer_email = $3)`,
+      [bookingId, menteeId, menteeEmail]
+    );
+    
+    if (bookingCheck.rows.length === 0) {
+      return res.status(404).json({ error: 'Booking not found' });
+    }
+    
+    const booking = bookingCheck.rows[0];
+    
+    // Update booking with new time
+    const updateResult = await pool.query(
+      `UPDATE bookings SET start_time = $1, end_time = $2, booking_status = 'pending_reschedule', notes = $3, updated_at = NOW()
+       WHERE id = $4 RETURNING *`,
+      [newStart, newEnd, `Reschedule request: ${reason || 'No reason provided'}`, bookingId]
+    );
+    
+    res.json({ 
+      success: true, 
+      message: 'Reschedule request sent',
+      booking: updateResult.rows[0]
+    });
+  } catch (error) {
+    console.error('Reschedule error:', error);
+    res.status(500).json({ error: 'Failed to reschedule booking' });
+  }
+});
+
+// PUT /api/mentee/bookings/:id/cancel - Cancel booking
+app.put('/api/mentee/bookings/:id/cancel', verifyToken, async (req, res) => {
+  try {
+    const { reason } = req.body;
+    const bookingId = req.params.id;
+    const menteeId = req.user.id;
+    const menteeEmail = req.user.email;
+    
+    // Check if booking exists and belongs to mentee
+    const bookingCheck = await pool.query(
+      `SELECT id, start_time FROM bookings WHERE id = $1 AND (mentee_id = $2 OR customer_email = $3)`,
+      [bookingId, menteeId, menteeEmail]
+    );
+    
+    if (bookingCheck.rows.length === 0) {
+      return res.status(404).json({ error: 'Booking not found' });
+    }
+    
+    const booking = bookingCheck.rows[0];
+    const startTime = new Date(booking.start_time);
+    const now = new Date();
+    
+    // Check if session is within 24 hours
+    const hoursUntilSession = (startTime - now) / (1000 * 60 * 60);
+    if (hoursUntilSession < 24) {
+      return res.status(400).json({ 
+        error: 'Cannot cancel session within 24 hours of start time',
+        hoursRemaining: hoursUntilSession.toFixed(1)
+      });
+    }
+    
+    // Mark booking as cancelled
+    const updateResult = await pool.query(
+      `UPDATE bookings SET is_cancelled = true, cancellation_reason = $1, updated_at = NOW() WHERE id = $2 RETURNING *`,
+      [reason || 'User cancelled', bookingId]
+    );
+    
+    res.json({ 
+      success: true, 
+      message: 'Booking cancelled successfully',
+      booking: updateResult.rows[0]
+    });
+  } catch (error) {
+    console.error('Cancel error:', error);
+    res.status(500).json({ error: 'Failed to cancel booking' });
+  }
+});
+
 // ============= MENTOR AUTH ENDPOINTS =============
 
 // Create mentor_applications table if it doesn't exist

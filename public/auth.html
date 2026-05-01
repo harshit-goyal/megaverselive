@@ -620,6 +620,48 @@
       </div>
     </div>
 
+    <!-- Reschedule Modal -->
+    <div id="rescheduleModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; padding: 20px; overflow-y: auto;">
+      <div style="background: white; max-width: 500px; margin: 50px auto; border-radius: 12px; padding: 24px;">
+        <h2 style="margin: 0 0 8px 0; color: #1a202c;">Reschedule Your Session</h2>
+        <p style="margin: 0 0 16px 0; color: #718096; font-size: 14px;">Choose a new date and time for your session</p>
+        
+        <div id="rescheduleError" class="error" style="display: none; margin-bottom: 16px;"></div>
+        <div id="rescheduleSuccess" class="success" style="display: none; margin-bottom: 16px;"></div>
+        
+        <div style="background: #f7f9fc; padding: 16px; border-radius: 8px; margin-bottom: 16px; border-left: 4px solid #667eea;">
+          <div style="font-size: 13px; color: #718096; font-weight: 600; margin-bottom: 4px;">Current Session</div>
+          <div id="rescheduleCurrentInfo" style="font-size: 14px; color: #2d3748; font-weight: 500;">Loading...</div>
+        </div>
+        
+        <form id="rescheduleForm" style="margin-bottom: 16px;">
+          <div class="form-group">
+            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #2d3748;">New Date</label>
+            <input type="date" id="rescheduleDate" required style="width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; font-family: inherit; font-size: 14px;">
+          </div>
+          
+          <div class="form-group">
+            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #2d3748;">New Time</label>
+            <input type="time" id="rescheduleTime" required style="width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; font-family: inherit; font-size: 14px;">
+          </div>
+          
+          <div class="form-group">
+            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #2d3748;">Reason for Rescheduling (Optional)</label>
+            <textarea id="rescheduleReason" placeholder="Let your mentor know why you're rescheduling..." style="width: 100%; padding: 8px; border: 1px solid #e2e8f0; border-radius: 6px; font-family: inherit; resize: vertical; height: 80px;"></textarea>
+          </div>
+          
+          <div style="background: #fffbeb; border: 1px solid #fcd34d; border-radius: 6px; padding: 12px; margin-bottom: 16px;">
+            <div style="font-size: 13px; color: #92400e;">ℹ️ Your mentor will receive a notification about the reschedule request. They need to approve the new time.</div>
+          </div>
+          
+          <div style="display: flex; gap: 12px;">
+            <button type="button" onclick="submitReschedule()" style="flex: 1; background: #667eea; color: white; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; font-weight: 500;">Request Reschedule</button>
+            <button type="button" onclick="closeRescheduleModal()" style="flex: 1; background: #e2e8f0; color: #2d3748; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; font-weight: 500;">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <!-- ========== MENTOR PAGES ========== -->
     
     <!-- Mentor Login -->
@@ -1272,13 +1314,119 @@
     }
     
     function openRescheduleModal(bookingId, currentDate) {
-      alert('Reschedule feature coming soon!\n\nCurrent session: ' + currentDate + '\n\nBooking ID: ' + bookingId);
+      document.getElementById('rescheduleModal').style.display = 'block';
+      document.getElementById('rescheduleCurrentInfo').textContent = currentDate;
+      document.getElementById('rescheduleForm').dataset.bookingId = bookingId;
+      document.getElementById('rescheduleError').style.display = 'none';
+      document.getElementById('rescheduleSuccess').style.display = 'none';
+      document.getElementById('rescheduleForm').reset();
+      
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      document.getElementById('rescheduleDate').min = tomorrow.toISOString().split('T')[0];
+    }
+    
+    function closeRescheduleModal() {
+      document.getElementById('rescheduleModal').style.display = 'none';
+      document.getElementById('rescheduleForm').reset();
+    }
+    
+    async function submitReschedule() {
+      const bookingId = document.getElementById('rescheduleForm').dataset.bookingId;
+      const newDate = document.getElementById('rescheduleDate').value;
+      const newTime = document.getElementById('rescheduleTime').value;
+      const reason = document.getElementById('rescheduleReason').value;
+      
+      const errorDiv = document.getElementById('rescheduleError');
+      const successDiv = document.getElementById('rescheduleSuccess');
+      
+      if (!newDate || !newTime) {
+        errorDiv.textContent = 'Please select both date and time';
+        errorDiv.style.display = 'block';
+        return;
+      }
+      
+      try {
+        const token = localStorage.getItem('menteeToken');
+        const newStartTime = new Date(`${newDate}T${newTime}`);
+        
+        const res = await fetch(`${API_URL}/api/mentee/bookings/${bookingId}/reschedule`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            new_start_time: newStartTime.toISOString(),
+            reason: reason
+          })
+        });
+        
+        const data = await res.json();
+        
+        if (!res.ok) {
+          errorDiv.textContent = data.error || 'Failed to reschedule';
+          errorDiv.style.display = 'block';
+          return;
+        }
+        
+        successDiv.textContent = '✅ Reschedule request sent! Your mentor will confirm the new time.';
+        successDiv.style.display = 'block';
+        
+        setTimeout(() => {
+          closeRescheduleModal();
+          loadMenteeUpcoming();
+        }, 2000);
+      } catch (error) {
+        errorDiv.textContent = 'Error: ' + error.message;
+        errorDiv.style.display = 'block';
+      }
+    }
+    
+    function openCancelModal(bookingId) {
+      document.getElementById('cancelModal').style.display = 'block';
+      document.getElementById('cancelForm').dataset.bookingId = bookingId;
+      document.getElementById('cancelReason').value = '';
+    }
+    
+    function closeCancelModal() {
+      document.getElementById('cancelModal').style.display = 'none';
+      document.getElementById('cancelForm').reset();
+    }
+    
+    async function confirmCancellation() {
+      const bookingId = document.getElementById('cancelForm').dataset.bookingId;
+      const reason = document.getElementById('cancelReason').value;
+      
+      try {
+        const token = localStorage.getItem('menteeToken');
+        
+        const res = await fetch(`${API_URL}/api/mentee/bookings/${bookingId}/cancel`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ reason: reason })
+        });
+        
+        const data = await res.json();
+        
+        if (!res.ok) {
+          alert('Error: ' + (data.error || 'Failed to cancel booking'));
+          return;
+        }
+        
+        alert('✅ Booking cancelled successfully');
+        closeCancelModal();
+        loadMenteeUpcoming();
+      } catch (error) {
+        alert('Error: ' + error.message);
+      }
     }
     
     function cancelSession(bookingId) {
-      if (confirm('Are you sure you want to cancel this session?')) {
-        alert('Cancel feature coming soon!\n\nBooking ID: ' + bookingId);
-      }
+      openCancelModal(bookingId);
     }
 
     async function handleMenteeProfileUpdate(e) {
