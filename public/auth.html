@@ -19,6 +19,14 @@
       align-items: center;
       color: #333;
     }
+    /* Full-screen when dashboard is active */
+    body.dashboard-active {
+      background: #f7f9fc;
+      justify-content: flex-start;
+      align-items: flex-start;
+      padding: 0;
+      margin: 0;
+    }
     .container {
       width: 100%;
       max-width: 450px;
@@ -86,6 +94,14 @@
     
     .page { display: none; }
     .page.active { display: block; }
+    
+    /* Full-screen dashboards */
+    #mentorDashboard.active,
+    #menteeDashboard.active {
+      min-height: 100vh;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
     
     .badge {
       display: inline-block;
@@ -321,6 +337,11 @@
       .page {
         min-height: 100vh;
         padding: 80px 16px 40px;
+      }
+      /* Override padding for dashboard pages */
+      #mentorDashboard.active,
+      #menteeDashboard.active {
+        padding: 0 !important;
       }
       /* Modal responsiveness */
       #ratingModal {
@@ -961,6 +982,14 @@
     function switchPage(pageName) {
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById(pageName).classList.add('active');
+      
+      // Add dashboard-active class for full-screen dashboards
+      const isDashboard = pageName === 'menteeDashboard' || pageName === 'mentorDashboard';
+      if (isDashboard) {
+        document.body.classList.add('dashboard-active');
+      } else {
+        document.body.classList.remove('dashboard-active');
+      }
       
       // Load data for specific pages
       if (pageName === 'menteeDashboard') {
