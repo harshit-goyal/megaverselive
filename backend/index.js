@@ -3193,6 +3193,50 @@ app.delete('/api/admin/mentee/:id', verifyAdminToken, async (req, res) => {
   }
 });
 
+// POST /api/admin/cleanup/all - Delete all test mentors and mentees (requires admin token)
+app.post('/api/admin/cleanup/all', verifyAdminToken, async (req, res) => {
+  try {
+    console.log('Starting cleanup of all test mentors and mentees...');
+    
+    // Delete all mentors and their related data
+    const mentorsDeleted = await pool.query('DELETE FROM mentors RETURNING id');
+    const mentorsCount = mentorsDeleted.rows.length;
+    
+    // Delete all mentee accounts
+    const menteesDeleted = await pool.query('DELETE FROM mentee_accounts RETURNING id');
+    const menteesCount = menteesDeleted.rows.length;
+    
+    // Delete all bookings
+    const bookingsDeleted = await pool.query('DELETE FROM bookings RETURNING id');
+    const bookingsCount = bookingsDeleted.rows.length;
+    
+    // Delete all time slots
+    const slotsDeleted = await pool.query('DELETE FROM time_slots RETURNING id');
+    const slotsCount = slotsDeleted.rows.length;
+    
+    // Delete all blocked slots
+    const blockedDeleted = await pool.query('DELETE FROM blocked_slots RETURNING id');
+    const blockedCount = blockedDeleted.rows.length;
+    
+    console.log(`Cleanup complete: ${mentorsCount} mentors, ${menteesCount} mentees, ${bookingsCount} bookings, ${slotsCount} slots, ${blockedCount} blocked slots deleted`);
+    
+    res.json({ 
+      success: true,
+      message: 'All test data cleaned up',
+      deleted: {
+        mentors: mentorsCount,
+        mentees: menteesCount,
+        bookings: bookingsCount,
+        time_slots: slotsCount,
+        blocked_slots: blockedCount
+      }
+    });
+  } catch (error) {
+    console.error('Cleanup error:', error);
+    res.status(500).json({ error: 'Failed to cleanup data', details: error.message });
+  }
+});
+
 // ============= START SERVER =============
 
 // Schedule reminder check every 15 minutes (defer until after server starts)
