@@ -432,55 +432,102 @@
     </div>
 
     <!-- Mentee Dashboard -->
-    <div id="menteeDashboard" class="page">
-      <div class="header">
-        <div class="logo">📊</div>
-        <h1 id="menteeWelcome">Welcome</h1>
-        <p class="subtitle">Your booking dashboard</p>
-      </div>
-      
-      <!-- Email Verification Banner -->
-      <div id="verificationBanner" style="background: #fef3c7; border: 1px solid #fcd34d; border-radius: 8px; padding: 14px; margin-bottom: 16px; display: none;">
-        <div style="display: flex; align-items: center; gap: 12px;">
-          <div style="font-size: 20px;">⚠️</div>
-          <div style="flex: 1;">
-            <div style="font-weight: 600; color: #92400e;">Email Not Verified</div>
-            <div style="font-size: 13px; color: #b45309; margin: 4px 0;">Verify your email to unlock booking features</div>
+    <!-- Mentee Dashboard (Full-screen modern layout) -->
+    <div id="menteeDashboard" class="page" style="background: #f7f9fc; min-height: 100vh; padding: 0; overflow: auto;">
+      <div style="display: flex; height: 100vh; max-width: 100%; margin: 0;">
+        <!-- Sidebar -->
+        <div style="width: 260px; background: #1a202c; color: white; padding: 24px 16px; overflow-y: auto; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+          <div style="margin-bottom: 32px;">
+            <div style="font-size: 24px; font-weight: 700; margin-bottom: 4px;">📚</div>
+            <div style="font-size: 14px; color: #a0aec0;">Learning Hub</div>
           </div>
-          <button onclick="sendVerificationEmail()" style="background: #f59e0b; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 500;">Send Verification</button>
-        </div>
-      </div>
-      <div id="menteeContent" style="display: none;">
-        <div class="form-group" style="background: #f7fafc; padding: 16px; border-radius: 8px; margin-bottom: 20px; border: none;">
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-            <div>
-              <div style="font-size: 12px; color: #718096; font-weight: 500;">Upcoming Sessions</div>
-              <div id="upcomingCount" style="font-size: 24px; font-weight: 700; color: #667eea;">0</div>
-            </div>
-            <div>
-              <div style="font-size: 12px; color: #718096; font-weight: 500;">Total Bookings</div>
-              <div id="totalBookings" style="font-size: 24px; font-weight: 700; color: #764ba2;">0</div>
-            </div>
+          
+          <nav style="display: flex; flex-direction: column; gap: 8px;">
+            <button onclick="switchMenteeTab('upcoming')" class="mentee-nav-btn active" style="background: #667eea; color: white; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; text-align: left; font-weight: 500; transition: all 0.2s;">🔔 Upcoming</button>
+            <button onclick="switchMenteeTab('history')" class="mentee-nav-btn" style="background: transparent; color: #cbd5e0; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; text-align: left; font-weight: 500; transition: all 0.2s;">📋 Booking History</button>
+            <button onclick="switchMenteeTab('progress')" class="mentee-nav-btn" style="background: transparent; color: #cbd5e0; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; text-align: left; font-weight: 500; transition: all 0.2s;">📈 Progress</button>
+          </nav>
+          
+          <div style="border-top: 1px solid #2d3748; margin-top: 24px; padding-top: 16px;">
+            <button onclick="switchPage('menteeProfile')" style="width: 100%; background: transparent; color: #cbd5e0; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; text-align: left; font-weight: 500; transition: all 0.2s;">👤 Profile</button>
+            <button onclick="goToBooking()" style="width: 100%; background: #667eea; color: white; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; text-align: left; font-weight: 500; transition: all 0.2s; margin-top: 8px;">➕ Book New Session</button>
+            <button onclick="menteeLogout()" style="width: 100%; background: transparent; color: #f56565; border: none; padding: 12px 16px; border-radius: 8px; cursor: pointer; text-align: left; font-weight: 500; transition: all 0.2s; margin-top: 8px;">🚪 Logout</button>
           </div>
         </div>
-        <button onclick="switchPage('menteeBookings')" style="background: #4a5568; margin-bottom: 12px;">View All Bookings</button>
-        <button onclick="switchPage('menteeProfile')" style="background: #718096; margin-bottom: 12px;">Edit Profile</button>
-        <button onclick="goToBooking()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">Book a Session</button>
+        
+        <!-- Main Content -->
+        <div style="flex: 1; overflow-y: auto; padding: 32px;">
+          <!-- Header -->
+          <div style="margin-bottom: 32px;">
+            <div style="font-size: 28px; font-weight: 700; color: #1a202c; margin-bottom: 4px;" id="menteeDashTitle">Welcome to Your Learning Hub</div>
+            <div style="font-size: 14px; color: #718096;">Manage your mentoring sessions and track your progress</div>
+          </div>
+          
+          <!-- Email Verification Banner -->
+          <div id="verificationBanner" style="background: #fef3c7; border: 1px solid #fcd34d; border-radius: 8px; padding: 14px; margin-bottom: 20px; display: none;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <div style="font-size: 20px;">⚠️</div>
+              <div style="flex: 1;">
+                <div style="font-weight: 600; color: #92400e;">Email Not Verified</div>
+                <div style="font-size: 13px; color: #b45309; margin: 4px 0;">Verify your email to unlock booking features</div>
+              </div>
+              <button onclick="sendVerificationEmail()" style="background: #f59e0b; color: white; border: none; padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 500;">Send Verification</button>
+            </div>
+          </div>
+          
+          <!-- Upcoming Sessions Tab -->
+          <div id="menteeTab-upcoming" class="mentee-tab">
+            <!-- Stats Grid -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 32px;">
+              <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                <div style="font-size: 13px; color: #718096; font-weight: 600; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">Next Session</div>
+                <div style="font-size: 18px; font-weight: 700; color: #667eea;" id="menteeStatsNextSession">—</div>
+                <div style="font-size: 12px; color: #a0aec0; margin-top: 8px;">Coming up</div>
+              </div>
+              
+              <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                <div style="font-size: 13px; color: #718096; font-weight: 600; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">Total Bookings</div>
+                <div style="font-size: 32px; font-weight: 700; color: #48bb78;" id="menteeStatsTotalBookings">0</div>
+                <div style="font-size: 12px; color: #a0aec0; margin-top: 8px;">All time</div>
+              </div>
+              
+              <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                <div style="font-size: 13px; color: #718096; font-weight: 600; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">Hours Learned</div>
+                <div style="font-size: 32px; font-weight: 700; color: #9f7aea;" id="menteeStatsHours">0 hrs</div>
+                <div style="font-size: 12px; color: #a0aec0; margin-top: 8px;">Total</div>
+              </div>
+            </div>
+            
+            <!-- Upcoming Sessions List -->
+            <div style="background: white; padding: 24px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+              <div style="font-size: 16px; font-weight: 700; color: #1a202c; margin-bottom: 16px;">Your Upcoming Sessions</div>
+              <div id="menteeUpcomingList" style="min-height: 200px;">
+                <div style="text-align: center; color: #a0aec0; padding: 40px 20px;">Loading sessions...</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Booking History Tab -->
+          <div id="menteeTab-history" class="mentee-tab" style="display: none;">
+            <div style="background: white; padding: 24px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+              <div style="font-size: 16px; font-weight: 700; color: #1a202c; margin-bottom: 16px;">Booking History</div>
+              <div id="menteeHistoryContent" style="min-height: 300px;">
+                <div style="text-align: center; color: #a0aec0; padding: 40px 20px;">Loading bookings...</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Progress Tab -->
+          <div id="menteeTab-progress" class="mentee-tab" style="display: none;">
+            <div style="background: white; padding: 24px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+              <div style="font-size: 16px; font-weight: 700; color: #1a202c; margin-bottom: 16px;">Your Learning Progress</div>
+              <div id="menteeProgressContent" style="min-height: 300px;">
+                <div style="text-align: center; color: #a0aec0; padding: 40px 20px;">Loading progress...</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div id="menteeLoading" style="text-align: center; color: #718096;">Loading dashboard...</div>
-      <button onclick="menteeLogout()" style="background: #f56565; margin-top: 20px;">Logout</button>
-    </div>
-
-    <!-- Mentee Bookings -->
-    <div id="menteeBookings" class="page">
-      <div class="header">
-        <div class="logo">📅</div>
-        <h1>Your Bookings</h1>
-        <p class="subtitle">Past and upcoming sessions</p>
-      </div>
-      <div id="bookingsList" style="max-height: 500px; overflow-y: auto;"></div>
-      <div id="bookingsLoading" style="text-align: center; color: #718096;">Loading bookings...</div>
-      <button onclick="switchPage('menteeDashboard')" style="background: #718096; margin-top: 20px;">Back to Dashboard</button>
     </div>
 
     <!-- Mentee Profile -->
@@ -967,15 +1014,15 @@
     }
 
     async function loadMenteeDashboard() {
-      document.getElementById('menteeLoading').style.display = 'block';
-      document.getElementById('menteeContent').style.display = 'none';
-      
       try {
         const token = localStorage.getItem('menteeToken');
         if (!token) {
-          document.getElementById('menteeLoading').innerHTML = '<p style="color: #718096; text-align: center;">Please log in to view your dashboard</p><button onclick="switchPage(\'menteeLogin\')" style="margin-top: 16px; padding: 8px 16px; background: #9f7aea; color: white; border: none; border-radius: 4px; cursor: pointer;">Go to Login</button>';
+          switchPage('menteeLogin');
           return;
         }
+        
+        const user = JSON.parse(localStorage.getItem('menteeUser') || '{}');
+        document.getElementById('menteeDashTitle').textContent = `Welcome, ${user.name || 'Learner'}!`;
         
         const res = await fetch(`${API_URL}/api/mentee/bookings`, {
           headers: { 'Authorization': `Bearer ${token}` }
@@ -984,80 +1031,253 @@
         if (!res.ok) throw new Error('Failed to fetch bookings');
         
         const data = await res.json();
-        currentUser = JSON.parse(localStorage.getItem('menteeUser') || '{}');
-        document.getElementById('menteeWelcome').textContent = `Welcome, ${currentUser.name}!`;
-        document.getElementById('totalBookings').textContent = data.bookings?.length || 0;
-        document.getElementById('upcomingCount').textContent = data.upcoming || 0;
-        document.getElementById('menteeLoading').style.display = 'none';
-        document.getElementById('menteeContent').style.display = 'block';
+        const bookings = data.bookings || [];
+        const upcoming = bookings.filter(b => new Date(b.start_time) > new Date() && !b.is_cancelled);
+        
+        document.getElementById('menteeStatsTotalBookings').textContent = bookings.length;
+        
+        if (upcoming.length > 0) {
+          const next = upcoming[0];
+          const nextDate = new Date(next.start_time);
+          document.getElementById('menteeStatsNextSession').textContent = nextDate.toLocaleDateString();
+        }
+        
+        const totalHours = bookings.reduce((acc, b) => {
+          const start = new Date(b.start_time);
+          const end = new Date(b.end_time);
+          const hours = (end - start) / (1000 * 60 * 60);
+          return acc + hours;
+        }, 0);
+        document.getElementById('menteeStatsHours').textContent = totalHours.toFixed(1) + ' hrs';
+        
+        switchMenteeTab('upcoming');
+        checkVerificationStatus();
       } catch (error) {
         console.error('Dashboard error:', error);
-        document.getElementById('menteeLoading').innerHTML = '<p style="color: #e53e3e; text-align: center;">Error loading dashboard: ' + error.message + '</p><button onclick="switchPage(\'menteeLogin\')" style="margin-top: 16px; padding: 8px 16px; background: #9f7aea; color: white; border: none; border-radius: 4px; cursor: pointer;">Try Again</button>';
       }
     }
-
-    async function loadMenteeBookings() {
-      document.getElementById('bookingsLoading').style.display = 'block';
-      document.getElementById('bookingsList').innerHTML = '';
     
-    try {
-      const token = localStorage.getItem('menteeToken');
-      const res = await fetch(`${API_URL}/api/mentee/bookings`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+    function switchMenteeTab(tabName) {
+      const tabs = document.querySelectorAll('.mentee-tab');
+      tabs.forEach(tab => tab.style.display = 'none');
+      document.getElementById(`menteeTab-${tabName}`).style.display = 'block';
+      
+      const buttons = document.querySelectorAll('.mentee-nav-btn');
+      buttons.forEach(btn => {
+        btn.style.background = 'transparent';
+        btn.style.color = '#cbd5e0';
       });
+      event.target.style.background = '#667eea';
+      event.target.style.color = 'white';
       
-      if (!res.ok) throw new Error('Failed to fetch bookings');
+      if (tabName === 'upcoming') loadMenteeUpcoming();
+      else if (tabName === 'history') loadMenteeBookingHistory();
+      else if (tabName === 'progress') loadMenteeProgress();
+    }
+    
+    async function loadMenteeUpcoming() {
+      const content = document.getElementById('menteeUpcomingList');
+      content.innerHTML = '<div style="text-align: center; color: #a0aec0; padding: 40px 20px;">Loading sessions...</div>';
       
-      const data = await res.json();
-      const bookings = data.bookings || [];
-      
-      if (bookings.length === 0) {
-        document.getElementById('bookingsList').innerHTML = '<p style="text-align: center; color: #718096; padding: 20px;">No bookings yet. Book your first session!</p>';
-      } else {
-        const now = new Date();
-        const html = bookings.map(b => {
-          const startTime = new Date(b.start_time);
-          const endTime = new Date(b.end_time);
-          const isUpcoming = startTime > now && !b.is_cancelled;
-          const isCancelled = b.is_cancelled;
-          let status = '✅ Completed';
-          if (isCancelled) status = '❌ Cancelled';
-          else if (isUpcoming) status = '🟢 Upcoming';
-          
-          const timeStr = startTime.toLocaleString();
-          const mentorName = b.mentor_name || 'Harshit Goyal';
-          const paymentStatus = b.payment_status === 'completed' ? '✅ Paid' : '⏳ Pending';
-          
-          const rateButton = !isUpcoming && !isCancelled ? `<button onclick="openRatingModal(${b.id})" style="background: #667eea; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; margin-top: 8px;">Rate Session</button>` : '';
-          const cancelButton = isUpcoming && !isCancelled ? `<button onclick="openCancelModal(${b.id})" style="background: #f56565; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; margin-top: 4px;">Cancel</button>` : '';
+      try {
+        const token = localStorage.getItem('menteeToken');
+        const res = await fetch(`${API_URL}/api/mentee/bookings`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!res.ok) throw new Error('Failed to fetch bookings');
+        
+        const data = await res.json();
+        const bookings = data.bookings || [];
+        const upcoming = bookings.filter(b => new Date(b.start_time) > new Date() && !b.is_cancelled);
+        
+        if (upcoming.length === 0) {
+          content.innerHTML = `
+            <div style="text-align: center; padding: 40px 20px;">
+              <div style="font-size: 48px; margin-bottom: 12px;">📚</div>
+              <div style="color: #2d3748; font-weight: 600; margin-bottom: 8px;">No upcoming sessions</div>
+              <div style="color: #a0aec0; margin-bottom: 16px;">Book a session to get started with your learning journey</div>
+              <button onclick="goToBooking()" style="background: #667eea; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 600;">Book Now</button>
+            </div>
+          `;
+          return;
+        }
+        
+        const html = upcoming.map((booking, idx) => {
+          const startTime = new Date(booking.start_time);
+          const endTime = new Date(booking.end_time);
+          const daysUntil = Math.ceil((startTime - new Date()) / (1000 * 60 * 60 * 24));
+          const mentorName = booking.mentor_name || 'Your Mentor';
           
           return `
-            <div style="background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 12px; opacity: ${isCancelled ? '0.6' : '1'};">
-              <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px;">
+            <div style="background: #f7fafc; border-left: 4px solid #667eea; padding: 20px; margin-bottom: 16px; border-radius: 8px;">
+              <div style="display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: start;">
                 <div>
-                  <h3 style="margin: 0 0 8px 0; color: #2d3748; text-decoration: ${isCancelled ? 'line-through' : 'none'};">${mentorName}</h3>
-                  <p style="margin: 0 0 4px 0; color: #4a5568; font-size: 14px;">📚 ${b.session_topic}</p>
-                  <p style="margin: 0 0 4px 0; color: #718096; font-size: 13px;">📅 ${timeStr}</p>
-                  <p style="margin: 0; color: #718096; font-size: 13px;">⏰ ${startTime.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})} - ${endTime.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}</p>
-                  ${isCancelled && b.cancellation_reason ? `<p style="margin: 4px 0 0 0; color: #f56565; font-size: 12px;">Reason: ${b.cancellation_reason}</p>` : ''}
+                  <div style="font-weight: 700; color: #2d3748; font-size: 16px; margin-bottom: 8px;">${mentorName}</div>
+                  <div style="display: grid; gap: 6px; margin-bottom: 12px;">
+                    <div style="font-size: 14px; color: #4a5568;">📚 ${booking.session_topic}</div>
+                    <div style="font-size: 14px; color: #4a5568;">📅 ${startTime.toLocaleDateString()}</div>
+                    <div style="font-size: 14px; color: #4a5568;">⏰ ${startTime.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})} - ${endTime.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}</div>
+                  </div>
+                  <div style="display: inline-block; background: #e6f2ff; color: #2b6cb0; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600;">
+                    ${daysUntil === 0 ? '🔥 TODAY' : daysUntil === 1 ? '⏰ TOMORROW' : daysUntil + ' days away'}
+                  </div>
                 </div>
                 <div style="text-align: right;">
-                  <div style="font-weight: 600; color: ${isUpcoming ? '#48bb78' : (isCancelled ? '#f56565' : '#718096')}; margin-bottom: 8px;">${status}</div>
-                  <div style="font-size: 13px; color: #718096; margin-bottom: 8px;">${paymentStatus}</div>
-                  ${rateButton}${cancelButton}
+                  <div style="font-weight: 600; color: #667eea; margin-bottom: 8px;">Session ${idx + 1}</div>
+                  <button onclick="openRescheduleModal(${booking.id}, '${startTime.toLocaleString()}')" style="background: #667eea; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 500; margin-bottom: 8px; display: block;">Reschedule</button>
+                  <button onclick="cancelSession(${booking.id})" style="background: transparent; color: #f56565; border: 1px solid #f56565; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 500;">Cancel</button>
                 </div>
               </div>
             </div>
           `;
         }).join('');
         
-        document.getElementById('bookingsList').innerHTML = html;
+        content.innerHTML = html;
+      } catch (error) {
+        console.error('Upcoming sessions error:', error);
+        content.innerHTML = `<p style="text-align: center; color: #e53e3e; padding: 40px;">Error loading upcoming sessions: ${error.message}</p>`;
       }
+    }
+    
+    async function loadMenteeBookingHistory() {
+      const content = document.getElementById('menteeHistoryContent');
+      content.innerHTML = '<div style="text-align: center; color: #a0aec0; padding: 40px 20px;">Loading history...</div>';
       
-      document.getElementById('bookingsLoading').style.display = 'none';
-    } catch (error) {
-        console.error('Bookings error:', error);
-        document.getElementById('bookingsLoading').textContent = 'Error loading bookings. Please try again.';
+      try {
+        const token = localStorage.getItem('menteeToken');
+        const res = await fetch(`${API_URL}/api/mentee/bookings`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!res.ok) throw new Error('Failed to fetch bookings');
+        
+        const data = await res.json();
+        const bookings = data.bookings || [];
+        const past = bookings.filter(b => new Date(b.start_time) <= new Date() || b.is_cancelled);
+        
+        if (past.length === 0) {
+          content.innerHTML = '<p style="text-align: center; color: #a0aec0; padding: 40px;">No past bookings yet.</p>';
+          return;
+        }
+        
+        const html = `
+          <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse;">
+              <thead>
+                <tr style="border-bottom: 2px solid #e2e8f0;">
+                  <th style="text-align: left; padding: 12px; color: #4a5568; font-weight: 600;">Mentor</th>
+                  <th style="text-align: left; padding: 12px; color: #4a5568; font-weight: 600;">Topic</th>
+                  <th style="text-align: left; padding: 12px; color: #4a5568; font-weight: 600;">Date & Time</th>
+                  <th style="text-align: left; padding: 12px; color: #4a5568; font-weight: 600;">Status</th>
+                  <th style="text-align: left; padding: 12px; color: #4a5568; font-weight: 600;">Duration</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${past.map(b => {
+                  const startTime = new Date(b.start_time);
+                  const endTime = new Date(b.end_time);
+                  const duration = ((endTime - startTime) / (1000 * 60)).toFixed(0);
+                  const mentorName = b.mentor_name || 'Your Mentor';
+                  let statusBadge = '✅ Completed';
+                  let statusColor = '#48bb78';
+                  if (b.is_cancelled) {
+                    statusBadge = '❌ Cancelled';
+                    statusColor = '#f56565';
+                  }
+                  
+                  return `
+                    <tr style="border-bottom: 1px solid #e2e8f0;">
+                      <td style="padding: 12px; color: #2d3748; font-weight: 500;">${mentorName}</td>
+                      <td style="padding: 12px; color: #4a5568;">${b.session_topic}</td>
+                      <td style="padding: 12px; color: #4a5568; font-size: 14px;">${startTime.toLocaleDateString()} ${startTime.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}</td>
+                      <td style="padding: 12px;"><span style="color: ${statusColor}; font-weight: 600;">${statusBadge}</span></td>
+                      <td style="padding: 12px; color: #4a5568;">${duration} mins</td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+        
+        content.innerHTML = html;
+      } catch (error) {
+        console.error('History error:', error);
+        content.innerHTML = `<p style="text-align: center; color: #e53e3e; padding: 40px;">Error loading booking history: ${error.message}</p>`;
+      }
+    }
+    
+    async function loadMenteeProgress() {
+      const content = document.getElementById('menteeProgressContent');
+      content.innerHTML = '<div style="text-align: center; color: #a0aec0; padding: 40px 20px;">Loading progress...</div>';
+      
+      try {
+        const token = localStorage.getItem('menteeToken');
+        const res = await fetch(`${API_URL}/api/mentee/bookings`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!res.ok) throw new Error('Failed to fetch bookings');
+        
+        const data = await res.json();
+        const bookings = data.bookings || [];
+        const completed = bookings.filter(b => new Date(b.start_time) <= new Date() && !b.is_cancelled);
+        
+        let totalHours = 0;
+        const topics = {};
+        
+        completed.forEach(b => {
+          const start = new Date(b.start_time);
+          const end = new Date(b.end_time);
+          const hours = (end - start) / (1000 * 60 * 60);
+          totalHours += hours;
+          
+          const topic = b.session_topic || 'General';
+          topics[topic] = (topics[topic] || 0) + 1;
+        });
+        
+        const topicsList = Object.entries(topics)
+          .sort(([, a], [, b]) => b - a)
+          .map(([topic, count]) => `<li style="padding: 8px 0; color: #2d3748;">${topic}: <strong>${count}</strong> session${count > 1 ? 's' : ''}</li>`)
+          .join('');
+        
+        const html = `
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;">
+            <div style="background: #f0f4ff; padding: 20px; border-radius: 8px; border-left: 4px solid #667eea;">
+              <div style="font-size: 13px; color: #4c51bf; font-weight: 600; margin-bottom: 8px;">Sessions Completed</div>
+              <div style="font-size: 32px; font-weight: 700; color: #667eea;">${completed.length}</div>
+            </div>
+            <div style="background: #f0fdf4; padding: 20px; border-radius: 8px; border-left: 4px solid #48bb78;">
+              <div style="font-size: 13px; color: #16a34a; font-weight: 600; margin-bottom: 8px;">Total Hours Learned</div>
+              <div style="font-size: 32px; font-weight: 700; color: #48bb78;">${totalHours.toFixed(1)}</div>
+            </div>
+            <div style="background: #f5f3ff; padding: 20px; border-radius: 8px; border-left: 4px solid #9f7aea;">
+              <div style="font-size: 13px; color: #6d28d9; font-weight: 600; margin-bottom: 8px;">Topics Explored</div>
+              <div style="font-size: 32px; font-weight: 700; color: #9f7aea;">${Object.keys(topics).length}</div>
+            </div>
+          </div>
+          
+          <div style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0;">
+            <div style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Topics You've Learned</div>
+            ${topicsList ? `<ul style="list-style: none; padding: 0;">${topicsList}</ul>` : '<p style="color: #a0aec0;">No topics learned yet</p>'}
+          </div>
+        `;
+        
+        content.innerHTML = html;
+      } catch (error) {
+        console.error('Progress error:', error);
+        content.innerHTML = `<p style="text-align: center; color: #e53e3e; padding: 40px;">Error loading progress: ${error.message}</p>`;
+      }
+    }
+    
+    function openRescheduleModal(bookingId, currentDate) {
+      alert('Reschedule feature coming soon!\n\nCurrent session: ' + currentDate + '\n\nBooking ID: ' + bookingId);
+    }
+    
+    function cancelSession(bookingId) {
+      if (confirm('Are you sure you want to cancel this session?')) {
+        alert('Cancel feature coming soon!\n\nBooking ID: ' + bookingId);
       }
     }
 
