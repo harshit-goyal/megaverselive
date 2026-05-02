@@ -21,11 +21,13 @@
     }
     /* Full-screen when dashboard is active */
     body.dashboard-active {
-      background: #f7f9fc;
-      justify-content: flex-start;
-      align-items: flex-start;
-      padding: 0;
-      margin: 0;
+      background: #f7f9fc !important;
+      justify-content: flex-start !important;
+      align-items: flex-start !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      overflow: hidden;
+      height: 100vh;
     }
     .container {
       width: 100%;
@@ -95,10 +97,13 @@
     .page { display: none; }
     .page.active { display: block; }
     
-    /* Full-screen dashboards */
+    /* Dashboard pages - full screen */
     #mentorDashboard.active,
     #menteeDashboard.active {
-      min-height: 100vh;
+      display: flex !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      max-width: 100% !important;
       padding: 0 !important;
       margin: 0 !important;
     }
@@ -342,6 +347,8 @@
       #mentorDashboard.active,
       #menteeDashboard.active {
         padding: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
       }
       /* Modal responsiveness */
       #ratingModal {
