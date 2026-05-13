@@ -1,0 +1,53 @@
+services:
+  - type: web
+    name: megaverse-api
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node backend/index.js
+    envVars:
+      - key: DB_HOST
+        fromDatabase:
+          name: megaverse-db
+          property: host
+      - key: DB_USER
+        fromDatabase:
+          name: megaverse-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: megaverse-db
+          property: password
+      - key: DB_NAME
+        value: bookings
+      - key: DB_PORT
+        value: 5432
+      - key: RAZORPAY_KEY_ID
+        sync: false
+      - key: RAZORPAY_KEY_SECRET
+        sync: false
+      - key: PAYPAL_CLIENT_ID
+        sync: false
+      - key: PAYPAL_CLIENT_SECRET
+        sync: false
+      - key: PAYPAL_API_URL
+        value: https://api.sandbox.paypal.com
+      - key: FRONTEND_URL
+        value: https://megaverselive.netlify.app
+      - key: ADMIN_JWT_SECRET
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: NODE_ENV
+        value: production
+
+  - type: postgresql
+    name: megaverse-db
+    plan: free
+    database: bookings
+    user: megaverse_user
+
+databases:
+  - name: megaverse-db
+    databaseName: bookings
+    user: megaverse_user
