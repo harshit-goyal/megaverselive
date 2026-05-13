@@ -8,6 +8,12 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+  <script>
+    // Set API URL for Netlify deployment
+    window.__ENV_API_URL = window.location.hostname === 'localhost' 
+      ? window.location.origin 
+      : 'https://megaverse-api.onrender.com';
+  </script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -936,7 +942,12 @@
   </div>
 
   <script>
-    const API_URL = window.location.origin;
+    // Use backend API URL from environment (Netlify injects this)
+    // Falls back to same origin for local development
+    const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+      ? window.location.origin
+      : (window.__ENV_API_URL || 'https://megaverse-api.onrender.com');
+    
     let currentUser = null;
     let currentRole = null;
 
