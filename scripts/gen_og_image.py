@@ -2,8 +2,8 @@
 from PIL import Image, ImageDraw, ImageFont
 
 W, H = 1200, 630
-top = (59, 7, 100)     # brand-900
-bot = (109, 40, 217)   # brand-600
+top = (44, 21, 15)     # espresso / brand-900
+bot = (168, 73, 47)    # terracotta / brand-600
 
 img = Image.new("RGB", (W, H), top)
 px = img.load()
@@ -33,15 +33,15 @@ def font(sz, bold=True):
     return ImageFont.load_default()
 
 
-d.text((80, 70), "Megaverse Live", font=font(54), fill=(233, 213, 255))
+d.text((80, 70), "Megaverse Live", font=font(54), fill=(246, 218, 206))
 d.text((80, 200), "Book 1:1 Sessions", font=font(92), fill=(255, 255, 255))
 d.text((80, 300), "with Real Mentors", font=font(92), fill=(255, 255, 255))
 d.text((80, 430), "Backend Interview Prep  |  English Coaching",
-       font=font(38, bold=False), fill=(216, 180, 254))
-d.rounded_rectangle([80, 510, 470, 575], radius=32, fill=(16, 185, 129))
+       font=font(38, bold=False), fill=(235, 181, 159))
+d.rounded_rectangle([80, 510, 470, 575], radius=32, fill=(62, 129, 89))
 d.text((110, 524), "Live - Real feedback", font=font(32), fill=(255, 255, 255))
 d.text((820, 545), "megaverselive.com", font=font(30, bold=False),
-       fill=(233, 213, 255))
+       fill=(246, 218, 206))
 
 img.save("public/assets/og-image.png", "PNG")
 print("saved public/assets/og-image.png", img.size)
