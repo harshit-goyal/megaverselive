@@ -10,19 +10,19 @@ module.exports = {
       },
       colors: {
         brand: {
-          50: '#faf5ff', 100: '#f3e8ff', 200: '#e9d5ff', 300: '#d8b4fe', 400: '#c084fc',
-          500: '#a855f7', 600: '#9333ea', 700: '#7e22ce', 800: '#6b21a8', 900: '#581c87',
+          50: '#f5f3ff', 100: '#ede9fe', 200: '#ddd6fe', 300: '#c4b5fd', 400: '#a78bfa',
+          500: '#7c3aed', 600: '#6d28d9', 700: '#5b21b6', 800: '#4c1d95', 900: '#3b0764',
         },
         accent: {
           50: '#ecfdf5', 100: '#d1fae5', 200: '#a7f3d0', 300: '#6ee7b7', 400: '#34d399', 500: '#10b981',
         },
-        neon: { blue: '#3b82f6', cyan: '#06b6d4', pink: '#ec4899', orange: '#f97316' },
+        neon: { blue: '#6366f1', cyan: '#8b5cf6', pink: '#a855f7', orange: '#f59e0b' },
       },
       boxShadow: {
         soft: '0 10px 40px rgba(0,0,0,0.08)',
-        glow: '0 0 50px rgba(168,85,247,0.25)',
-        'glow-lg': '0 0 80px rgba(168,85,247,0.3)',
-        neon: '0 0 20px rgba(168,85,247,0.4), 0 0 60px rgba(168,85,247,0.1)',
+        glow: '0 0 50px rgba(124,58,237,0.25)',
+        'glow-lg': '0 0 80px rgba(124,58,237,0.3)',
+        neon: '0 0 20px rgba(124,58,237,0.4), 0 0 60px rgba(124,58,237,0.1)',
         card: '0 4px 30px rgba(0,0,0,0.05)',
       },
       animation: {

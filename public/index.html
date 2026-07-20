@@ -94,12 +94,12 @@
 
       /* Animated gradient text */
       .gradient-text {
-        background: linear-gradient(135deg, #a855f7, #ec4899, #f97316, #a855f7);
+        background: linear-gradient(120deg, #7c3aed, #a855f7);
         background-size: 300% 300%;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
-        animation: gradientShift 6s ease infinite;
+        animation: none;
       }
 
       /* Glass card */
@@ -112,8 +112,8 @@
       }
       .glass-card:hover {
         transform: translateY(-6px);
-        box-shadow: 0 20px 60px rgba(168,85,247,0.15);
-        border-color: rgba(168,85,247,0.3);
+        box-shadow: 0 20px 60px rgba(124,58,237,0.15);
+        border-color: rgba(124,58,237,0.3);
       }
 
       /* Gradient border card */
@@ -129,7 +129,7 @@
         inset: 0;
         padding: 2px;
         border-radius: 1.5rem;
-        background: linear-gradient(135deg, #a855f7, #ec4899, #06b6d4, #a855f7);
+        background: linear-gradient(135deg, #7c3aed, #a855f7, #8b5cf6, #7c3aed);
         background-size: 300% 300%;
         -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
         mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -157,7 +157,7 @@
         left: -50%;
         width: 200%;
         height: 200%;
-        background: radial-gradient(ellipse at 30% 50%, rgba(168,85,247,0.15) 0%, transparent 50%),
+        background: radial-gradient(ellipse at 30% 50%, rgba(124,58,237,0.15) 0%, transparent 50%),
                     radial-gradient(ellipse at 70% 30%, rgba(236,72,153,0.1) 0%, transparent 50%),
                     radial-gradient(ellipse at 50% 80%, rgba(6,182,212,0.08) 0%, transparent 50%);
         animation: gradientShift 15s ease infinite;
@@ -176,7 +176,7 @@
       /* Mesh gradient background for sections */
       .mesh-bg {
         background: 
-          radial-gradient(at 20% 80%, rgba(168,85,247,0.06) 0%, transparent 50%),
+          radial-gradient(at 20% 80%, rgba(124,58,237,0.06) 0%, transparent 50%),
           radial-gradient(at 80% 20%, rgba(236,72,153,0.04) 0%, transparent 50%),
           radial-gradient(at 50% 50%, rgba(6,182,212,0.03) 0%, transparent 50%);
       }
@@ -188,12 +188,12 @@
       }
       .card-interactive:hover {
         transform: translateY(-8px) scale(1.02);
-        box-shadow: 0 25px 60px rgba(168,85,247,0.12);
+        box-shadow: 0 25px 60px rgba(124,58,237,0.12);
       }
 
       /* Gradient button */
       .btn-gradient {
-        background: linear-gradient(135deg, #a855f7 0%, #ec4899 50%, #f97316 100%);
+        background: linear-gradient(135deg, #6d28d9 0%, #7c3aed 50%, #a855f7 100%);
         background-size: 200% 200%;
         transition: all 0.4s ease;
         position: relative;
@@ -201,7 +201,7 @@
       }
       .btn-gradient:hover {
         background-position: 100% 100%;
-        box-shadow: 0 10px 40px rgba(168,85,247,0.3);
+        box-shadow: 0 10px 40px rgba(124,58,237,0.3);
         transform: translateY(-2px);
       }
       .btn-gradient::after {
@@ -236,7 +236,7 @@
         100% { background-position: 200% 0; }
       }
       .shimmer {
-        background: linear-gradient(90deg, transparent, rgba(168,85,247,0.08), transparent);
+        background: linear-gradient(90deg, transparent, rgba(124,58,237,0.08), transparent);
         background-size: 200% 100%;
         animation: shimmer 3s infinite;
       }
@@ -250,7 +250,7 @@
         position: absolute;
         inset: -2px;
         border-radius: 1.75rem;
-        background: linear-gradient(135deg, #a855f7, #ec4899, #06b6d4, #a855f7);
+        background: linear-gradient(135deg, #7c3aed, #a855f7, #8b5cf6, #7c3aed);
         background-size: 300% 300%;
         animation: gradientShift 4s ease infinite;
         z-index: -1;
@@ -267,7 +267,7 @@
         right: -2rem;
         width: 2rem;
         height: 2px;
-        background: linear-gradient(90deg, #a855f7, #ec4899);
+        background: linear-gradient(90deg, #7c3aed, #a855f7);
         display: none;
       }
       @media (min-width: 768px) {
@@ -302,7 +302,7 @@
         position: absolute;
         inset: -3px;
         border-radius: inherit;
-        background: linear-gradient(135deg, #a855f7, #ec4899);
+        background: linear-gradient(135deg, #7c3aed, #a855f7);
         opacity: 0;
         z-index: -1;
         filter: blur(12px);
@@ -324,7 +324,7 @@
       /* Custom scrollbar */
       ::-webkit-scrollbar { width: 8px; }
       ::-webkit-scrollbar-track { background: #f8fafc; }
-      ::-webkit-scrollbar-thumb { background: linear-gradient(#a855f7, #ec4899); border-radius: 10px; }
+      ::-webkit-scrollbar-thumb { background: linear-gradient(#7c3aed, #a855f7); border-radius: 10px; }
     </style>
 
     <!-- Analytics (Google Analytics 4) -->
@@ -466,7 +466,7 @@
               </a>
             </div>
 
-            <p class="mt-5 text-xs text-slate-400/70">
+            <p class="mt-5 text-xs text-slate-300">
               After booking, you'll receive a payment link to confirm your slot.
             </p>
 
@@ -817,7 +817,7 @@
           <!-- ELITE — Single Session -->
           <div class="flex flex-col rounded-3xl bg-white border border-slate-200 p-8 shadow-card card-interactive relative overflow-hidden gradient-border">
             <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-slate-400 via-brand-400 to-brand-500"></div>
-            <div class="inline-flex w-fit items-center gap-2 rounded-full bg-slate-100 border border-slate-200 px-3 py-1.5 text-xs font-bold text-slate-700">⚡ Elite Session</div>
+            <div class="inline-flex w-fit items-center gap-2 rounded-full bg-slate-100 border border-slate-200 px-3 py-1.5 text-xs font-bold text-slate-700">Elite Session</div>
             <p class="mt-4 text-sm text-slate-500">A single, high-impact 1:1 session — perfect to unblock a specific problem, decision, or interview.</p>
             <div class="mt-5">
               <span class="text-2xl font-black bg-gradient-to-r from-slate-600 to-brand-500 bg-clip-text text-transparent">Pricing on Enquiry</span>
@@ -841,7 +841,7 @@
           <div class="flex flex-col rounded-3xl bg-white border border-slate-200 p-8 shadow-card card-interactive relative overflow-hidden gradient-border">
             <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-brand-400 via-neon-pink to-neon-cyan"></div>
             <div class="absolute top-4 right-4"><span class="rounded-full bg-blue-100 px-3 py-1 text-[10px] font-black text-blue-700 uppercase tracking-widest">Most Popular</span></div>
-            <div class="inline-flex w-fit items-center gap-2 rounded-full bg-blue-50 border border-blue-200 px-3 py-1.5 text-xs font-bold text-blue-700">🚀 Plus</div>
+            <div class="inline-flex w-fit items-center gap-2 rounded-full bg-blue-50 border border-blue-200 px-3 py-1.5 text-xs font-bold text-blue-700">Plus</div>
             <p class="mt-4 text-sm text-slate-500">A 6-month guided journey to build real momentum with consistent, structured mentorship.</p>
             <div class="mt-5">
               <span class="text-2xl font-black bg-gradient-to-r from-brand-500 to-neon-pink bg-clip-text text-transparent">Pricing on Enquiry</span>
@@ -866,7 +866,7 @@
           <div class="pricing-popular flex flex-col rounded-3xl bg-white p-8 shadow-glow card-interactive relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-amber-400 via-neon-orange to-neon-pink"></div>
             <div class="absolute top-4 right-4"><span class="rounded-full bg-gradient-to-r from-amber-500 to-neon-orange px-3 py-1 text-[10px] font-black text-white uppercase tracking-widest shadow-lg">Best Value</span></div>
-            <div class="inline-flex w-fit items-center gap-2 rounded-full bg-amber-50 border border-amber-200 px-3 py-1.5 text-xs font-bold text-amber-700">👑 Premium</div>
+            <div class="inline-flex w-fit items-center gap-2 rounded-full bg-amber-50 border border-amber-200 px-3 py-1.5 text-xs font-bold text-amber-700">Premium</div>
             <p class="mt-4 text-sm text-slate-500">Our flagship 6-month career partnership — everything in Plus, plus end-to-end interview &amp; placement support.</p>
             <div class="mt-5">
               <span class="text-2xl font-black bg-gradient-to-r from-amber-500 to-neon-orange bg-clip-text text-transparent">Pricing on Enquiry</span>
@@ -889,7 +889,7 @@
 
         </div>
 
-        <p class="mt-8 text-center text-sm text-slate-400">
+        <p class="mt-8 text-center text-sm text-slate-500">
           All programs are paid upfront as a one-time payment and run over 6 months. Seats are limited to keep mentorship personal. Share your goals on WhatsApp and we'll recommend the right fit with pricing.
         </p>
       </div>
@@ -918,17 +918,17 @@
           <!-- Copy -->
           <div class="md:col-span-3">
             <div class="inline-flex items-center gap-2 rounded-full bg-brand-50 border border-brand-200 px-4 py-1.5 text-xs font-bold text-brand-600 uppercase tracking-widest mb-4">Meet your mentor</div>
-            <h2 class="text-3xl font-black tracking-tight md:text-4xl">Hi, I'm Harshit 👋</h2>
+            <h2 class="text-3xl font-black tracking-tight md:text-4xl">Hi, I'm Harshit</h2>
             <p class="mt-2 text-sm font-bold text-brand-600">Founder &amp; Lead Mentor · Megaverse Live</p>
             <p class="mt-5 text-slate-600 leading-relaxed">
               I'm a backend engineer who has spent years on both sides of the interview table. I started Megaverse Live to give learners the honest, 1:1 guidance I wish I'd had — no recordings, no fluff, just real feedback and a clear plan you can act on the same day.
             </p>
 
             <div class="mt-6 flex flex-wrap gap-2.5">
-              <span class="rounded-full bg-blue-50 border border-blue-200 px-3 py-1.5 text-xs font-bold text-blue-700">⚙️ Backend &amp; System Design</span>
-              <span class="rounded-full bg-brand-50 border border-brand-200 px-3 py-1.5 text-xs font-bold text-brand-700">🎯 Interview Prep</span>
-              <span class="rounded-full bg-amber-50 border border-amber-200 px-3 py-1.5 text-xs font-bold text-amber-700">🗣 English &amp; Communication</span>
-              <span class="rounded-full bg-emerald-50 border border-emerald-200 px-3 py-1.5 text-xs font-bold text-emerald-700">🧭 Career Roadmaps</span>
+              <span class="rounded-full bg-brand-50 border border-brand-100 px-3 py-1.5 text-xs font-bold text-brand-700">Backend &amp; System Design</span>
+              <span class="rounded-full bg-brand-50 border border-brand-200 px-3 py-1.5 text-xs font-bold text-brand-700">Interview Prep</span>
+              <span class="rounded-full bg-brand-50 border border-brand-100 px-3 py-1.5 text-xs font-bold text-brand-700">English &amp; Communication</span>
+              <span class="rounded-full bg-brand-50 border border-brand-100 px-3 py-1.5 text-xs font-bold text-brand-700">Career Roadmaps</span>
             </div>
 
             <div class="mt-7 grid grid-cols-3 gap-4 max-w-md border-t border-slate-100 pt-6">
@@ -1564,7 +1564,7 @@
       Cal('init', {origin: 'https://cal.com'});
       Cal('ui', {
         theme: 'light',
-        styles: { branding: { brandColor: '#a855f7' } },
+        styles: { branding: { brandColor: '#7c3aed' } },
         hideEventTypeDetails: false,
         layout: 'month_view'
       });

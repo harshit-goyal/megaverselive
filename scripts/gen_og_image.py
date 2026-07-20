@@ -2,8 +2,8 @@
 from PIL import Image, ImageDraw, ImageFont
 
 W, H = 1200, 630
-top = (88, 28, 135)    # brand-900
-bot = (147, 51, 234)   # brand-600
+top = (59, 7, 100)     # brand-900
+bot = (109, 40, 217)   # brand-600
 
 img = Image.new("RGB", (W, H), top)
 px = img.load()
