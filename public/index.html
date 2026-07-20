@@ -26,7 +26,7 @@
     <!-- Preconnect for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;0,900;1,500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,400&family=Great+Vibes&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;0,900;1,500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,400&family=Dancing+Script:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://megaverselive.com" />
 
@@ -68,7 +68,7 @@
     <style>
       * { font-family: 'Source Serif 4', Georgia, 'Times New Roman', serif; }
       body { background-color: #FBF8F3; color: #241C18; }
-      .font-script { font-family: 'Great Vibes', cursive; }
+      .font-script { font-family: 'Dancing Script', cursive; font-weight: 700; }
       h1, h2, h3, .font-display { font-family: 'Playfair Display', Georgia, serif; letter-spacing: -0.01em; font-weight: 700; }
 
       /* Keyframe used by custom .gradient-text and .pricing-popular (formerly from Tailwind CDN config) */
@@ -96,7 +96,7 @@
 
       /* Animated gradient text */
       .gradient-text {
-        background: linear-gradient(120deg, #C15B3F, #DD9270);
+        background: linear-gradient(120deg, #BB5A3A, #D29B89);
         background-size: 300% 300%;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
@@ -114,8 +114,8 @@
       }
       .glass-card:hover {
         transform: translateY(-6px);
-        box-shadow: 0 20px 60px rgba(193,91,63,0.15);
-        border-color: rgba(193,91,63,0.3);
+        box-shadow: 0 20px 60px rgba(187,90,58,0.15);
+        border-color: rgba(187,90,58,0.3);
       }
 
       /* Gradient border card */
@@ -131,7 +131,7 @@
         inset: 0;
         padding: 2px;
         border-radius: 1.5rem;
-        background: linear-gradient(135deg, #C15B3F, #DD9270, #CF7350, #C15B3F);
+        background: linear-gradient(135deg, #BB5A3A, #D29B89, #D29B89, #BB5A3A);
         background-size: 300% 300%;
         -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
         mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -148,7 +148,7 @@
 
       /* Dark hero */
       .hero-dark {
-        background: linear-gradient(135deg, #2A211D 0%, #231A16 30%, #2A211D 60%, #1C1512 100%);
+        background: linear-gradient(135deg, #3E1E13 0%, #2A140D 30%, #3E1E13 60%, #1A0D08 100%);
         position: relative;
         overflow: hidden;
       }
@@ -159,9 +159,9 @@
         left: -50%;
         width: 200%;
         height: 200%;
-        background: radial-gradient(ellipse at 30% 50%, rgba(193,91,63,0.15) 0%, transparent 50%),
-                    radial-gradient(ellipse at 70% 30%, rgba(193,91,63,0.1) 0%, transparent 50%),
-                    radial-gradient(ellipse at 50% 80%, rgba(221,146,112,0.08) 0%, transparent 50%);
+        background: radial-gradient(ellipse at 30% 50%, rgba(187,90,58,0.15) 0%, transparent 50%),
+                    radial-gradient(ellipse at 70% 30%, rgba(187,90,58,0.1) 0%, transparent 50%),
+                    radial-gradient(ellipse at 50% 80%, rgba(210,155,137,0.08) 0%, transparent 50%);
         animation: gradientShift 15s ease infinite;
         background-size: 100% 100%;
       }
@@ -178,9 +178,9 @@
       /* Mesh gradient background for sections */
       .mesh-bg {
         background: 
-          radial-gradient(at 20% 80%, rgba(193,91,63,0.06) 0%, transparent 50%),
-          radial-gradient(at 80% 20%, rgba(193,91,63,0.04) 0%, transparent 50%),
-          radial-gradient(at 50% 50%, rgba(221,146,112,0.03) 0%, transparent 50%);
+          radial-gradient(at 20% 80%, rgba(187,90,58,0.06) 0%, transparent 50%),
+          radial-gradient(at 80% 20%, rgba(187,90,58,0.04) 0%, transparent 50%),
+          radial-gradient(at 50% 50%, rgba(210,155,137,0.03) 0%, transparent 50%);
       }
 
       /* Interactive card hover */
@@ -190,20 +190,20 @@
       }
       .card-interactive:hover {
         transform: translateY(-8px) scale(1.02);
-        box-shadow: 0 25px 60px rgba(193,91,63,0.12);
+        box-shadow: 0 25px 60px rgba(187,90,58,0.12);
       }
 
       /* Gradient button */
       .btn-gradient {
-        background: #C15B3F;
+        background: #BB5A3A;
         background-size: 100% 100%;
         transition: all 0.4s ease;
         position: relative;
         overflow: hidden;
       }
       .btn-gradient:hover {
-        background-color: #A8492F;
-        box-shadow: 0 12px 34px rgba(193,91,63,0.28);
+        background-color: #7D3C27;
+        box-shadow: 0 12px 34px rgba(187,90,58,0.28);
         transform: translateY(-2px);
       }
       .btn-gradient::after {
@@ -238,7 +238,7 @@
         100% { background-position: 200% 0; }
       }
       .shimmer {
-        background: linear-gradient(90deg, transparent, rgba(193,91,63,0.08), transparent);
+        background: linear-gradient(90deg, transparent, rgba(187,90,58,0.08), transparent);
         background-size: 200% 100%;
         animation: shimmer 3s infinite;
       }
@@ -252,7 +252,7 @@
         position: absolute;
         inset: -2px;
         border-radius: 1.75rem;
-        background: linear-gradient(135deg, #C15B3F, #DD9270, #CF7350, #C15B3F);
+        background: linear-gradient(135deg, #BB5A3A, #D29B89, #D29B89, #BB5A3A);
         background-size: 300% 300%;
         animation: gradientShift 4s ease infinite;
         z-index: -1;
@@ -269,7 +269,7 @@
         right: -2rem;
         width: 2rem;
         height: 2px;
-        background: linear-gradient(90deg, #C15B3F, #DD9270);
+        background: linear-gradient(90deg, #BB5A3A, #D29B89);
         display: none;
       }
       @media (min-width: 768px) {
@@ -304,7 +304,7 @@
         position: absolute;
         inset: -3px;
         border-radius: inherit;
-        background: linear-gradient(135deg, #C15B3F, #DD9270);
+        background: linear-gradient(135deg, #BB5A3A, #D29B89);
         opacity: 0;
         z-index: -1;
         filter: blur(12px);
@@ -326,7 +326,7 @@
       /* Custom scrollbar */
       ::-webkit-scrollbar { width: 8px; }
       ::-webkit-scrollbar-track { background: #FBF8F3; }
-      ::-webkit-scrollbar-thumb { background: linear-gradient(#C15B3F, #DD9270); border-radius: 10px; }
+      ::-webkit-scrollbar-thumb { background: linear-gradient(#BB5A3A, #D29B89); border-radius: 10px; }
     </style>
 
     <!-- Analytics (Google Analytics 4) -->
@@ -1561,7 +1561,7 @@
       Cal('init', {origin: 'https://cal.com'});
       Cal('ui', {
         theme: 'light',
-        styles: { branding: { brandColor: '#C15B3F' } },
+        styles: { branding: { brandColor: '#BB5A3A' } },
         hideEventTypeDetails: false,
         layout: 'month_view'
       });

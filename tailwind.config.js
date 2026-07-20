@@ -1,39 +1,39 @@
-/** Tailwind config — warm editorial rebrand (matches harshitgoyal.com) */
+/** Tailwind config — warm editorial rebrand, tokens matched to harshitgoyal.com */
 module.exports = {
   content: ['./public/**/*.html'],
-  safelist: ['text-brand-600', 'text-slate-500', 'shadow-soft', 'font-script', 'font-display'],
+  safelist: ['text-brand-600', 'text-stone-500', 'shadow-soft', 'font-script', 'font-display'],
   theme: {
     extend: {
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
         serif: ['"Source Serif 4"', 'Georgia', 'serif'],
         display: ['"Playfair Display"', 'Georgia', 'serif'],
-        script: ['"Great Vibes"', 'cursive'],
+        script: ['"Dancing Script"', 'cursive'],
       },
       colors: {
-        // Terracotta / rust primary
+        // Terracotta / rust — matched to harshitgoyal.com palette
         brand: {
-          50: '#FBF0EA', 100: '#F6DACE', 200: '#EBB59F', 300: '#DD9270', 400: '#CF7350',
-          500: '#C15B3F', 600: '#A8492F', 700: '#883A26', 800: '#6A2E20', 900: '#4C2117',
+          50: '#FCEFE9', 100: '#FCDED9', 200: '#E8C0B3', 300: '#D29B89', 400: '#C57C5C',
+          500: '#BB5A3A', 600: '#A24E33', 700: '#7D3C27', 800: '#5C2C1D', 900: '#3E1E13',
         },
         // Muted sage — reserved for the "live" indicator only
         accent: {
           50: '#eaf5ee', 100: '#cbe7d5', 200: '#9fd0b1', 300: '#6fb488', 400: '#4E9A6B', 500: '#3E8159',
         },
-        cream: '#FBF8F3',
+        cream: '#FDF8F4',
         paper: '#FFFFFF',
-        blush: '#F8EBE6',
-        ink: '#241C18',
-        espresso: '#2A211D',
-        muted: '#6B625C',
-        neon: { blue: '#DD9270', cyan: '#CF7350', pink: '#C15B3F', orange: '#C89B6A' },
+        blush: '#FCDED9',
+        ink: '#241612',
+        espresso: '#3E1E13',
+        muted: '#6B615B',
+        neon: { blue: '#D29B89', cyan: '#D29B89', pink: '#BB5A3A', orange: '#C89B6A' },
       },
       boxShadow: {
-        soft: '0 10px 40px rgba(36,28,24,0.08)',
-        glow: '0 0 50px rgba(193,91,63,0.22)',
-        'glow-lg': '0 0 80px rgba(193,91,63,0.26)',
-        neon: '0 12px 34px rgba(193,91,63,0.28)',
-        card: '0 4px 30px rgba(36,28,24,0.06)',
+        soft: '0 10px 40px rgba(62,30,19,0.08)',
+        glow: '0 0 50px rgba(187,90,58,0.22)',
+        'glow-lg': '0 0 80px rgba(187,90,58,0.26)',
+        neon: '0 12px 34px rgba(187,90,58,0.26)',
+        card: '0 4px 30px rgba(62,30,19,0.06)',
       },
       animation: {
         'fade-in': 'fadeIn 0.8s cubic-bezier(0.16,1,0.3,1) forwards',
