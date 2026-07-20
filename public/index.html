@@ -11,7 +11,14 @@
     <meta property="og:description" content="Live 1:1 sessions for Backend Interview Prep & English Coaching. Real feedback. Clear improvement plan." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://megaverselive.com" />
+    <meta property="og:image" content="https://megaverselive.com/assets/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Megaverse Live — Book 1:1 Sessions with Real Mentors" />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://megaverselive.com/assets/og-image.png" />
+    <meta name="twitter:title" content="Megaverse Live — Book 1:1 Sessions with Real Mentors" />
+    <meta name="twitter:description" content="Live 1:1 sessions for Backend Interview Prep & English Coaching. Real feedback. Clear improvement plan." />
 
     <!-- Favicon placeholder -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>" />
@@ -389,6 +396,25 @@
       ::-webkit-scrollbar-track { background: #f8fafc; }
       ::-webkit-scrollbar-thumb { background: linear-gradient(#a855f7, #ec4899); border-radius: 10px; }
     </style>
+
+    <!-- Analytics (Google Analytics 4) -->
+    <!-- To activate: replace G-XXXXXXXXXX below with your GA4 Measurement ID. -->
+    <!-- It stays inert (no requests) until a real ID is set. -->
+    <script>
+      (function () {
+        var GA_ID = 'G-XXXXXXXXXX';
+        if (!GA_ID || GA_ID.indexOf('XXXX') !== -1) return; // not configured yet
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+        document.head.appendChild(s);
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        window.gtag = gtag;
+        gtag('js', new Date());
+        gtag('config', GA_ID, { anonymize_ip: true });
+      })();
+    </script>
   </head>
 
   <body class="bg-slate-50 text-slate-900 antialiased">
@@ -1460,8 +1486,8 @@
         <div class="mt-8 flex flex-col gap-2 border-t border-slate-800 pt-6 text-xs text-slate-500 md:flex-row md:items-center md:justify-between">
           <div>&copy; <span id="year"></span> Megaverse Live. All rights reserved.</div>
           <div class="flex gap-4">
-            <a class="hover:text-brand-400 transition" href="#">Privacy Policy</a>
-            <a class="hover:text-brand-400 transition" href="#">Terms of Service</a>
+            <a class="hover:text-brand-400 transition" href="/privacy-policy.html">Privacy Policy</a>
+            <a class="hover:text-brand-400 transition" href="/terms-of-service.html">Terms of Service</a>
           </div>
         </div>
       </div>
