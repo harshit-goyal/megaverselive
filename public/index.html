@@ -153,6 +153,12 @@
       * { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
       h1, h2, h3, .font-display { font-family: 'Sora', 'Inter', system-ui, sans-serif; letter-spacing: -0.02em; }
 
+      /* Scroll-aware sticky header */
+      header { transition: box-shadow .3s ease, background-color .3s ease; }
+      header > div { transition: padding .3s ease; }
+      header.scrolled { box-shadow: 0 10px 40px rgba(0,0,0,0.08); background-color: rgba(255,255,255,0.9); }
+      header.scrolled > div { padding-top: .4rem; padding-bottom: .4rem; }
+
       /* Smooth reveal on scroll */
       .reveal {
         opacity: 0;
@@ -525,7 +531,7 @@
                 href="https://cal.com/hgoyal925/1-1-connect"
                 data-cal-link="hgoyal925/1-1-connect"
                 data-cal-config='{"layout":"month_view"}'
-                class="inline-flex items-center justify-center gap-2 rounded-full btn-gradient px-8 py-4 text-sm font-bold text-white shadow-neon"
+                class="glow-ring inline-flex items-center justify-center gap-2 rounded-full btn-gradient px-8 py-4 text-sm font-bold text-white shadow-neon"
               >
                 Book a 1:1 Session
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
@@ -1001,6 +1007,12 @@
               <span class="rounded-full bg-brand-50 border border-brand-200 px-3 py-1.5 text-xs font-bold text-brand-700">🎯 Interview Prep</span>
               <span class="rounded-full bg-amber-50 border border-amber-200 px-3 py-1.5 text-xs font-bold text-amber-700">🗣 English &amp; Communication</span>
               <span class="rounded-full bg-emerald-50 border border-emerald-200 px-3 py-1.5 text-xs font-bold text-emerald-700">🧭 Career Roadmaps</span>
+            </div>
+
+            <div class="mt-7 grid grid-cols-3 gap-4 max-w-md border-t border-slate-100 pt-6">
+              <div><div class="text-2xl font-black text-slate-900 font-display">5.0★</div><div class="text-xs text-slate-500 mt-0.5">Mentee rating</div></div>
+              <div><div class="text-2xl font-black text-slate-900 font-display">100%</div><div class="text-xs text-slate-500 mt-0.5">Live 1:1</div></div>
+              <div><div class="text-2xl font-black text-slate-900 font-display">Same-day</div><div class="text-xs text-slate-500 mt-0.5">Action plan</div></div>
             </div>
 
             <div class="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -1597,14 +1609,10 @@
       }, { threshold: 0.5 });
       counters.forEach(el => counterObserver.observe(el));
 
-      // Smooth header shadow on scroll
+      // Smooth header shrink + shadow on scroll
       const header = document.querySelector('header');
       window.addEventListener('scroll', () => {
-        if (window.scrollY > 10) {
-          header.classList.add('shadow-soft');
-        } else {
-          header.classList.remove('shadow-soft');
-        }
+        header.classList.toggle('scrolled', window.scrollY > 10);
       });
 
       // Active nav link highlight
