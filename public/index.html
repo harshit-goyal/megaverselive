@@ -906,8 +906,8 @@
               Tell me your goal and I'll send a free, tailored prep resource &mdash; plus you can grab a no-pressure 15-minute intro call to map out your path. No spam, ever.
             </p>
             <ul class="mt-6 space-y-3">
-              <li class="flex items-start gap-3 text-sm text-stone-700"><span class="grid h-5 w-5 shrink-0 mt-0.5 place-items-center rounded-full bg-brand-100 text-brand-700"><svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span>A free goal-specific prep resource (checklist &amp; roadmap)</li>
-              <li class="flex items-start gap-3 text-sm text-stone-700"><span class="grid h-5 w-5 shrink-0 mt-0.5 place-items-center rounded-full bg-brand-100 text-brand-700"><svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span>Honest advice on where to focus first</li>
+              <li class="flex items-start gap-3 text-sm text-stone-700"><span class="grid h-5 w-5 shrink-0 mt-0.5 place-items-center rounded-full bg-brand-100 text-brand-700"><svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span>Instant PDF: the full 6-month roadmap &mdash; 9 topics with timelines</li>
+              <li class="flex items-start gap-3 text-sm text-stone-700"><span class="grid h-5 w-5 shrink-0 mt-0.5 place-items-center rounded-full bg-brand-100 text-brand-700"><svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span>The major / minor study system top candidates use</li>
               <li class="flex items-start gap-3 text-sm text-stone-700"><span class="grid h-5 w-5 shrink-0 mt-0.5 place-items-center rounded-full bg-brand-100 text-brand-700"><svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span>First to know when new slots &amp; tracks open</li>
             </ul>
             <div class="mt-8 border-t border-brand-100 pt-6">
@@ -962,12 +962,17 @@
               <p class="text-center text-xs text-stone-400 font-sans">No spam. Unsubscribe anytime.</p>
             </form>
 
-            <div id="leadSuccess" class="hidden text-center py-10">
+            <div id="leadSuccess" class="hidden text-center py-8">
               <div class="mx-auto grid h-14 w-14 place-items-center rounded-full bg-accent-100 text-accent-500">
                 <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
               </div>
               <h3 class="mt-4 font-display text-2xl text-ink">You&rsquo;re in!</h3>
-              <p class="mt-2 text-muted font-sans">Check your inbox &mdash; your free resource is on the way. Want to talk sooner? Book a free intro call above.</p>
+              <p class="mt-2 text-muted font-sans">Here&rsquo;s your free roadmap &mdash; download it below. Working on English or Career? I&rsquo;ll email your tailored resource shortly.</p>
+              <a id="leadDownload" href="/assets/backend-roadmap.pdf" download class="mt-6 inline-flex items-center justify-center gap-2 rounded-full btn-gradient px-6 py-3.5 text-sm font-bold text-white font-sans">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v12m0 0l-4-4m4 4l4-4M4 20h16"/></svg>
+                Download the Backend Roadmap (PDF)
+              </a>
+              <p class="mt-4 text-xs text-stone-400 font-sans">Prefer to talk? Book a free 15-min intro call above.</p>
             </div>
           </div>
         </div>
@@ -1675,6 +1680,8 @@
               f.classList.add('hidden');
               var ok = document.getElementById('leadSuccess');
               if (ok) ok.classList.remove('hidden');
+              var dl = document.getElementById('leadDownload');
+              if (dl) { try { dl.click(); } catch (err) {} }
               if (window.gtag) { gtag('event', 'generate_lead', { method: 'lead_form' }); }
             })
             .catch(function () {
